@@ -275,6 +275,17 @@
             opacity: 0; transition: opacity 0.3s;
         }
 
+        .bento-label {
+            position: absolute;
+            bottom: 10px; right: 12px;
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+            z-index: 3;
+            pointer-events: none;
+        }
+
         .bento-overlay i {
             color: #fff; font-size: 1.4rem;
             width: 44px; height: 44px;
@@ -616,8 +627,7 @@
             <h2 class="sec-title">סיפורים, משחקים והשראה ללא גבולות</h2>
         </div>
         <div class="filter-tabs rv">
-            <button class="tab active" data-filter="all">הכל</button>
-            <button class="tab" data-filter="video">וידאו וקריאייטיב</button>
+            <button class="tab active" data-filter="video">וידאו וקריאייטיב</button>
             <button class="tab" data-filter="interactive">חוויות אינטראקטיביות</button>
         </div>
         <div class="bento rv">
@@ -669,29 +679,35 @@
                 <img src="https://i.ytimg.com/vi/aiHoY-D5_BQ/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="bento-item" data-cat="interactive">
+            <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
                 <img src="img/ss-workshop.jpg" alt="Stories Before Tools Workshop">
                 <div class="bento-overlay"><i class="fas fa-laptop-code"></i></div>
+                <span class="bento-label">Stories Before Tools</span>
             </a>
-            <a href="https://www.adamlevi.net/" target="_blank" class="bento-item" data-cat="interactive">
+            <a href="https://www.adamlevi.net/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
                 <img src="img/ss-adamlevi.jpg" alt="Adam Levi Site">
                 <div class="bento-overlay"><i class="fas fa-globe"></i></div>
+                <span class="bento-label">Adam Levi Site</span>
             </a>
-            <a href="https://www.quackai.co/" target="_blank" class="bento-item" data-cat="interactive">
+            <a href="https://www.quackai.co/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
                 <img src="img/ss-quackai.jpg" alt="QuackAI">
                 <div class="bento-overlay"><i class="fas fa-robot"></i></div>
+                <span class="bento-label">QuackAI</span>
             </a>
-            <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="bento-item" data-cat="interactive">
-                <img src="img/ss-quacky.jpg" alt="Quacky Duck Game">
+            <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="bento-item filtered-out" data-cat="interactive">
+                <img src="img/ss-quacky.jpg" alt="Quacky Duck">
                 <div class="bento-overlay"><i class="fas fa-gamepad"></i></div>
+                <span class="bento-label">Quacky Duck</span>
             </a>
-            <a href="https://levi04-ai.github.io/pokemon-apartment-game/" target="_blank" class="bento-item" data-cat="interactive">
+            <a href="https://levi04-ai.github.io/pokemon-apartment-game/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
                 <img src="img/ss-pokemon.jpg" alt="Pokemon Apartment Game">
                 <div class="bento-overlay"><i class="fas fa-gamepad"></i></div>
+                <span class="bento-label">Pokemon Apartment</span>
             </a>
-            <a href="https://quackai-eight.vercel.app/" target="_blank" class="bento-item" data-cat="interactive">
+            <a href="https://quackai-eight.vercel.app/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
                 <img src="img/ss-quackai-app.jpg" alt="QuackAI App">
                 <div class="bento-overlay"><i class="fas fa-mobile-alt"></i></div>
+                <span class="bento-label">QuackAI App</span>
             </a>
         </div>
         <div style="text-align:center;margin-top:1.5rem;">
@@ -780,7 +796,7 @@
                 tab.classList.add('active');
                 const filter = tab.dataset.filter;
                 document.querySelectorAll('.bento-item[data-cat]').forEach(item => {
-                    if (filter === 'all' || item.dataset.cat === filter) {
+                    if (item.dataset.cat === filter) {
                         item.classList.remove('filtered-out');
                     } else {
                         item.classList.add('filtered-out');
