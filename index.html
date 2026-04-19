@@ -147,29 +147,6 @@
             border-color: #e8a849;
             color: #e8a849;
             box-shadow: 0 0 12px rgba(232,168,73,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-glow::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border-radius: inherit;
-            background: conic-gradient(from 0deg, transparent 0%, transparent 85%, #e8a849 90%, #fff 95%, #e8a849 100%);
-            animation: glowSpin 3s linear infinite;
-            z-index: -1;
-            opacity: 0.8;
-        }
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            inset: 1px;
-            background: #0a0a0a;
-            border-radius: inherit;
-            z-index: -1;
-        }
-        @keyframes glowSpin {
-            to { transform: rotate(360deg); }
         }
         .btn-glow:hover {
             border-color: #f0b860;
@@ -670,7 +647,7 @@
                 </p>
                 <div class="hero-actions">
                     <a href="#services" class="btn-main">בואו נעבוד יחד <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
-                    <a href="#content" class="btn-sec btn-glow">מעבדת היצירה</a>
+                    <a href="#content" class="btn-sec btn-glow">מעבדת היצירה ✦</a>
                 </div>
             </div>
             <div class="hero-visual">
