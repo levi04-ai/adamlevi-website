@@ -286,6 +286,70 @@
             pointer-events: none;
         }
 
+        .vibe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            max-width: 1020px;
+            margin: 0 auto;
+        }
+
+        .vibe-card {
+            background: #141414;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .vibe-card:hover {
+            border-color: rgba(62,201,176,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+
+        .vibe-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .vibe-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .vibe-card:hover .vibe-thumb img { transform: scale(1.05); }
+
+        .vibe-info {
+            padding: 1rem 1.2rem 1.2rem;
+        }
+
+        .vibe-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.4rem;
+        }
+
+        .vibe-info p {
+            font-size: 0.82rem;
+            color: #777;
+            line-height: 1.7;
+        }
+
+        @media (max-width:768px) {
+            .vibe-grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+        @media (min-width:769px) and (max-width:1024px) {
+            .vibe-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
         .bento-overlay i {
             color: #fff; font-size: 1.4rem;
             width: 44px; height: 44px;
@@ -679,35 +743,49 @@
                 <img src="https://i.ytimg.com/vi/aiHoY-D5_BQ/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-workshop.png" alt="Stories Before Tools Workshop">
-                <div class="bento-overlay"><i class="fas fa-laptop-code"></i></div>
-                <span class="bento-label">Stories Before Tools</span>
+        </div>
+        <div class="vibe-grid" data-cat="interactive" style="display:none;">
+            <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-quacky.webp" alt="Quacky Duck"></div>
+                <div class="vibe-info">
+                    <h4>Quacky Duck</h4>
+                    <p>משחק Runner קצבי שפיתחתי מאפס בעזרת חשיבה יצירתית וליווי של AI.</p>
+                </div>
             </a>
-            <a href="https://www.adamlevi.net/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-adamlevi.jpg" alt="Adam Levi Site">
-                <div class="bento-overlay"><i class="fas fa-globe"></i></div>
-                <span class="bento-label">Adam Levi Site</span>
+            <a href="https://levi04-ai.github.io/pokemon-apartment-game/" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-pokemon.jpg" alt="Pixel Art Quest"></div>
+                <div class="vibe-info">
+                    <h4>Pixel Art Quest</h4>
+                    <p>איך שואב אבק עזר לי לעצב משחק מחשב? הוכחה שחשיבה מחוץ לקופסה מנצחת כל כלי טכנולוגי.</p>
+                </div>
             </a>
-            <a href="https://www.quackai.co/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-quackai.jpg" alt="QuackAI">
-                <div class="bento-overlay"><i class="fas fa-robot"></i></div>
-                <span class="bento-label">QuackAI</span>
+            <a href="https://www.adamlevi.net/" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-adamlevi.jpg" alt="Adam Levi Site"></div>
+                <div class="vibe-info">
+                    <h4>האתר החדש - adamlevi.net</h4>
+                    <p>המעבדה האישית שלי. אתר שנבנה בשיטת ה&#8209;Vibe Coding כדי להעניק חוויה של השראה וסטוריטלינג דיגיטלי.</p>
+                </div>
             </a>
-            <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-quacky.webp" alt="Quacky Duck">
-                <div class="bento-overlay"><i class="fas fa-gamepad"></i></div>
-                <span class="bento-label">Quacky Duck</span>
+            <a href="https://quackai-eight.vercel.app/" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-quackai-app.png" alt="QuackAI App"></div>
+                <div class="vibe-info">
+                    <h4>QuackAI App</h4>
+                    <p>איך בדיחה הפכה לאפליקציה "אמיתית". ניסוי קטן שהפך למוצר עובד שמדגים קיצור תהליכי פיתוח מבלי לאבד את הלב.</p>
+                </div>
             </a>
-            <a href="https://levi04-ai.github.io/pokemon-apartment-game/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-pokemon.jpg" alt="Pokemon Apartment Game">
-                <div class="bento-overlay"><i class="fas fa-gamepad"></i></div>
-                <span class="bento-label">Pokemon Apartment</span>
+            <a href="https://www.quackai.co/" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-quackai.jpg" alt="QuackAI Studio"></div>
+                <div class="vibe-info">
+                    <h4>סטודיו QuackAI - פלטפורמת וידאו אוטומטית</h4>
+                    <p>איך בונים סטודיו שלם שעובד לבד? פלטפורמת SaaS שהופכת זיכרונות לסרטוני פלסטלינה מונפשים, עם אוטומציה מלאה מקצה לקצה ומערכת סליקה.</p>
+                </div>
             </a>
-            <a href="https://quackai-eight.vercel.app/" target="_blank" class="bento-item filtered-out" data-cat="interactive">
-                <img src="img/ss-quackai-app.png" alt="QuackAI App">
-                <div class="bento-overlay"><i class="fas fa-mobile-alt"></i></div>
-                <span class="bento-label">QuackAI App</span>
+            <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="vibe-card rv">
+                <div class="vibe-thumb"><img src="img/ss-workshop.png" alt="דף נחיתה לסדנה"></div>
+                <div class="vibe-info">
+                    <h4>דף נחיתה לסדנה</h4>
+                    <p>מערכת הרשמה מלאה שפיתחתי ב&#8209;AI, הכוללת שמירת נתונים, ניהול נרשמים ויצירת CRM אוטומטי.</p>
+                </div>
             </a>
         </div>
         <div style="text-align:center;margin-top:1.5rem;">
@@ -795,13 +873,15 @@
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 const filter = tab.dataset.filter;
-                document.querySelectorAll('.bento-item[data-cat]').forEach(item => {
+                document.querySelectorAll('[data-cat]').forEach(item => {
                     if (item.dataset.cat === filter) {
                         item.classList.remove('filtered-out');
                     } else {
                         item.classList.add('filtered-out');
                     }
                 });
+                document.querySelector('.bento').style.display = filter === 'video' ? '' : 'none';
+                document.querySelector('.vibe-grid').style.display = filter === 'interactive' ? '' : 'none';
             });
         });
 
