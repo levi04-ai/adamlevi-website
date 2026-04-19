@@ -295,28 +295,24 @@
         }
 
         .vibe-card {
-            background: #141414;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            overflow: hidden;
-            transition: all 0.3s;
             text-decoration: none;
             color: inherit;
             display: block;
+            transition: transform 0.3s;
         }
 
-        .vibe-card:hover {
-            border-color: rgba(62,201,176,0.15);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-        }
+        .vibe-card:hover { transform: translateY(-4px); }
 
         .vibe-thumb {
             width: 100%;
             aspect-ratio: 16/9;
             overflow: hidden;
-            position: relative;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: border-color 0.3s;
         }
+
+        .vibe-card:hover .vibe-thumb { border-color: rgba(62,201,176,0.15); }
 
         .vibe-thumb img {
             width: 100%; height: 100%;
@@ -327,19 +323,19 @@
         .vibe-card:hover .vibe-thumb img { transform: scale(1.05); }
 
         .vibe-info {
-            padding: 1rem 1.2rem 1.2rem;
+            padding: 0.9rem 0.2rem 0;
         }
 
         .vibe-info h4 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: #fff;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
         }
 
         .vibe-info p {
             font-size: 0.82rem;
-            color: #777;
+            color: #666;
             line-height: 1.7;
         }
 
@@ -748,15 +744,15 @@
             <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-quacky.webp" alt="Quacky Duck"></div>
                 <div class="vibe-info">
-                    <h4>Quacky Duck</h4>
-                    <p>משחק Runner קצבי שפיתחתי מאפס בעזרת חשיבה יצירתית וליווי של AI.</p>
+                    <h4>Quacky Duck - ה-Runner הראשון</h4>
+                    <p>ניסוי בבניית מכניקת משחק וסטוריטלינג קצבי בליווי כלי AI.</p>
                 </div>
             </a>
             <a href="https://levi04-ai.github.io/pokemon-apartment-game/" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-pokemon.jpg" alt="Pixel Art Quest"></div>
                 <div class="vibe-info">
-                    <h4>Pixel Art Quest</h4>
-                    <p>איך שואב אבק עזר לי לעצב משחק מחשב? הוכחה שחשיבה מחוץ לקופסה מנצחת כל כלי טכנולוגי.</p>
+                    <h4>ממפת שואב אבק למשחק מחשב</h4>
+                    <p>מקרה בוחן בפיצוח קריאייטיב: שימוש ברפרנסים לא צפויים כדי לייצר עולמות חדשים.</p>
                 </div>
             </a>
             <a href="https://www.adamlevi.net/" target="_blank" class="vibe-card rv">
@@ -769,22 +765,22 @@
             <a href="https://quackai-eight.vercel.app/" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-quackai-app.png" alt="QuackAI App"></div>
                 <div class="vibe-info">
-                    <h4>QuackAI App</h4>
-                    <p>איך בדיחה הפכה לאפליקציה "אמיתית". ניסוי קטן שהפך למוצר עובד שמדגים קיצור תהליכי פיתוח מבלי לאבד את הלב.</p>
+                    <h4>מהרעיון אל האפליקציה</h4>
+                    <p>הדגמת תהליך פיתוח מואץ (Rapid Prototyping) של מוצר אינטראקטיבי בעזרת AI.</p>
                 </div>
             </a>
             <a href="https://www.quackai.co/" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-quackai.jpg" alt="QuackAI Studio"></div>
                 <div class="vibe-info">
-                    <h4>סטודיו QuackAI - פלטפורמת וידאו אוטומטית</h4>
-                    <p>איך בונים סטודיו שלם שעובד לבד? פלטפורמת SaaS שהופכת זיכרונות לסרטוני פלסטלינה מונפשים, עם אוטומציה מלאה מקצה לקצה ומערכת סליקה.</p>
+                    <h4>QuackAI - פלטפורמת וידאו אוטומטית (SaaS)</h4>
+                    <p>אוטומציה מלאה משלב הרעיון ועד הסליקה. פתרון טכנולוגי להפקת וידאו מבוסס ענן.</p>
                 </div>
             </a>
             <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-workshop.png" alt="דף נחיתה לסדנה"></div>
                 <div class="vibe-info">
-                    <h4>דף נחיתה לסדנה</h4>
-                    <p>מערכת הרשמה מלאה שפיתחתי ב&#8209;AI, הכוללת שמירת נתונים, ניהול נרשמים ויצירת CRM אוטומטי.</p>
+                    <h4>מערכת הרשמה וניהול נתונים</h4>
+                    <p>בניית תשתית אוטומטית לניהול נרשמים, CRM וסנכרון דאטה בזמן אמת.</p>
                 </div>
             </a>
         </div>
