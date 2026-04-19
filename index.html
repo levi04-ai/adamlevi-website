@@ -291,6 +291,36 @@
         .bento-hidden { display: none; }
         .bento.expanded .bento-hidden { display: block; }
 
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #888;
+            padding: 0.55rem 1.4rem;
+            border-radius: 100px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab:hover { color: #fff; border-color: rgba(255,255,255,0.15); }
+
+        .tab.active {
+            background: #3ec9b0;
+            color: #0a0a0a;
+            border-color: #3ec9b0;
+        }
+
+        .bento-item[data-cat].filtered-out { display: none; }
+
         .btn-more {
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
@@ -585,54 +615,67 @@
             <span class="sec-label">מעבדת היצירה</span>
             <h2 class="sec-title">סיפורים, משחקים והשראה ללא גבולות</h2>
         </div>
+        <div class="filter-tabs rv">
+            <button class="tab active" data-filter="all">הכל</button>
+            <button class="tab" data-filter="video">וידאו וקריאייטיב</button>
+            <button class="tab" data-filter="interactive">חוויות אינטראקטיביות</button>
+        </div>
         <div class="bento rv">
-            <a href="https://youtu.be/wPBn_1c4IYc" target="_blank" class="bento-item">
+            <a href="https://youtu.be/wPBn_1c4IYc" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/wPBn_1c4IYc/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/9Wp6kV8F9HI" target="_blank" class="bento-item">
+            <a href="https://youtu.be/9Wp6kV8F9HI" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/9Wp6kV8F9HI/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/WI2oCdG2DQI" target="_blank" class="bento-item">
+            <a href="https://youtu.be/WI2oCdG2DQI" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/WI2oCdG2DQI/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/XaoAt1FN_MA" target="_blank" class="bento-item">
+            <a href="https://youtu.be/XaoAt1FN_MA" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/XaoAt1FN_MA/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtube.com/shorts/opk7et3hxrE" target="_blank" class="bento-item">
+            <a href="https://youtube.com/shorts/opk7et3hxrE" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/opk7et3hxrE/oar2.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtube.com/shorts/YlOVe9nb79o" target="_blank" class="bento-item">
+            <a href="https://youtube.com/shorts/YlOVe9nb79o" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/YlOVe9nb79o/oar2.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtube.com/shorts/fvuG8HvYkGA" target="_blank" class="bento-item">
+            <a href="https://youtube.com/shorts/fvuG8HvYkGA" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/fvuG8HvYkGA/oar2.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/OR3BuK9sTFQ" target="_blank" class="bento-item">
+            <a href="https://youtu.be/OR3BuK9sTFQ" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/OR3BuK9sTFQ/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/HVWYMXGhe_s" target="_blank" class="bento-item">
+            <a href="https://youtu.be/HVWYMXGhe_s" target="_blank" class="bento-item" data-cat="video">
                 <img src="https://i.ytimg.com/vi/HVWYMXGhe_s/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/MNu_TWGpaOc" target="_blank" class="bento-item bento-hidden">
+            <a href="https://youtu.be/MNu_TWGpaOc" target="_blank" class="bento-item bento-hidden" data-cat="video">
                 <img src="https://i.ytimg.com/vi/MNu_TWGpaOc/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/MrlMuZ0J9ss" target="_blank" class="bento-item bento-hidden">
+            <a href="https://youtu.be/MrlMuZ0J9ss" target="_blank" class="bento-item bento-hidden" data-cat="video">
                 <img src="https://i.ytimg.com/vi/MrlMuZ0J9ss/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
-            <a href="https://youtu.be/aiHoY-D5_BQ" target="_blank" class="bento-item bento-hidden">
+            <a href="https://youtu.be/aiHoY-D5_BQ" target="_blank" class="bento-item bento-hidden" data-cat="video">
                 <img src="https://i.ytimg.com/vi/aiHoY-D5_BQ/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
+            </a>
+            <a href="https://www.quackai.co/create" target="_blank" class="bento-item" data-cat="interactive">
+                <img src="https://i.ytimg.com/vi/wPBn_1c4IYc/hqdefault.jpg" alt="QuackAI">
+                <div class="bento-overlay"><i class="fas fa-gamepad"></i></div>
+            </a>
+            <a href="https://adamlevi-workshop.netlify.app/" target="_blank" class="bento-item" data-cat="interactive">
+                <img src="https://i.ytimg.com/vi/9Wp6kV8F9HI/hqdefault.jpg" alt="Workshop">
+                <div class="bento-overlay"><i class="fas fa-laptop-code"></i></div>
             </a>
         </div>
         <div style="text-align:center;margin-top:1.5rem;">
@@ -713,6 +756,22 @@
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('v'); });
         }, { threshold: 0.08 });
         document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+        // Filter tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const filter = tab.dataset.filter;
+                document.querySelectorAll('.bento-item[data-cat]').forEach(item => {
+                    if (filter === 'all' || item.dataset.cat === filter) {
+                        item.classList.remove('filtered-out');
+                    } else {
+                        item.classList.add('filtered-out');
+                    }
+                });
+            });
+        });
 
         const showMoreBtn = document.getElementById('showMore');
         const bento = document.querySelector('.bento');
