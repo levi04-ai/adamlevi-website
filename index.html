@@ -277,6 +277,28 @@
         .bento-item:hover img { transform: scale(1.05); }
         .bento-item:hover { border-color: rgba(62,201,176,0.15); }
 
+        .bento-hidden { display: none; }
+        .bento.expanded .bento-hidden { display: block; }
+
+        .btn-more {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #aaa;
+            padding: 0.7rem 2rem;
+            border-radius: 10px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-more:hover { border-color: rgba(62,201,176,0.15); color: #fff; }
+        .btn-more i { transition: transform 0.3s; font-size: 0.75rem; }
+        .btn-more.open i { transform: rotate(180deg); }
+
         /* all same size */
 
         @media (max-width:768px) {
@@ -589,6 +611,21 @@
                 <img src="https://i.ytimg.com/vi/HVWYMXGhe_s/hqdefault.jpg" alt="">
                 <div class="bento-overlay"><i class="fas fa-play"></i></div>
             </a>
+            <a href="https://youtu.be/MNu_TWGpaOc" target="_blank" class="bento-item bento-hidden">
+                <img src="https://i.ytimg.com/vi/MNu_TWGpaOc/hqdefault.jpg" alt="">
+                <div class="bento-overlay"><i class="fas fa-play"></i></div>
+            </a>
+            <a href="https://youtu.be/MrlMuZ0J9ss" target="_blank" class="bento-item bento-hidden">
+                <img src="https://i.ytimg.com/vi/MrlMuZ0J9ss/hqdefault.jpg" alt="">
+                <div class="bento-overlay"><i class="fas fa-play"></i></div>
+            </a>
+            <a href="https://youtu.be/aiHoY-D5_BQ" target="_blank" class="bento-item bento-hidden">
+                <img src="https://i.ytimg.com/vi/aiHoY-D5_BQ/hqdefault.jpg" alt="">
+                <div class="bento-overlay"><i class="fas fa-play"></i></div>
+            </a>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem;">
+            <button id="showMore" class="btn-more rv">הצג עוד <i class="fas fa-chevron-down"></i></button>
         </div>
     </section>
 
@@ -665,6 +702,19 @@
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('v'); });
         }, { threshold: 0.08 });
         document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+        const showMoreBtn = document.getElementById('showMore');
+        const bento = document.querySelector('.bento');
+        showMoreBtn.addEventListener('click', () => {
+            bento.classList.toggle('expanded');
+            showMoreBtn.classList.toggle('open');
+            showMoreBtn.querySelector('span') || showMoreBtn.childNodes[0];
+            if (bento.classList.contains('expanded')) {
+                showMoreBtn.innerHTML = 'הצג פחות <i class="fas fa-chevron-up"></i>';
+            } else {
+                showMoreBtn.innerHTML = 'הצג עוד <i class="fas fa-chevron-down"></i>';
+            }
+        });
     </script>
 </body>
 </html>
