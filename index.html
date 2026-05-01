@@ -243,6 +243,21 @@
         .card h3 { font-size: 1.15rem; font-weight: 700; color: #eee; margin-bottom: 0.6rem; }
         .card p { color: #888; font-size: 0.98rem; line-height: 1.85; }
 
+        .card-cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            margin-top: 1.5rem; padding: 0.65rem 1.5rem;
+            background: #11caa0; color: #0a0a0a;
+            border-radius: 50px; text-decoration: none;
+            font-size: 0.95rem; font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .card-cta:hover {
+            transform: translateY(-2px);
+            background: #14e0b0;
+            box-shadow: 0 8px 24px rgba(17, 202, 160, 0.3);
+        }
+        .card-cta i { font-size: 0.8rem; }
+
         /* BENTO GRID */
         .bento {
             display: grid;
@@ -710,11 +725,12 @@
                 <h3>הרצאות על AI ויצירה</h3>
                 <p>הרצאות השראה וחדשנות: לפתוח את הראש למה שאפשרי. נדבר על המפגש שבין דמיון אנושי לבינה מלאכותית, ואיך להישאר רלוונטיים (ויצירתיים) בעולם שמשתנה כל יום.</p>
             </div>
-            <a href="/workshop/" class="card rv d2" style="text-decoration:none;color:inherit;">
+            <div class="card rv d2">
                 <div class="card-ico"><i class="fas fa-wand-magic-sparkles"></i></div>
                 <h3>סדנאות "Stories Before Tools"</h3>
                 <p>הסדנה המעשית: המסע המלא מרעיון משוגע למוצר מוגמר. אנימציה, משחקים או תוכן ויראלי, בואו ללמוד איך לחשוב אחרת ולבנות עולמות בעזרת הכלים החדשים.</p>
-            </a>
+                <a href="/workshop/" class="card-cta">סדנה ליוצרים <i class="fas fa-arrow-left"></i></a>
+            </div>
             <div class="card rv d3">
                 <div class="card-ico"><i class="fas fa-star"></i></div>
                 <h3>סדנאות לארגונים</h3>
