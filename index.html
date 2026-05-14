@@ -751,11 +751,12 @@
 
         /* MOBILE */
         @media (max-width:1024px) {
-            .hero-inner { flex-direction: column; text-align: center; gap: 2.5rem; }
-            .hero-visual { flex: 0 0 auto; max-width: 480px; margin: 0 auto; }
-            .hero-content { text-align: center; }
-            .hero-desc { margin-left: auto; margin-right: auto; }
-            .hero-actions { justify-content: center; }
+            .hero-inner { flex-direction: column; text-align: center; gap: 1.5rem; }
+            .hero-visual { flex: 0 0 auto; max-width: 480px; margin: 0 auto; order: 2; }
+            .hero-content { text-align: center; display: contents; }
+            .hero-content h1 { order: 1; }
+            .hero-desc { margin: 0 auto; order: 3; }
+            .hero-actions { justify-content: center; order: 4; }
             .cards { grid-template-columns: 1fr; max-width: 380px; }
             .lec { grid-template-columns: 1fr; }
         }
