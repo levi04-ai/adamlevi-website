@@ -348,6 +348,84 @@
         }
         .btn-whatsapp i { font-size: 1.3rem; }
 
+        .press-section { padding: 4rem 3.5rem; }
+        .press-card {
+            display: flex;
+            align-items: stretch;
+            max-width: 1020px;
+            margin: 0 auto;
+            background: rgba(232,168,73,0.04);
+            border: 1px solid rgba(232,168,73,0.2);
+            border-radius: 18px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 0 32px rgba(232,168,73,0.08);
+        }
+        .press-card:hover {
+            border-color: rgba(232,168,73,0.45);
+            box-shadow: 0 0 40px rgba(232,168,73,0.18);
+            transform: translateY(-3px);
+        }
+        .press-thumb {
+            flex: 0 0 45%;
+            overflow: hidden;
+            position: relative;
+        }
+        .press-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .press-card:hover .press-thumb img { transform: scale(1.04); }
+        .press-content {
+            flex: 1;
+            padding: 2rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .press-badge {
+            display: inline-block;
+            background: #e8a849;
+            color: #0a0a0a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+        .press-content h3 {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 0.8rem;
+        }
+        .press-content p {
+            font-size: 0.95rem;
+            color: #999;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .press-cta {
+            color: #e8a849;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+        .press-card:hover .press-cta { color: #f0b860; }
+
+        @media (max-width:768px) {
+            .press-card { flex-direction: column; }
+            .press-thumb { flex: 0 0 auto; aspect-ratio: 16/9; }
+            .press-content { padding: 1.5rem; }
+            .press-content h3 { font-size: 1.2rem; }
+        }
+
         .vibe-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -779,6 +857,18 @@
         </div>
     </section>
 
+    <section class="section press-section">
+        <a href="https://www.mako.co.il/nexter/news/Article-89fcb397caefd91026.htm" target="_blank" class="press-card rv">
+            <div class="press-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako"></div>
+            <div class="press-content">
+                <span class="press-badge">סקירה בתקשורת</span>
+                <h3>המשחק שפיתחתי הגיע לכתבה ב&#8209;mako</h3>
+                <p>פרויקט ה&#8209;Pixel Art שיצרתי בעזרת AI הגיע לכתבה ב&#8209;Nexter על mako. הכתבה מפרקת את תהליך היצירה ואיך חפץ יומיומי הפך לחוויה אינטראקטיבית.</p>
+                <span class="press-cta">לקריאת הכתבה המלאה ↗</span>
+            </div>
+        </a>
+    </section>
+
     <section class="section" id="content">
         <div class="sec-head rv">
             <span class="sec-label">מעבדת היצירה</span>
@@ -843,15 +933,6 @@
             </a>
         </div>
         <div class="vibe-grid" data-cat="interactive" style="display:none;">
-            <a href="https://www.mako.co.il/nexter/news/Article-89fcb397caefd91026.htm" target="_blank" class="vibe-card featured rv">
-                <span class="vibe-badge">סקירה בתקשורת</span>
-                <div class="vibe-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako על Pixel Art Quest"></div>
-                <div class="vibe-info">
-                    <h4>מהמעבדה לכותרות: איך מפת שואב אבק הפכה למשחק</h4>
-                    <p>פרויקט ה&#8209;Pixel Art שפיתחתי הגיע ל&#8209;mako בזכות השילוב בין טכנולוגיית AI לסטוריטלינג אנושי. הכתבה מפרקת את תהליך היצירה שהפך חפץ יומיומי לחוויה אינטראקטיבית.</p>
-                    <span class="vibe-cta">לקריאת הכתבה המלאה ↗</span>
-                </div>
-            </a>
             <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-quacky.webp" alt="Quacky Duck"></div>
                 <div class="vibe-info">
