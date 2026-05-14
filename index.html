@@ -361,9 +361,43 @@
             color: inherit;
             display: block;
             transition: transform 0.3s;
+            position: relative;
         }
 
         .vibe-card:hover { transform: translateY(-4px); }
+
+        .vibe-card.featured .vibe-thumb {
+            border-color: rgba(232,168,73,0.4);
+            box-shadow: 0 0 32px rgba(232,168,73,0.15);
+        }
+        .vibe-card.featured:hover .vibe-thumb {
+            border-color: rgba(232,168,73,0.7);
+            box-shadow: 0 0 40px rgba(232,168,73,0.25);
+        }
+        .vibe-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: #e8a849;
+            color: #0a0a0a;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.3rem 0.7rem;
+            border-radius: 100px;
+            letter-spacing: 0.02em;
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(232,168,73,0.3);
+        }
+        .vibe-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            color: #e8a849;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+        .vibe-card.featured:hover .vibe-cta { color: #f0b860; }
 
         .vibe-thumb {
             width: 100%;
@@ -809,6 +843,15 @@
             </a>
         </div>
         <div class="vibe-grid" data-cat="interactive" style="display:none;">
+            <a href="https://www.mako.co.il/nexter/news/Article-89fcb397caefd91026.htm" target="_blank" class="vibe-card featured rv">
+                <span class="vibe-badge">סקירה בתקשורת</span>
+                <div class="vibe-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako על Pixel Art Quest"></div>
+                <div class="vibe-info">
+                    <h4>מהמעבדה לכותרות: איך מפת שואב אבק הפכה למשחק</h4>
+                    <p>פרויקט ה&#8209;Pixel Art שפיתחתי הגיע ל&#8209;mako בזכות השילוב בין טכנולוגיית AI לסטוריטלינג אנושי. הכתבה מפרקת את תהליך היצירה שהפך חפץ יומיומי לחוויה אינטראקטיבית.</p>
+                    <span class="vibe-cta">לקריאת הכתבה המלאה ↗</span>
+                </div>
+            </a>
             <a href="https://duckademy.itch.io/quacky-duck" target="_blank" class="vibe-card rv">
                 <div class="vibe-thumb"><img src="img/ss-quacky.webp" alt="Quacky Duck"></div>
                 <div class="vibe-info">
