@@ -160,6 +160,46 @@
         .audience-item p { color: var(--text-soft); font-size: clamp(1.1rem, 1.8vw, 1.25rem); font-weight: 300; line-height: 1.85; margin: 0; }
         .audience-item p strong { color: var(--text); font-weight: 600; }
 
+        /* PROOF SECTION — personal story + press */
+        .proof { padding: 5rem 0; }
+
+        /* Personal story (from the launch post) */
+        .story-block { max-width: 720px; margin: 0 auto 3.5rem; padding: 0 1.75rem; }
+        .story-block p { color: var(--text-soft); font-size: var(--fs-lead); font-weight: 300; line-height: 1.85; margin-bottom: 1.4rem; text-align: center; }
+        .story-block p:last-child { margin-bottom: 0; }
+        .story-block p strong { color: #fff; font-weight: 600; }
+        .story-block p.story-highlight { color: var(--mint); font-weight: 600; font-size: clamp(1.15rem, 2vw, 1.35rem); margin-top: 0.5rem; }
+
+        .achievements { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 760px; margin: 2rem auto 0; }
+        .achievement { text-align: center; padding: 1.25rem 0.75rem; border-top: 1px solid var(--border); }
+        .achievement-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .achievement-text { font-size: 0.95rem; color: var(--text-soft); font-weight: 400; line-height: 1.4; }
+        .achievement-text strong { color: var(--mint); font-weight: 700; display: block; margin-bottom: 0.2rem; }
+
+        /* Press / Mako card */
+        .press-card-link { display: block; max-width: 880px; margin: 0 auto; padding: 0 1.5rem; text-decoration: none; color: inherit; }
+        .press-card { display: flex; align-items: stretch; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: all 0.3s ease; }
+        .press-card:hover { border-color: rgba(17, 202, 160, 0.35); box-shadow: 0 0 40px rgba(17, 202, 160, 0.12); transform: translateY(-3px); }
+        .press-thumb { flex: 0 0 40%; max-width: 300px; overflow: hidden; }
+        .press-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .press-card:hover .press-thumb img { transform: scale(1.04); }
+        .press-content { flex: 1; padding: 1.75rem 2rem; display: flex; flex-direction: column; justify-content: center; }
+        .press-badge { display: inline-block; align-self: flex-end; color: var(--mint); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; }
+        .press-content h3 { font-size: var(--fs-h3); font-weight: 700; color: #fff; margin-bottom: 0.75rem; line-height: 1.35; letter-spacing: -0.015em; }
+        .press-content p { color: var(--text-soft); font-size: var(--fs-body-l); font-weight: 300; line-height: 1.7; margin-bottom: 0.85rem; }
+        .press-cta { color: var(--mint); font-size: 0.92rem; font-weight: 600; align-self: flex-end; transition: color 0.3s; }
+        .press-card:hover .press-cta { color: #14e0b0; }
+
+        @media (max-width: 768px) {
+            .achievements { grid-template-columns: 1fr; gap: 0; }
+            .achievement { border-top: 1px solid var(--border); padding: 1.1rem 0; }
+            .press-card { flex-direction: column; }
+            .press-thumb { flex: 0 0 auto; max-width: 100%; max-height: 220px; }
+            .press-content { padding: 1.5rem 1.5rem 1.75rem; }
+            .press-badge { align-self: flex-start; }
+            .press-cta { align-self: flex-start; }
+        }
+
         /* REGISTRATION BOX */
         .register { padding: 4.5rem 1.75rem 5.5rem; }
         .register-box { max-width: 480px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 20px; padding: 2.75rem 2.25rem; text-align: center; }
@@ -316,6 +356,43 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- PROOF: personal story + press mention -->
+    <section class="proof">
+        <div class="story-block">
+            <p>השם <strong>"Stories Before Tools"</strong> הוא משפט שאני אומר לעצמי כל יום מאז שהתחלתי לעבוד עם AI.</p>
+            <p>הכלים השתנו, ההזדמנויות נפתחו - אבל <strong>משהו אחר קרה במקביל</strong>: הכל מתחיל להיראות אותו דבר. אותם פילטרים, אותן פוזות, אותו "טעם" סינתטי שמזהים תוך 2 שניות.</p>
+            <p class="story-highlight">ובכל זאת - הצלחתי להוכיח לעצמי משהו אחר:<br>שכשמקדימים את הסיפור לכלים, קורים דברים אחרים לגמרי.</p>
+
+            <div class="achievements">
+                <div class="achievement">
+                    <div class="achievement-icon">🎬</div>
+                    <div class="achievement-text"><strong>מיליוני צפיות</strong>בסרטונים</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">💼</div>
+                    <div class="achievement-text"><strong>פניות ועבודה</strong>מאתרים שבניתי</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🎮</div>
+                    <div class="achievement-text"><strong>משחק ויראלי</strong>שהגיע לכתבה במאקו</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Press card -->
+        <a href="https://www.mako.co.il/nexter-news/Article-89fcb397caefd91026.htm" target="_blank" rel="noopener" class="press-card-link">
+            <div class="press-card">
+                <div class="press-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako על המשחק" loading="lazy"></div>
+                <div class="press-content">
+                    <span class="press-badge">סקירה בתקשורת</span>
+                    <h3>איך סטוריטלינג ו-AI הגיעו לכותרות ב-mako</h3>
+                    <p>לקחתי מפה טכנית של שואב אבק, רתמתי כלי AI ובלי לדעת שורת קוד אחת, הפכתי אותה למשחק מחשב אישי ומרגש. הכתבה ב-mako מפרקת את הגישה שלי - איך הניצוץ האנושי נותן לטכנולוגיה משמעות.</p>
+                    <span class="press-cta">לקריאת הכתבה המלאה ↗</span>
+                </div>
+            </div>
+        </a>
     </section>
 
     <!-- CORE VALUE — אז מה כן -->
