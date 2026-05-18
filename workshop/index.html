@@ -57,8 +57,15 @@
         h1 .accent { color: var(--mint); font-weight: 700; }
         .hero-subtitle { font-size: clamp(1.05rem, 2vw, 1.4rem); font-weight: 600; color: var(--mint); margin-bottom: 3rem; line-height: 1.4; letter-spacing: 0.05em; }
 
-        .hero-statement { max-width: 720px; margin: 0 auto 3rem; padding: 2rem 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: var(--fs-lead); color: var(--text-soft); line-height: 1.7; font-weight: 300; }
+        .hero-statement { max-width: 720px; margin: 0 auto 2.25rem; padding: 2rem 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: var(--fs-lead); color: var(--text-soft); line-height: 1.7; font-weight: 300; }
         .hero-statement b { color: var(--text); font-weight: 500; }
+
+        /* Hero quick-CTA */
+        .hero-cta { display: inline-flex; align-items: center; gap: 0.7rem; background: var(--mint); color: #0a0e14; text-decoration: none; padding: 0.95rem 1.75rem; border-radius: 50px; font-size: 1.05rem; font-weight: 700; transition: all 0.3s ease; font-family: inherit; box-shadow: 0 8px 32px rgba(17, 202, 160, 0.2); }
+        .hero-cta:hover { transform: translateY(-2px); background: #14e0b0; box-shadow: 0 12px 40px rgba(17, 202, 160, 0.35); }
+        .hero-cta-meta { color: rgba(10, 14, 20, 0.65); font-weight: 500; font-size: 0.92rem; }
+        .hero-cta-arrow { font-size: 1.1rem; line-height: 1; }
+        .hero-cta-sub { display: block; margin-top: 0.85rem; color: var(--text-dim); font-size: 0.85rem; font-weight: 400; letter-spacing: 0.04em; }
 
         .scroll-arrow { display: none; }
 
@@ -313,6 +320,13 @@
             <h1><span class="accent">Stories</span> Before Tools.</h1>
             <div class="hero-subtitle">סדנת קריאייטיב ויצירתיות בעידן ה-AI</div>
             <p class="hero-statement">אנחנו חיים בתקופה שהפכה את ה<b>איך</b> לנגיש לכולם, ואת ה<b>מה</b> לבידול היחיד שנשאר לנו. כדי לא לטבוע בים של יצירתיות גנרית, אנחנו חייבים לזקק את הזהות והטעם האישי שלנו - הדברים היחידים ששום כלי AI לא יוכל להחליף.</p>
+
+            <a href="https://meshulam.co.il/quick_payment?b=29b37b2cc8a40e1248800f4ef2ba2c07" target="_blank" class="hero-cta">
+                <span>לשריין מקום בסדנה</span>
+                <span class="hero-cta-meta">27.05 · 180₪</span>
+                <span class="hero-cta-arrow">←</span>
+            </a>
+            <span class="hero-cta-sub">לייב ב-Google Meet · כולל הקלטה · מקומות מוגבלים</span>
             <div class="scroll-arrow"><span class="line"></span><span class="dot"></span></div>
         </div>
     </section>
