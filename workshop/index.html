@@ -216,16 +216,21 @@
             .section-lead + .section-lead { margin-top: 1rem; }
 
             .syllabus-list { margin-top: 2rem; }
-            .syllabus-item { gap: 1rem; padding: 1.4rem 0; }
-            .syllabus-num { min-width: 2.5rem; }
+            .syllabus-item { padding: 1.6rem 0; flex-direction: column; align-items: center; text-align: center; gap: 0.4rem; }
+            .syllabus-num { min-width: 0; margin-bottom: 0.2rem; }
+            .syllabus-body { width: 100%; }
             .syllabus-body h3 { margin-bottom: 0.5rem; }
 
             .manifesto-list { margin-top: 1.75rem; }
-            .manifesto-item { padding: 1.25rem 0; }
-            .manifesto-content h3 { margin-bottom: 0.4rem; }
+            .manifesto-item { padding: 1.5rem 0; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; }
+            .manifesto-dash { font-size: 1.5rem; min-width: 0; line-height: 1; }
+            .manifesto-content { width: 100%; }
+            .manifesto-content h3 { margin-bottom: 0.4rem; display: block; }
+            .manifesto-content h3::after { content: ''; }
 
             .audience-list { padding: 0 1.25rem; }
-            .audience-item { padding: 1.2rem 0; }
+            .audience-item { padding: 1.4rem 0; flex-direction: column; align-items: center; text-align: center; gap: 0.4rem; }
+            .audience-dash { font-size: 1.5rem; min-width: 0; line-height: 1; }
             .audience .section-eyebrow { font-size: 1.5rem; margin-bottom: 1.5rem; }
 
             .speaking-gallery { padding: 1.25rem 1.25rem 0.5rem; margin-top: -0.5rem; }
