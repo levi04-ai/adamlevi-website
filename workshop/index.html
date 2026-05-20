@@ -231,6 +231,7 @@
 
         /* COUNTDOWN TIMER — minimal, no box */
         .countdown { margin: 1.5rem 0 0; text-align: center; }
+        .countdown-hero { margin: 0 0 1.5rem; text-align: center; }
         .countdown-label { display: block; color: var(--text-dim); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 0.65rem; }
         .countdown-grid { display: inline-flex; justify-content: center; gap: 1.1rem; direction: ltr; }
         .countdown-unit { display: flex; flex-direction: column; align-items: center; }
@@ -342,6 +343,15 @@
             <h1><span class="accent">Stories</span> Before Tools.</h1>
             <div class="hero-subtitle">סדנת קריאייטיב ויצירתיות בעידן ה-AI</div>
             <p class="hero-statement">אנחנו חיים בתקופה שהפכה את ה<b>איך</b> לנגיש לכולם, ואת ה<b>מה</b> לבידול היחיד שנשאר לנו. כדי לא לטבוע בים של יצירתיות גנרית, אנחנו חייבים לזקק את הזהות והטעם האישי שלנו - הדברים היחידים ששום כלי AI לא יוכל להחליף.</p>
+
+            <div class="countdown-hero" id="countdown-hero">
+                <div class="countdown-grid">
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-days-h">--</span><span class="countdown-name">ימים</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-hours-h">--</span><span class="countdown-name">שעות</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-minutes-h">--</span><span class="countdown-name">דקות</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-seconds-h">--</span><span class="countdown-name">שניות</span></div>
+                </div>
+            </div>
 
             <a href="https://meshulam.co.il/quick_payment?b=29b37b2cc8a40e1248800f4ef2ba2c07" target="_blank" class="hero-cta">לשריין מקום בסדנה</a>
             <div class="scroll-arrow"><span class="line"></span><span class="dot"></span></div>
@@ -554,28 +564,38 @@
             });
         }
 
-        // COUNTDOWN TIMER
+        // COUNTDOWN TIMER — Registration closes Tue May 26, 23:59 Israel time (UTC+3) => 20:59 UTC
         (function () {
-            // Workshop date: May 27, 2026, 20:30 Israel time (UTC+3) => 17:30 UTC
-            const targetUTC = new Date(Date.UTC(2026, 4, 27, 17, 30, 0)).getTime();
-            const grid = document.getElementById('countdownGrid');
-            const elDays = document.getElementById('cd-days');
-            const elHours = document.getElementById('cd-hours');
-            const elMins = document.getElementById('cd-minutes');
-            const elSecs = document.getElementById('cd-seconds');
-            const countdownBox = document.getElementById('countdown');
+            const targetUTC = new Date(Date.UTC(2026, 4, 26, 20, 59, 59)).getTime();
 
             function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+            // Update both countdowns
+            const countdowns = [
+                {
+                    box: document.getElementById('countdown'),
+                    days: document.getElementById('cd-days'),
+                    hours: document.getElementById('cd-hours'),
+                    minutes: document.getElementById('cd-minutes'),
+                    seconds: document.getElementById('cd-seconds')
+                },
+                {
+                    box: document.getElementById('countdown-hero'),
+                    days: document.getElementById('cd-days-h'),
+                    hours: document.getElementById('cd-hours-h'),
+                    minutes: document.getElementById('cd-minutes-h'),
+                    seconds: document.getElementById('cd-seconds-h')
+                }
+            ];
 
             function tick() {
                 const now = Date.now();
                 const diff = targetUTC - now;
 
                 if (diff <= 0) {
-                    // Workshop started or passed
-                    if (countdownBox) {
-                        countdownBox.innerHTML = '<div class="countdown-final">הסדנה מתחילה עכשיו 🎯</div>';
-                    }
+                    countdowns.forEach(c => {
+                        if (c.box) c.box.style.display = 'none';
+                    });
                     return;
                 }
 
@@ -584,10 +604,12 @@
                 const minutes = Math.floor((diff / (1000 * 60)) % 60);
                 const seconds = Math.floor((diff / 1000) % 60);
 
-                if (elDays) elDays.textContent = pad(days);
-                if (elHours) elHours.textContent = pad(hours);
-                if (elMins) elMins.textContent = pad(minutes);
-                if (elSecs) elSecs.textContent = pad(seconds);
+                countdowns.forEach(c => {
+                    if (c.days) c.days.textContent = pad(days);
+                    if (c.hours) c.hours.textContent = pad(hours);
+                    if (c.minutes) c.minutes.textContent = pad(minutes);
+                    if (c.seconds) c.seconds.textContent = pad(seconds);
+                });
             }
 
             tick();
