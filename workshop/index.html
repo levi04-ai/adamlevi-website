@@ -228,6 +228,20 @@
         .register-details { list-style: none; margin: 0 0 2rem; padding: 0; text-align: center; }
         .register-details li { padding: 0.4rem 0; color: var(--text-soft); font-size: var(--fs-body); font-weight: 400; line-height: 1.65; }
         .register-details li strong { color: var(--text); font-weight: 600; }
+
+        /* COUNTDOWN TIMER */
+        .countdown { margin: 0 0 1.75rem; padding: 1.25rem 1rem; background: rgba(17, 202, 160, 0.05); border: 1px solid rgba(17, 202, 160, 0.2); border-radius: 14px; }
+        .countdown-label { display: block; color: var(--mint); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.85rem; }
+        .countdown-grid { display: flex; justify-content: center; gap: 0.6rem; direction: ltr; }
+        .countdown-unit { display: flex; flex-direction: column; align-items: center; min-width: 56px; padding: 0.6rem 0.5rem; background: var(--bg); border-radius: 10px; }
+        .countdown-value { font-size: 1.65rem; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+        .countdown-name { font-size: 0.7rem; color: var(--text-dim); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.35rem; }
+        .countdown-final { color: var(--mint); font-size: 1.1rem; font-weight: 700; padding: 0.5rem 0; }
+        @media (max-width: 480px) {
+            .countdown-unit { min-width: 48px; padding: 0.5rem 0.4rem; }
+            .countdown-value { font-size: 1.4rem; }
+            .countdown-name { font-size: 0.65rem; }
+        }
         .register-button { display: inline-block; background: var(--mint); color: #0a0e14; text-decoration: none; padding: 1rem 2.5rem; border-radius: 50px; font-size: var(--fs-body-l); font-weight: 700; transition: all 0.3s ease; font-family: inherit; letter-spacing: 0; width: 100%; max-width: 340px; box-sizing: border-box; border: none; cursor: pointer; }
         .register-button:hover:not(:disabled) { transform: translateY(-1px); background: #14e0b0; box-shadow: 0 10px 32px rgba(17, 202, 160, 0.25); }
         .register-button:disabled { background: rgba(17, 202, 160, 0.4); color: rgba(10, 14, 20, 0.7); cursor: default; }
@@ -473,6 +487,15 @@
                 <li><strong>20:30</strong> · שעתיים של תוכן</li>
                 <li>לייב ב-Google Meet</li>
             </ul>
+            <div class="countdown" id="countdown">
+                <span class="countdown-label">הסדנה מתחילה בעוד</span>
+                <div class="countdown-grid" id="countdownGrid">
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-days">--</span><span class="countdown-name">ימים</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-hours">--</span><span class="countdown-name">שעות</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-minutes">--</span><span class="countdown-name">דקות</span></div>
+                    <div class="countdown-unit"><span class="countdown-value" id="cd-seconds">--</span><span class="countdown-name">שניות</span></div>
+                </div>
+            </div>
             <a href="https://meshulam.co.il/quick_payment?b=29b37b2cc8a40e1248800f4ef2ba2c07" target="_blank" class="register-button">לשריין מקום בסדנה</a>
             <span class="register-secure">תשלום מאובטח · bit · ויזה · מאסטרקארד</span>
         </div>
@@ -538,6 +561,46 @@
                 showMoreBtn.innerHTML = expanded ? 'הצג פחות <span class="arrow">▼</span>' : 'הצג עוד <span class="arrow">▼</span>';
             });
         }
+
+        // COUNTDOWN TIMER
+        (function () {
+            // Workshop date: May 27, 2026, 20:30 Israel time (UTC+3) => 17:30 UTC
+            const targetUTC = new Date(Date.UTC(2026, 4, 27, 17, 30, 0)).getTime();
+            const grid = document.getElementById('countdownGrid');
+            const elDays = document.getElementById('cd-days');
+            const elHours = document.getElementById('cd-hours');
+            const elMins = document.getElementById('cd-minutes');
+            const elSecs = document.getElementById('cd-seconds');
+            const countdownBox = document.getElementById('countdown');
+
+            function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+            function tick() {
+                const now = Date.now();
+                const diff = targetUTC - now;
+
+                if (diff <= 0) {
+                    // Workshop started or passed
+                    if (countdownBox) {
+                        countdownBox.innerHTML = '<div class="countdown-final">הסדנה מתחילה עכשיו 🎯</div>';
+                    }
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                if (elDays) elDays.textContent = pad(days);
+                if (elHours) elHours.textContent = pad(hours);
+                if (elMins) elMins.textContent = pad(minutes);
+                if (elSecs) elSecs.textContent = pad(seconds);
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        })();
     </script>
 </body>
 </html>
