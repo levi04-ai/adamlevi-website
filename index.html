@@ -697,6 +697,44 @@
         .about-body p { color: #999; font-size: 1.12rem; line-height: 2; margin-bottom: 1.1rem; }
         .about-body strong { color: #eee; }
 
+        /* CONTACT FORM */
+        .contact-section { padding: 5rem 3.5rem 4rem; }
+        .contact-form {
+            max-width: 580px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .form-row { display: flex; gap: 0.9rem; }
+        .form-row input { flex: 1; }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0.95rem 1.1rem;
+            color: #fff;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: rgba(62,201,176,0.4);
+            background: rgba(255,255,255,0.05);
+        }
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder { color: #666; }
+        .contact-form textarea { resize: vertical; min-height: 120px; font-family: inherit; }
+        .contact-form button { align-self: center; margin-top: 0.5rem; }
+        @media (max-width:768px) {
+            .form-row { flex-direction: column; }
+            .contact-section { padding: 4rem 1.5rem 2rem; }
+        }
+
         /* FOOTER */
         .foot { border-top: 1px solid rgba(255,255,255,0.04); padding: 3rem 3.5rem 1.5rem; }
 
@@ -1030,7 +1068,28 @@
         </div>
     </section>
 
-    <footer class="foot" id="contact">
+    <section class="section contact-section" id="contact">
+        <div class="sec-head rv">
+            <span class="sec-label">בואו נדבר</span>
+            <h2 class="sec-title">השאירו הודעה</h2>
+            <p class="sec-desc" style="font-size:1rem;margin-top:1rem;">סדנה, הרצאה, או סתם רעיון משוגע - אשמח לשמוע.</p>
+        </div>
+        <form action="https://formsubmit.co/Levi04@Gmail.com" method="POST" class="contact-form rv">
+            <input type="hidden" name="_subject" value="הודעה חדשה מהאתר!">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="https://adamlevi.net/?sent=1">
+            <input type="hidden" name="_template" value="table">
+            <div class="form-row">
+                <input type="text" name="שם" placeholder="שם" required>
+                <input type="email" name="מייל" placeholder="מייל" required>
+            </div>
+            <input type="tel" name="טלפון" placeholder="טלפון (לא חובה)">
+            <textarea name="הודעה" placeholder="ספרו לי קצת על הפרויקט או הרעיון..." rows="5" required></textarea>
+            <button type="submit" class="btn-main">שליחה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></button>
+        </form>
+    </section>
+
+    <footer class="foot">
         <div class="foot-inner">
             <div class="foot-info">
                 <h3>אפשר להתחיל משיחה!</h3>
