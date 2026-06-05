@@ -57,7 +57,7 @@
             color: #777; text-decoration: none; font-size: 0.95rem;
             font-weight: 500; transition: color 0.2s;
         }
-        .nav-links a:hover, .nav-links a.active { color: #ff2d92; }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
 
         .nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
 
@@ -76,9 +76,8 @@
             top: 0; left: 0; right: 0;
             height: 100%;
             background:
-                radial-gradient(ellipse at 25% 15%, rgba(255,45,146,0.22) 0%, transparent 50%),
-                radial-gradient(ellipse at 75% 25%, rgba(255,45,146,0.18) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 75%, rgba(110,70,200,0.15) 0%, transparent 50%);
+                radial-gradient(ellipse at 80% 20%, rgba(255,45,146,0.12) 0%, transparent 45%),
+                radial-gradient(ellipse at 20% 80%, rgba(120,80,200,0.06) 0%, transparent 50%);
             pointer-events: none;
         }
 
@@ -195,22 +194,14 @@
 
         /* SECTIONS */
         .section { padding: 6rem 3.5rem; position: relative; z-index: 1; }
-        .dark-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background:
-                radial-gradient(ellipse at 20% 30%, rgba(255,45,146,0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 70%, rgba(255,45,146,0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
+        .dark-section::before { content: none; }
 
         .sec-head { max-width: 650px; margin: 0 auto 3rem; text-align: center; }
 
         .sec-label {
-            font-size: 1.4rem; letter-spacing: 0.06em;
-            text-transform: uppercase; color: #ff2d92;
-            font-weight: 700; margin-bottom: 1rem;
+            font-size: 0.9rem; letter-spacing: 0.1em;
+            text-transform: uppercase; color: #888;
+            font-weight: 600; margin-bottom: 1rem;
             display: block;
         }
 
@@ -260,10 +251,11 @@
         .card-ico {
             width: 72px; height: 72px;
             margin: 0 auto 1.4rem;
-            background: rgba(255,45,146,0.08);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
-            color: #ff2d92; font-size: 1.8rem;
+            color: #fff; font-size: 1.8rem;
             transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
             animation: iconFloat 4s ease-in-out infinite;
         }
