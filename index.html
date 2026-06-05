@@ -30,32 +30,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: transparent;
-            backdrop-filter: blur(0);
-            border-bottom: 1px solid transparent;
-            transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease, padding 0.3s ease;
-        }
-        .nav:hover {
             background: #0d0d0d;
-            backdrop-filter: blur(16px);
-            border-bottom-color: rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: padding 0.3s ease;
         }
-        .nav:hover .nav-logo { color: #f3eee5; }
-        .nav:hover .nav-links a { color: #444; }
-        .nav:hover .nav-links a:hover,
-        .nav:hover .nav-links a.active { color: #f3eee5; }
         .nav.scrolled { padding: 0.7rem 2.5rem; }
 
-        .nav-logo { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; text-decoration: none; letter-spacing: -0.01em; }
+        .nav-logo { font-size: 1.2rem; font-weight: 700; color: #f3eee5; text-decoration: none; letter-spacing: -0.01em; }
 
         .nav-links { display: flex; gap: 2rem; list-style: none; }
         .nav-links a {
-            color: #2a2a2a; text-decoration: none; font-size: 0.92rem;
+            color: #b8b3a3; text-decoration: none; font-size: 0.92rem;
             font-weight: 500; transition: color 0.2s;
         }
-        .nav-links a:hover, .nav-links a.active { color: #1a1a1a; }
+        .nav-links a:hover, .nav-links a.active { color: #f3eee5; }
 
-        .nav-toggle { display: none; background: none; border: none; color: #1a1a1a; font-size: 1.4rem; cursor: pointer; }
+        .nav-toggle { display: none; background: none; border: none; color: #f3eee5; font-size: 1.4rem; cursor: pointer; }
 
         /* HERO */
         .hero {
@@ -221,11 +211,11 @@
         .card-ico {
             width: 72px; height: 72px;
             margin: 0 auto 1.4rem;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: #f3eee5;
+            border: 1px solid rgba(0,0,0,0.08);
             border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.8rem;
+            color: #0d0d0d; font-size: 1.8rem;
             transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
             animation: iconFloat 4s ease-in-out infinite;
         }
@@ -239,14 +229,14 @@
         }
 
         .card:hover .card-ico {
-            background: #f0ead8; color: #0a0a0a;
-            box-shadow: 0 6px 20px rgba(240,234,216,0.25);
+            background: #0d0d0d; color: #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             transform: translateY(-6px) scale(1.05);
             animation-play-state: paused;
         }
 
-        .card h3 { font-size: 1.15rem; font-weight: 700; color: #eee; margin-bottom: 0.6rem; }
-        .card p { color: #2a2a2a; font-size: 0.98rem; line-height: 1.85; }
+        .card h3 { font-size: 1.15rem; font-weight: 700; color: #0d0d0d; margin-bottom: 0.6rem; }
+        .card p { color: #444; font-size: 0.98rem; line-height: 1.85; }
 
         .card-cta {
             display: inline-flex; align-items: center; gap: 0.5rem;
@@ -545,11 +535,11 @@
         }
 
         .tab {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: transparent;
+            border: 1px solid rgba(0,0,0,0.15);
             color: #2a2a2a;
             padding: 0.55rem 1.4rem;
-            border-radius: 100px;
+            border-radius: 10px;
             font-family: 'Heebo', sans-serif;
             font-size: 0.88rem;
             font-weight: 600;
@@ -560,9 +550,9 @@
         .tab:hover { color: #fff; border-color: rgba(255,255,255,0.15); }
 
         .tab.active {
-            background: #f0ead8;
-            color: #0a0a0a;
-            border-color: #1a1a1a;
+            background: #0d0d0d;
+            color: #fff;
+            border-color: #0d0d0d;
         }
 
         .bento-item[data-cat].filtered-out { display: none; }
