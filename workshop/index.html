@@ -18,14 +18,14 @@
     </script>
     <style>
         :root {
-            --bg: #0d0d0d;
-            --bg-elev: #1a1a1a;
-            --mint: #f0ead8;
-            --mint-glow: rgba(240,234,216,0.08);
-            --text: #f0ead8;
-            --text-dim: #888888;
-            --text-soft: #b8b3a3;
-            --border: rgba(255,255,255,0.1);
+            --bg: #fff;
+            --bg-elev: #f7f4ee;
+            --mint: #0d0d0d;
+            --mint-glow: rgba(0,0,0,0.04);
+            --text: #1a1a1a;
+            --text-dim: #666666;
+            --text-soft: #444444;
+            --border: rgba(0,0,0,0.18);
 
             /* Modular type scale */
             --fs-display: clamp(2.5rem, 6.5vw, 3.6rem);
@@ -61,14 +61,13 @@
             flex-direction: row-reverse;
             justify-content: space-between;
             align-items: center;
-            background: rgba(13,13,13,0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
+            background: #0d0d0d;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .ws-logo {
             font-size: 1.2rem;
             font-weight: 700;
-            color: var(--text);
+            color: #f3eee5;
             text-decoration: none;
             letter-spacing: -0.01em;
         }
@@ -79,13 +78,13 @@
             margin: 0; padding: 0;
         }
         .ws-nav-links a {
-            color: var(--text-soft);
+            color: #b8b3a3;
             text-decoration: none;
             font-size: 0.92rem;
             font-weight: 500;
             transition: color 0.2s;
         }
-        .ws-nav-links a:hover { color: var(--text); }
+        .ws-nav-links a:hover { color: #f3eee5; }
         @media (max-width:768px) {
             .ws-nav { padding: 0.8rem 1.25rem; }
             .ws-nav-links { gap: 1rem; }
