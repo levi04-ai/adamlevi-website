@@ -13,8 +13,8 @@
 
         body {
             font-family: 'Heebo', sans-serif;
-            background: #0d0d0d;
-            color: #d9d4c7;
+            background: #f3eee5;
+            color: #1a1a1a;
             overflow-x: hidden;
             direction: rtl;
             text-align: right;
@@ -30,11 +30,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(13,13,13,0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.3s;
+            background: transparent;
+            backdrop-filter: blur(0);
+            border-bottom: 1px solid transparent;
+            transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease, padding 0.3s ease;
         }
+        .nav:hover {
+            background: #0d0d0d;
+            backdrop-filter: blur(16px);
+            border-bottom-color: rgba(255,255,255,0.06);
+        }
+        .nav:hover .nav-logo { color: #f3eee5; }
+        .nav:hover .nav-links a { color: #b8b3a3; }
+        .nav:hover .nav-links a:hover,
+        .nav:hover .nav-links a.active { color: #f3eee5; }
         .nav.scrolled { padding: 0.7rem 2.5rem; }
 
         .nav-logo { font-size: 1.2rem; font-weight: 700; color: #f0ead8; text-decoration: none; letter-spacing: -0.01em; }
