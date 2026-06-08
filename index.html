@@ -224,6 +224,18 @@
         .card:nth-child(2) .card-ico { animation-delay: 0.5s; }
         .card:nth-child(3) .card-ico { animation-delay: 1s; }
 
+        .card-ico-img {
+            width: 96px; height: 96px;
+            padding: 0;
+            background: transparent;
+            border: 2px solid rgba(0,0,0,0.18);
+            overflow: hidden;
+            border-radius: 50%;
+        }
+        .card-ico-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .card:hover .card-ico-img { background: transparent; }
+        .card:hover .card-ico-img img { transform: scale(1.05); transition: transform 0.4s; }
+
         @keyframes iconFloat {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
@@ -881,19 +893,19 @@
         </div>
         <div class="cards">
             <div class="card rv d1">
-                <div class="card-ico"><i class="fas fa-gem"></i></div>
+                <div class="card-ico card-ico-img"><img src="img/card-ai.png" alt="הרצאות על AI ויצירה"></div>
                 <h3>הרצאות על AI ויצירה</h3>
                 <p>הרצאות השראה וחדשנות: לפתוח את הראש למה שאפשרי. נדבר על המפגש שבין דמיון אנושי לבינה מלאכותית, ואיך להישאר רלוונטיים (ויצירתיים) בעולם שמשתנה כל יום.</p>
                 <a href="#contact" class="card-cta">צור קשר</a>
             </div>
             <div class="card rv d2">
-                <div class="card-ico"><i class="fas fa-wand-magic-sparkles"></i></div>
+                <div class="card-ico card-ico-img"><img src="img/card-stories.png" alt="סדנאות Stories Before Tools"></div>
                 <h3>סדנאות "Stories Before Tools"</h3>
                 <p>הסדנה המעשית: המסע המלא מרעיון משוגע למוצר מוגמר. אנימציה, משחקים או תוכן ויראלי, בואו ללמוד איך לחשוב אחרת ולבנות עולמות בעזרת הכלים החדשים.</p>
                 <a href="/workshop/" target="_blank" class="card-cta">לסדנה</a>
             </div>
             <div class="card rv d3">
-                <div class="card-ico"><i class="fas fa-star"></i></div>
+                <div class="card-ico card-ico-img"><img src="img/card-org.png" alt="סדנאות לארגונים"></div>
                 <h3>סדנאות לארגונים</h3>
                 <p>פיצוח קריאייטיב לארגונים: להטמיע חשיבה מחוץ לקופסה והשראה בצוותי שיווק וחדשנות. נלמד איך להפוך את ה&#8209;AI למנוע של רעיונות, לא רק של ביצוע.</p>
                 <a href="#contact" class="card-cta">צור קשר</a>
