@@ -775,6 +775,25 @@
         .foot-info h3 { color: #f0ead8 !important; }
         .foot-info a { color: #b8b3a3 !important; }
         .foot-info a:hover { color: #f0ead8 !important; }
+        .foot-wa {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            background: #25D366;
+            color: #0a0a0a !important;
+            padding: 0.55rem 1.1rem !important;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+        .foot-wa:hover {
+            background: #2dd476;
+            color: #0a0a0a !important;
+            transform: translateY(-1px);
+        }
+        .foot-wa i { font-size: 1rem; }
         .foot-bar { color: #777; }
 
         .foot-inner {
@@ -878,8 +897,8 @@
     <nav class="nav" id="nav">
         <ul class="nav-links" id="nav-links">
             <li><a href="#hero" class="active">בית</a></li>
-            <li><a href="#content">תוכן</a></li>
             <li><a href="#services">הרצאות וסדנאות</a></li>
+            <li><a href="#content">תוכן</a></li>
             <li><a href="#about">אודות</a></li>
             <li><a href="#contact">צור קשר</a></li>
         </ul>
@@ -898,13 +917,8 @@
                     אני מאמין שבעולם שבו הכלים משתנים ומתחלפים בכל שבוע, הסיפור הוא העוגן הקבוע שלנו. הבינה המלאכותית לא כאן כדי להחליף את מי שאנחנו, היא כאן כדי להעצים אותנו. היא הכוח שמאפשר לנו לקחת את הרעיונות הכי רחוקים שלנו ולהוציא אותם לאור במהירות ובדיוק שפעם רק חלמנו עליהם.
                     <br><br>דווקא עכשיו, בעידן ה&#8209;AI, יש לנו הזדמנות נדירה לחשוב שונה. זו השעה לחדד ולזקק את הזהות הייחודית שלנו, כי לכל אחד מאיתנו יש את הניצוץ שלו, וזה בדיוק מה שנותן לסיפור שלנו את הקול החד&#8209;פעמי שלו.
                 </p>
-                <a href="https://www.mako.co.il/nexter-news/Article-89fcb397caefd91026.htm" target="_blank" class="hero-press rv">
-                    <img src="img/mako-logo.svg" alt="mako" onerror="this.style.display='none'">
-                    <span>"מקסים: בנה לאשתו משחק מחשב" — סקירה ב&#8209;mako</span>
-                    <i class="fas fa-arrow-left"></i>
-                </a>
                 <div class="hero-actions">
-                    <a href="https://wa.me/972528079800?text=%D7%94%D7%99%20%D7%90%D7%93%D7%9D%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%94%D7%90%D7%AA%D7%A8%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%93%D7%91%D7%A8" target="_blank" class="btn-main"><i class="fab fa-whatsapp" style="font-size:1.1rem"></i>בואו נעבוד יחד</a>
+                    <a href="#contact" class="btn-main">בואו נעבוד יחד <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
                     <a href="#content" class="btn-sec btn-glow">מעבדת היצירה ✦</a>
                 </div>
             </div>
@@ -940,18 +954,6 @@
                 <a href="#contact" class="card-cta">צור קשר</a>
             </div>
         </div>
-    </section>
-
-    <section class="section press-section">
-        <a href="https://www.mako.co.il/nexter-news/Article-89fcb397caefd91026.htm" target="_blank" class="press-card rv">
-            <div class="press-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako"></div>
-            <div class="press-content">
-                <span class="press-badge">סקירה בתקשורת</span>
-                <h3>איך סטוריטלינג ו&#8209;AI הגיעו לכותרות ב&#8209;mako</h3>
-                <p>הפרויקט הזה הוא ההוכחה שסיפור טוב תמיד קודם לכלים. לקחתי מפה טכנית של שואב אבק, רתמתי כלי AI ובלי לדעת שורת קוד אחת, הפכתי אותה למשחק מחשב אישי ומרגש. הכתבה ב&#8209;mako מפרקת את הגישה שלי, Stories Before Tools, שמראה איך הניצוץ האנושי נותן לטכנולוגיה משמעות ויוצר אימפקט אמיתי.</p>
-                <span class="press-cta">לקריאת הכתבה המלאה ↗</span>
-            </div>
-        </a>
     </section>
 
     <section class="section" id="content">
@@ -1143,7 +1145,7 @@
             <div class="foot-info">
                 <h3>אפשר להתחיל משיחה!</h3>
                 <a href="mailto:Levi04@Gmail.com">Levi04@Gmail.com</a>
-                <a href="tel:052-807-9800">052-807-9800</a>
+                <a href="https://wa.me/972528079800?text=%D7%94%D7%99%20%D7%90%D7%93%D7%9D%2C%20%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%94%D7%90%D7%AA%D7%A8%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%93%D7%91%D7%A8" target="_blank" class="foot-wa"><i class="fab fa-whatsapp"></i> שלחו הודעה ב-WhatsApp</a>
             </div>
             <div class="soc">
                 <a href="https://www.linkedin.com/in/adamlevi/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
