@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אופן ספייס | סדרת אנימציה על החיים בהייטק — Adam Levi</title>
+    <meta name="description" content="אופן ספייס - סדרת אנימציה ישראלית שמדייקת את עולם ההייטק מבפנים עד שזה נהיה מצחיק. 13 פרקים, נוצרה מקצה לקצה בכלי AI על ידי אדם לוי.">
+    <link rel="canonical" href="https://www.adamlevi.net/series/">
+    <meta property="og:type" content="video.tv_show">
+    <meta property="og:title" content="אופן ספייס | סדרת אנימציה על החיים בהייטק">
+    <meta property="og:description" content="13 פרקים על מה שבאמת קורה במשרד. סדרת אנימציה של אדם לוי.">
+    <meta property="og:image" content="https://www.adamlevi.net/img/series/ep2.jpg">
+    <meta property="og:url" content="https://www.adamlevi.net/series/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #fff;
+            color: #1a1a1a;
+            overflow-x: hidden;
+            direction: rtl;
+            text-align: right;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== NAV (זהה לאתר הראשי) ===== */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 1.1rem 2.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            background: #0d0d0d;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: padding 0.3s ease;
+        }
+        .nav.scrolled { padding: 0.7rem 2.5rem; }
+        .nav-logo { font-size: 1.2rem; font-weight: 700; color: #f3eee5; text-decoration: none; letter-spacing: -0.01em; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: #b8b3a3; text-decoration: none; font-size: 0.92rem;
+            font-weight: 500; transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #f3eee5; }
+        .nav-toggle { display: none; background: none; border: none; color: #f3eee5; font-size: 1.4rem; cursor: pointer; }
+
+        /* ===== SECTIONS ===== */
+        .section { padding: 6rem 3.5rem; position: relative; z-index: 1; background: #fff; }
+        .sec-head { max-width: 700px; margin: 0 auto 3rem; text-align: center; }
+        .sec-label { font-size: 0.85rem; letter-spacing: 0.04em; color: #444; font-weight: 500; margin-bottom: 0.8rem; display: block; }
+        .sec-title { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 700; color: #1a1a1a; margin-bottom: 1rem; letter-spacing: -0.02em; }
+        .sec-desc { color: #2a2a2a; font-size: 1.1rem; line-height: 1.8; }
+
+        .dark { background: #0d0d0d; }
+        .dark .sec-label { color: #b8b3a3; }
+        .dark .sec-title { color: #f3eee5; }
+        .dark .sec-desc { color: #b8b3a3; }
+
+        .rv { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+        .rv.v { opacity: 1; transform: translateY(0); }
+        .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.16s; } .d3 { transition-delay: 0.24s; }
+
+        /* ===== BUG / WORDMARK ===== */
+        .bug {
+            display: inline-flex; align-items: baseline; gap: 0.35rem;
+            font-family: ui-monospace, 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem; font-weight: 700; color: #f3eee5;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(243,238,229,0.18);
+            padding: 0.4rem 0.8rem; border-radius: 8px;
+            letter-spacing: 0.02em; direction: rtl;
+        }
+        .bug .sl { color: #E18B13; }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative; overflow: hidden;
+            background: #0d0d0d;
+            padding: 9rem 3.5rem 5rem;
+            min-height: 100vh;
+            display: flex; align-items: center;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 75% 20%, rgba(225,139,19,0.16) 0%, transparent 55%),
+                radial-gradient(ellipse at 15% 85%, rgba(46,94,158,0.18) 0%, transparent 55%);
+            pointer-events: none;
+        }
+        .hero-inner {
+            max-width: 1200px; margin: 0 auto; width: 100%;
+            display: flex; align-items: center; gap: 4rem;
+            position: relative; z-index: 1;
+        }
+        .hero-content { flex: 1; min-width: 0; }
+        .hero h1 {
+            font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+            font-weight: 900; line-height: 1.05; letter-spacing: -0.035em;
+            color: #f3eee5; margin: 1.2rem 0 0.6rem;
+        }
+        .hero h1 em { font-style: normal; color: #E18B13; }
+        .hero-sub {
+            font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+            color: #e5ded1; font-weight: 500; line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+        .hero-desc { color: #b8b3a3; font-size: 1.02rem; line-height: 1.95; max-width: 560px; margin-bottom: 1.8rem; }
+        .hero-desc strong { color: #f3eee5; font-weight: 600; }
+
+        .meta-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #d8d2c5; font-size: 0.82rem; font-weight: 500;
+            padding: 0.4rem 0.85rem; border-radius: 100px;
+        }
+        .chip i { font-size: 0.75rem; color: #E18B13; }
+
+        .btn-row { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+        .btn-main {
+            display: inline-flex; align-items: center; gap: 0.55rem;
+            background: #E18B13; color: #14100a;
+            padding: 0.85rem 1.7rem; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; text-decoration: none;
+            font-family: 'Heebo', sans-serif; border: none; cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-main:hover { background: #f59f26; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(225,139,19,0.3); }
+        .btn-sec {
+            display: inline-flex; align-items: center; gap: 0.55rem;
+            background: transparent; color: #f3eee5;
+            border: 1px solid rgba(243,238,229,0.3);
+            padding: 0.85rem 1.7rem; border-radius: 10px;
+            font-size: 1rem; font-weight: 600; text-decoration: none;
+            transition: all 0.25s;
+        }
+        .btn-sec:hover { border-color: #f3eee5; background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+
+        /* hero collage */
+        .hero-art { flex: 0 0 42%; max-width: 460px; position: relative; }
+        .collage { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .collage img {
+            width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block;
+            border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+        }
+        .collage img:nth-child(1) { transform: rotate(-2.5deg); }
+        .collage img:nth-child(2) { transform: rotate(2deg) translateY(14px); }
+        .collage img:nth-child(3) { transform: rotate(1.5deg) translateY(-10px); }
+        .collage img:nth-child(4) { transform: rotate(-1.5deg) translateY(6px); }
+
+        /* ===== EPISODES ===== */
+        .ep-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 18px; max-width: 1160px; margin: 0 auto;
+        }
+        .ep {
+            position: relative; display: block; text-decoration: none; color: inherit;
+            border: 1px solid rgba(0,0,0,0.12); border-radius: 16px;
+            overflow: hidden; background: #fff;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s, border-color 0.3s;
+            cursor: pointer; text-align: right; font: inherit; padding: 0; width: 100%;
+        }
+        .ep:hover { transform: translateY(-5px); border-color: rgba(0,0,0,0.28); box-shadow: 0 18px 44px rgba(0,0,0,0.16); }
+        .ep-thumb { position: relative; aspect-ratio: 1/1; overflow: hidden; background: #efeae1; }
+        .ep-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.55s; }
+        .ep:hover .ep-thumb img { transform: scale(1.05); }
+        .ep-play {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0) 100%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .ep:hover .ep-play { opacity: 1; }
+        .ep-play span {
+            width: 54px; height: 54px; border-radius: 50%;
+            background: rgba(225,139,19,0.95); color: #14100a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .ep-num {
+            position: absolute; top: 10px; right: 10px; z-index: 2;
+            font-family: ui-monospace, 'Consolas', monospace;
+            font-size: 0.72rem; font-weight: 700; color: #f3eee5;
+            background: rgba(13,13,13,0.82); border: 1px solid rgba(255,255,255,0.14);
+            padding: 0.22rem 0.55rem; border-radius: 6px;
+        }
+        .ep-dur {
+            position: absolute; bottom: 10px; left: 10px; z-index: 2;
+            font-size: 0.72rem; font-weight: 600; color: #fff;
+            background: rgba(13,13,13,0.75); padding: 0.18rem 0.5rem; border-radius: 6px;
+        }
+        .ep-body { padding: 0.9rem 1rem 1.1rem; }
+        .ep-body h3 { font-size: 1.02rem; font-weight: 700; color: #0d0d0d; line-height: 1.35; }
+
+        .ep.pending { cursor: default; }
+        .ep.pending .ep-play { display: none; }
+        .ep.pending:hover .ep-thumb img { transform: none; }
+
+        .ep.soon { cursor: default; border-style: dashed; background: #fafafa; }
+        .ep.soon:hover { transform: none; box-shadow: none; border-color: rgba(0,0,0,0.12); }
+        .ep-soon-face {
+            aspect-ratio: 1/1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            color: #9a9a9a; background: #f4f1ec;
+        }
+        .ep-soon-face i { font-size: 2rem; color: #d0392b; }
+        .ep-soon-face span { font-size: 0.9rem; font-weight: 600; }
+
+        .ep-note { text-align: center; color: #666; font-size: 0.92rem; margin-top: 1.8rem; }
+
+        /* ===== CHARACTERS ===== */
+        .cast {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 16px; max-width: 1100px; margin: 0 auto;
+        }
+        .cast-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 1.5rem 1.1rem; text-align: center;
+            transition: all 0.3s;
+        }
+        .cast-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.07); }
+        .cast-card img {
+            width: 108px; height: 108px; border-radius: 50%; object-fit: cover;
+            display: block; margin: 0 auto 1rem;
+            border: 3px solid var(--c, #E18B13);
+            background: #fff;
+        }
+        .cast-card h3 { font-size: 1.1rem; font-weight: 700; color: #f3eee5; margin-bottom: 0.3rem; }
+        .cast-role { font-size: 0.78rem; font-weight: 600; color: var(--c, #E18B13); display: block; margin-bottom: 0.7rem; letter-spacing: 0.02em; }
+        .cast-card p { font-size: 0.88rem; color: #b8b3a3; line-height: 1.7; }
+
+        /* ===== PIPELINE ===== */
+        .pipe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1020px; margin: 0 auto; }
+        .pipe-card {
+            background: #fff; border: 1px solid rgba(0,0,0,0.14);
+            border-radius: 14px; padding: 1.6rem 1.4rem;
+            transition: all 0.3s;
+        }
+        .pipe-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.26); }
+        .pipe-ico {
+            width: 46px; height: 46px; border-radius: 12px;
+            background: #0d0d0d; color: #E18B13;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem; margin-bottom: 1rem;
+        }
+        .pipe-card h3 { font-size: 1.05rem; font-weight: 700; color: #0d0d0d; margin-bottom: 0.45rem; }
+        .pipe-card p { font-size: 0.94rem; color: #444; line-height: 1.8; }
+        .pipe-card b { color: #0d0d0d; font-weight: 600; }
+
+        /* ===== FACTS STRIP ===== */
+        .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 1020px; margin: 3rem auto 0; }
+        .fact { text-align: center; padding: 1.4rem 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; background: rgba(255,255,255,0.03); }
+        .fact b { display: block; font-size: 1.9rem; font-weight: 900; color: #E18B13; line-height: 1; margin-bottom: 0.45rem; letter-spacing: -0.02em; }
+        .fact span { font-size: 0.85rem; color: #b8b3a3; }
+
+        /* ===== CTA ===== */
+        .cta-wrap { max-width: 700px; margin: 0 auto; text-align: center; }
+        .cta-wrap .btn-row { justify-content: center; }
+        .btn-whatsapp {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            background: #25D366; color: #0a0a0a;
+            padding: 0.85rem 1.7rem; border-radius: 10px;
+            font-size: 1rem; font-weight: 700; text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-whatsapp:hover { background: #2dd476; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,211,102,0.3); }
+        .btn-whatsapp i { font-size: 1.25rem; }
+
+        /* ===== LIGHTBOX ===== */
+        .lb {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(6,6,6,0.94);
+            display: none; align-items: center; justify-content: center;
+            padding: 1.5rem;
+        }
+        .lb.open { display: flex; }
+        .lb-box { width: min(88vh, 100%); max-width: 720px; }
+        .lb-frame {
+            position: relative; width: 100%; aspect-ratio: 1/1;
+            border-radius: 16px; overflow: hidden; background: #000;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .lb-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .lb-title { color: #f3eee5; font-size: 1.05rem; font-weight: 600; margin-top: 1rem; text-align: center; }
+        .lb-close {
+            position: absolute; top: 1.2rem; left: 1.2rem;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #f3eee5; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .lb-close:hover { background: rgba(255,255,255,0.2); }
+
+        /* ===== FOOTER ===== */
+        .foot { background: #0d0d0d; padding: 3rem 3.5rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.06); }
+        .foot-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; }
+        .foot-info h3 { color: #f3eee5; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .foot-info a { color: #b8b3a3; text-decoration: none; display: block; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .foot-info a:hover { color: #f3eee5; }
+        .soc { display: flex; gap: 0.7rem; }
+        .soc a {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            color: #b8b3a3; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: all 0.25s;
+        }
+        .soc a:hover { background: #f3eee5; color: #0d0d0d; transform: translateY(-3px); }
+        .foot-bar { text-align: center; color: #6f6a5f; font-size: 0.82rem; margin-top: 2.2rem; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1080px) {
+            .ep-grid { grid-template-columns: repeat(3, 1fr); }
+            .cast { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .hero-inner { flex-direction: column; text-align: center; gap: 2.5rem; }
+            .hero-content { text-align: right; }
+            .hero-art { flex: 0 0 auto; width: 100%; max-width: min(380px, 100%); }
+            .hero-desc { max-width: 100%; }
+            .pipe { grid-template-columns: 1fr; }
+            .facts { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav { padding: 0.7rem 1.5rem; }
+            .nav-links {
+                display: none; position: absolute;
+                top: calc(100% + 6px); left: 1rem; right: 1rem;
+                background: rgba(10,10,10,0.95); backdrop-filter: blur(20px);
+                flex-direction: column; padding: 1rem; gap: 0.3rem;
+                border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { padding: 0.6rem 1rem; border-radius: 8px; }
+            .nav-toggle { display: block; }
+
+            .hero { padding: 7rem 1.5rem 3.5rem; min-height: auto; }
+            .section { padding: 4rem 1.5rem; }
+            .ep-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .ep-body { padding: 0.7rem 0.8rem 0.9rem; }
+            .ep-body h3 { font-size: 0.9rem; }
+            .cast { grid-template-columns: repeat(2, 1fr); }
+            .btn-row { justify-content: flex-start; }
+            .foot { padding: 2.5rem 1.5rem 1rem; }
+            .foot-inner { flex-direction: column; text-align: center; }
+            .soc { justify-content: center; }
+        }
+        @media (max-width: 420px) {
+            .cast { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav" id="nav">
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/">בית</a></li>
+            <li><a href="/#services">הרצאות וסדנאות</a></li>
+            <li><a href="/#content">תוכן</a></li>
+            <li><a href="/series/" class="active">אופן ספייס - סדרה</a></li>
+            <li><a href="/#about">אודות</a></li>
+            <li><a href="/#contact">צור קשר</a></li>
+        </ul>
+        <button class="nav-toggle" id="nav-toggle">&#9776;</button>
+        <a href="/" class="nav-logo">Adam Levi</a>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <span class="bug rv">&#8249;אופן<span class="sl">/</span>ספייס&#8250;</span>
+                <h1 class="rv d1">אופן <em>ספייס</em></h1>
+                <p class="hero-sub rv d1">סדרת אנימציה על מה שבאמת קורה במשרד.</p>
+                <p class="hero-desc rv d2">
+                    לא סאטירה על ההייטק מבחוץ — <strong>דיוק שלו מבפנים, עד שזה נהיה מצחיק</strong>.
+                    אריק, קובי, דנה ודימה נלחמים על קרואסון סלמון, על מי לובש מכופתרת ועל מי קיבל קרדיט,
+                    בזמן שהמנכ״ל מכריז מלמעלה &rlm;"Tech. Code. Family."&rlm; הפער הזה הוא כל הסדרה.
+                    <br><br>
+                    כל פרק נכתב, אויר, דובב והורכב על ידי אדם לוי — בעזרת כלי AI, מהפריים הראשון ועד המיקס.
+                </p>
+                <div class="meta-row rv d2">
+                    <span class="chip"><i class="fas fa-layer-group"></i> 13 פרקים</span>
+                    <span class="chip"><i class="fas fa-crop-simple"></i> פורמט ריבועי 1:1</span>
+                    <span class="chip"><i class="fas fa-comment"></i> עברית</span>
+                    <span class="chip"><i class="fas fa-wand-magic-sparkles"></i> נוצר ב-AI</span>
+                </div>
+                <div class="btn-row rv d3">
+                    <a href="#episodes" class="btn-main">לצפייה בפרקים <i class="fas fa-play" style="font-size:0.75rem"></i></a>
+                    <a href="https://www.youtube.com/channel/UCivgRspyvbtxQ5-L_kp6qGw" target="_blank" rel="noopener" class="btn-sec">לערוץ היוטיוב <i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="hero-art rv d2">
+                <div class="collage">
+                    <picture><source srcset="/img/series/ep2.webp" type="image/webp"><img src="/img/series/ep2.jpg" alt="אריק ודנה מול הלוח המחיק" loading="eager" decoding="async"></picture>
+                    <picture><source srcset="/img/series/ep3.webp" type="image/webp"><img src="/img/series/ep3.jpg" alt="אריק וקובי במעלית" loading="eager" decoding="async"></picture>
+                    <picture><source srcset="/img/series/ep9.webp" type="image/webp"><img src="/img/series/ep9.jpg" alt="אירוע ה-150K של CyberFlowers" loading="lazy" decoding="async"></picture>
+                    <picture><source srcset="/img/series/ep7.webp" type="image/webp"><img src="/img/series/ep7.jpg" alt="קובי משלם בקפיטריה" loading="lazy" decoding="async"></picture>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== EPISODES ===== -->
+    <section class="section" id="episodes">
+        <div class="sec-head rv">
+            <span class="sec-label">העונה הראשונה</span>
+            <h2 class="sec-title">כל הפרקים</h2>
+            <p class="sec-desc">מ-21 שניות ועד שלוש דקות. לוחצים על פרק וצופים.</p>
+        </div>
+
+        <div class="ep-grid rv">
+            <button class="ep" data-yt="" data-title="פרק 1 · אבולוציה של הייטקיסט">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 01</span>
+                    <picture><source srcset="/img/series/ep1.webp" type="image/webp"><img src="/img/series/ep1.jpg" alt="פרק 1 - אבולוציה של הייטקיסט" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">0:21</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>אבולוציה של הייטקיסט</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 2 · בלונים לנטלי">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 02</span>
+                    <picture><source srcset="/img/series/ep2.webp" type="image/webp"><img src="/img/series/ep2.jpg" alt="פרק 2 - בלונים לנטלי" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">0:37</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>בלונים לנטלי</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 3 · מעלית">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 03</span>
+                    <picture><source srcset="/img/series/ep3.webp" type="image/webp"><img src="/img/series/ep3.jpg" alt="פרק 3 - מעלית" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">0:27</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>מעלית</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 4 · עובד חדש">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 04</span>
+                    <picture><source srcset="/img/series/ep4.webp" type="image/webp"><img src="/img/series/ep4.jpg" alt="פרק 4 - עובד חדש" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">0:42</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>עובד חדש</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 5 · חולצה מכופתרת">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 05</span>
+                    <picture><source srcset="/img/series/ep5.webp" type="image/webp"><img src="/img/series/ep5.jpg" alt="פרק 5 - חולצה מכופתרת" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">0:52</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>חולצה מכופתרת</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 6 · ילד טוב">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 06</span>
+                    <picture><source srcset="/img/series/ep6.webp" type="image/webp"><img src="/img/series/ep6.jpg" alt="פרק 6 - ילד טוב" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">1:00</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>ילד טוב</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 7 · סאחי">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 07</span>
+                    <picture><source srcset="/img/series/ep7.webp" type="image/webp"><img src="/img/series/ep7.jpg" alt="פרק 7 - סאחי" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">1:00</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>סאחי</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 8 · ראמן">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 08</span>
+                    <picture><source srcset="/img/series/ep8.webp" type="image/webp"><img src="/img/series/ep8.jpg" alt="פרק 8 - ראמן" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">2:20</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>ראמן</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 9 · קרואסון סלמון">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 09</span>
+                    <picture><source srcset="/img/series/ep9.webp" type="image/webp"><img src="/img/series/ep9.jpg" alt="פרק 9 - קרואסון סלמון" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">2:04</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>קרואסון סלמון</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 10 · משאבי אנוש">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 10</span>
+                    <picture><source srcset="/img/series/ep10.webp" type="image/webp"><img src="/img/series/ep10.jpg" alt="פרק 10 - משאבי אנוש" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">2:28</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>משאבי אנוש</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 11 · CyberFlowers">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 11</span>
+                    <picture><source srcset="/img/series/ep11.webp" type="image/webp"><img src="/img/series/ep11.jpg" alt="פרק 11 - CyberFlowers" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">3:12</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>CyberFlowers</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 12 · קהוט">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 12</span>
+                    <picture><source srcset="/img/series/ep12.webp" type="image/webp"><img src="/img/series/ep12.jpg" alt="פרק 12 - קהוט" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">1:51</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>קהוט</h3></div>
+            </button>
+
+            <button class="ep" data-yt="" data-title="פרק 13 · כלבים">
+                <div class="ep-thumb">
+                    <span class="ep-num">פרק 13</span>
+                    <picture><source srcset="/img/series/ep13.webp" type="image/webp"><img src="/img/series/ep13.jpg" alt="פרק 13 - כלבים" loading="lazy" decoding="async"></picture>
+                    <span class="ep-dur">1:35</span>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>כלבים</h3></div>
+            </button>
+
+            <div class="ep soon">
+                <div class="ep-soon-face">
+                    <i class="fas fa-question"></i>
+                    <span>פרק 14</span>
+                </div>
+                <div class="ep-body"><h3 style="color:#8a8a8a;">בעבודה</h3></div>
+            </div>
+        </div>
+
+        <p class="ep-note rv">איזה פרק הכי אהבתם? <a href="/#contact" style="color:#0d0d0d;font-weight:600;">ספרו לי</a> 👇</p>
+    </section>
+
+    <!-- ===== CAST ===== -->
+    <section class="section dark" id="cast">
+        <div class="sec-head rv">
+            <span class="sec-label">מי יושב באופן ספייס</span>
+            <h2 class="sec-title">הדמויות</h2>
+            <p class="sec-desc">בסדרה יש חוק אחד: אף אחד לא מחליף בגדים. תלבושת = זהות, וזה מה שמאפשר לזהות כל דמות תוך פחות משנייה.</p>
+        </div>
+        <div class="cast rv">
+            <div class="cast-card" style="--c:#E18B13;">
+                <picture><source srcset="/img/series/char-erik.webp" type="image/webp"><img src="/img/series/char-erik.jpg" alt="אריק" loading="lazy" decoding="async"></picture>
+                <h3>אריק</h3>
+                <span class="cast-role">הסוודר הכתום</span>
+                <p>הצבע הרווי היחיד בפריים — ולכן העין הולכת אליו בכל שוט. מגיב לכל דבר, שורד את הרוב.</p>
+            </div>
+            <div class="cast-card" style="--c:#2E5E9E;">
+                <picture><source srcset="/img/series/char-kobi.webp" type="image/webp"><img src="/img/series/char-kobi.jpg" alt="קובי" loading="lazy" decoding="async"></picture>
+                <h3>קובי</h3>
+                <span class="cast-role">המכופתרת הכחולה</span>
+                <p>זקן מלא, מכנס קרגו וכרטיס סיבוס שלא תמיד עובד. הכי רגוע בחדר, גם כשהוא לא.</p>
+            </div>
+            <div class="cast-card" style="--c:#B4A8D8;">
+                <picture><source srcset="/img/series/char-dana.webp" type="image/webp"><img src="/img/series/char-dana.jpg" alt="דנה" loading="lazy" decoding="async"></picture>
+                <h3>דנה</h3>
+                <span class="cast-role">הקוקו הבלונדיני</span>
+                <p>מנהלת את הלוח המחיק ואת השיחה. יודעת בדיוק מה נאמר בישיבה, ומי לא הקשיב.</p>
+            </div>
+            <div class="cast-card" style="--c:#6E7A4A;">
+                <picture><source srcset="/img/series/char-dima.webp" type="image/webp"><img src="/img/series/char-dima.jpg" alt="דימה" loading="lazy" decoding="async"></picture>
+                <h3>דימה</h3>
+                <span class="cast-role">משקפי שמש בפנים</span>
+                <p>וסט טקטי, חולצת מטאליקה, אפס פילטר. מדבר מעט ותמיד בעיתוי הכי לא נכון.</p>
+            </div>
+            <div class="cast-card" style="--c:#D9622B;">
+                <picture><source srcset="/img/series/char-shir.webp" type="image/webp"><img src="/img/series/char-shir.jpg" alt="שיר" loading="lazy" decoding="async"></picture>
+                <h3>שיר</h3>
+                <span class="cast-role">משאבי אנוש</span>
+                <p>תלתלי נחושת ובלייזר נייבי. מגיעה עם חיוך, קלסר ושאלה אחת שאף אחד לא רוצה לענות עליה.</p>
+            </div>
+        </div>
+
+        <div class="facts rv">
+            <div class="fact"><b>13</b><span>פרקים בעונה</span></div>
+            <div class="fact"><b>960²</b><span>רזולוציה ריבועית</span></div>
+            <div class="fact"><b>24</b><span>פריימים בשנייה</span></div>
+            <div class="fact"><b>1.8s</b><span>אורך שוט ממוצע</span></div>
+        </div>
+    </section>
+
+    <!-- ===== HOW ===== -->
+    <section class="section" id="how">
+        <div class="sec-head rv">
+            <span class="sec-label">Stories Before Tools</span>
+            <h2 class="sec-title">איך הסדרה נוצרת</h2>
+            <p class="sec-desc">אין צוות אנימציה. יש סיפור, ואחריו שרשרת כלים שמביאה אותו למסך — מדף דמות ועד המיקס הסופי.</p>
+        </div>
+        <div class="pipe rv">
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-user-pen"></i></div>
+                <h3>דפי דמות</h3>
+                <p>כל דמות מקבלת <b>דף דמות מלא</b>: T&#8209;pose, פרופיל, פוזות הליכה וישיבה, ו-6&#8211;12 ראשי הבעה מתויגים. זה הנכס שמחזיק את הסדרה עקבית לאורך 13 פרקים.</p>
+            </div>
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-image"></i></div>
+                <h3>סטילים</h3>
+                <p>כל שוט נבנה קודם כתמונה סטטית — קו נקי, אאוטליין כהה, מילוי כמעט שטוח. הפלטה נשמרת אפורה-בז' בכוונה, כדי שהכתום של אריק יישאר הצבע היחיד שמושך את העין.</p>
+            </div>
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-film"></i></div>
+                <h3>אנימציה</h3>
+                <p>הסטילים הופכים לתנועה ב-<b>image&#8209;to&#8209;video</b>, בכיוון מכוון של אנימציית שנות ה-90: מצלמה סטטית, תנועה חסכונית, המשחק בגבות ובעיניים.</p>
+            </div>
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-microphone-lines"></i></div>
+                <h3>קול וליפסינק</h3>
+                <p>הקולות מוקלטים ומומרים, ואז מסונכרנים לשפתיים. עברית מדוברת, סלנג הייטק אמיתי — ומילות הטכנולוגיה נשארות באנגלית בתוך המשפט.</p>
+            </div>
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-scissors"></i></div>
+                <h3>עריכה</h3>
+                <p>קצב של ריאקשן-שוטים: <b>27&#8211;37 חתכים לדקה</b>. בלי קריינות, בלי title card — נכנסים ישר לסצנה, פאנץ' בסוף, ושחור.</p>
+            </div>
+            <div class="pipe-card">
+                <div class="pipe-ico"><i class="fas fa-volume-high"></i></div>
+                <h3>סאונד ומיקס</h3>
+                <p>מוזיקת רקע משרדית קבועה, SFX נקודתיים וכתוביות עברית צרובות. כרטיס הסיום תמיד אותו דבר: "עקבו לפרק הבא".</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="section dark">
+        <div class="cta-wrap">
+            <h2 class="sec-title rv" style="color:#f3eee5;">רוצים את הפרק הבא ראשונים?</h2>
+            <p class="sec-desc rv d1" style="margin-bottom:2rem;">קבוצת WhatsApp שקטה עם עדכונים על פרקים חדשים, סדנאות והצצות מאחורי הקלעים. בלי ספאם.</p>
+            <div class="btn-row rv d2">
+                <a href="https://chat.whatsapp.com/Cq3Kqg5mXo37vIwiAMuH91" target="_blank" rel="noopener" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> הצטרפות לקבוצה</a>
+                <a href="/#contact" class="btn-sec">לשיתוף פעולה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="foot">
+        <div class="foot-inner">
+            <div class="foot-info">
+                <h3>אפשר להתחיל משיחה!</h3>
+                <a href="mailto:Levi04@Gmail.com">Levi04@Gmail.com</a>
+                <a href="/">חזרה לאתר &rarr;</a>
+            </div>
+            <div class="soc">
+                <a href="https://www.linkedin.com/in/adamlevi/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com/adamlevi_storyteller/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.youtube.com/channel/UCivgRspyvbtxQ5-L_kp6qGw" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@duckademy" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        <div class="foot-bar">&copy; 2025 Adam Levi | Created with &hearts; and AI</div>
+    </footer>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="נגן פרק">
+        <button class="lb-close" id="lb-close" aria-label="סגירה"><i class="fas fa-xmark"></i></button>
+        <div class="lb-box">
+            <div class="lb-frame" id="lb-frame"></div>
+            <p class="lb-title" id="lb-title"></p>
+        </div>
+    </div>
+
+    <script>
+        // nav
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+        const toggle = document.getElementById('nav-toggle');
+        const navLinks = document.getElementById('nav-links');
+        toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+
+        // reveal on scroll
+        const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('v'); }), { threshold: 0.08 });
+        document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+        // lightbox
+        const lb = document.getElementById('lb');
+        const lbFrame = document.getElementById('lb-frame');
+        const lbTitle = document.getElementById('lb-title');
+
+        function closeLb() {
+            lb.classList.remove('open');
+            lbFrame.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+        document.getElementById('lb-close').addEventListener('click', closeLb);
+        lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+        document.querySelectorAll('.ep[data-yt]').forEach(card => {
+            if (!card.dataset.yt) {
+                card.classList.add('pending');
+                const dur = card.querySelector('.ep-dur');
+                if (dur) dur.textContent = 'בקרוב';
+            }
+            card.addEventListener('click', () => {
+                const id = card.dataset.yt;
+                if (!id) return;
+                lbTitle.textContent = card.dataset.title || '';
+                lbFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id +
+                    '?autoplay=1&rel=0" title="' + (card.dataset.title || '') +
+                    '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+                lb.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+    </script>
+</body>
+</html>
