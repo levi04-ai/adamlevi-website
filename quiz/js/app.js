@@ -65,6 +65,45 @@
 
   const DEVICE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
 
+  /**
+   * מאיפה הגיע המבקר — נקבע פעם אחת בתחילת הביקור ונשלח עם כל אירוע:
+   *   referrer — האתר שממנו הגיע (לא תמיד קיים: וואטסאפ וקישור מודבק לא מעבירים)
+   *   app      — אם נפתח בתוך הדפדפן המובנה של אפליקציה, לפי סוג הדפדפן
+   *   src      — תגית שאנחנו שמים בקישור, למשל ?src=whatsapp
+   * הסיווג לערוצים (לינקדאין / פייסבוק / ...) נעשה בגיליון.
+   */
+  const ORIGIN = (() => {
+    try {
+      const saved = sessionStorage.getItem('os_quiz_origin');
+      if (saved) return JSON.parse(saved);
+    } catch (e) { /* ממשיכים לחשב */ }
+
+    let referrer = 'direct';
+    try { if (document.referrer) referrer = new URL(document.referrer).hostname || 'direct'; } catch (e) {}
+
+    const ua = navigator.userAgent || '';
+    const app =
+      /Instagram/i.test(ua)                               ? 'instagram' :
+      /FBAN|FBAV|FB_IAB|FBIOS|FB4A|FBMD/i.test(ua)        ? 'facebook'  :
+      /LinkedInApp/i.test(ua)                             ? 'linkedin'  :
+      /musical_ly|BytedanceWebview|TikTok|trill/i.test(ua) ? 'tiktok'   :
+      /Snapchat/i.test(ua)                                ? 'snapchat'  :
+      /Twitter/i.test(ua)                                 ? 'twitter'   :
+      /Telegram/i.test(ua)                                ? 'telegram'  :
+      /WhatsApp/i.test(ua)                                ? 'whatsapp'  : '';
+
+    let src = '';
+    try {
+      const q = new URLSearchParams(window.location.search);
+      src = String(q.get('src') || q.get('utm_source') || '')
+        .toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30);
+    } catch (e) {}
+
+    const origin = { referrer, app, src };
+    try { sessionStorage.setItem('os_quiz_origin', JSON.stringify(origin)); } catch (e) {}
+    return origin;
+  })();
+
   /** טוען את Google Analytics רק אם הוגדר מזהה בקובץ הקונפיג */
   function initAnalytics() {
     const id = String(SITE.ga4Id || '').trim();
@@ -109,10 +148,25 @@
   function track(name, params) {
     const data = params || {};
     try {
-      sendToSheet(Object.assign({ event: name, session: SESSION_ID, device: DEVICE }, data));
+      sendToSheet(Object.assign({ event: name, session: SESSION_ID, device: DEVICE }, ORIGIN, data));
       if (typeof window.gtag === 'function') window.gtag('event', name, data);
       if (typeof window.clarity === 'function') window.clarity('event', name);
     } catch (e) { /* מדידה לעולם לא שוברת את המבחן */ }
+  }
+
+  /**
+   * קישור משותף עם תגית, כדי שבגיליון יהיה אפשר לדעת כמה הגיעו משיתוף
+   * מתוך המבחן ובאיזו רשת. למשל: .../quiz/?src=share-whatsapp
+   */
+  function taggedLink(tag) {
+    const base = shareLink();
+    try {
+      const u = new URL(base);
+      u.searchParams.set('src', tag);
+      return u.toString();
+    } catch (e) {
+      return base;
+    }
   }
 
   /** הכתובת שתשותף */
@@ -691,7 +745,7 @@
 
   async function shareTo(platform, character) {
     const message = messageFor(character);
-    const url = shareLink();
+    const url = taggedLink('share-' + platform);
     const live = isLive();
 
     if (platform === 'instagram') {
@@ -729,7 +783,7 @@
    */
   async function shareToInstagram(character) {
     const message = messageFor(character);
-    const url = shareLink();
+    const url = taggedLink('share-instagram');
     const live = isLive();
 
     await saveStoryImage();
@@ -742,7 +796,7 @@
 
   async function copyResultLink() {
     const message = SITE.inviteText || 'בואו תגלו איזו דמות אתם:';
-    const url = shareLink();
+    const url = taggedLink('share-invite');
     const live = isLive();
 
     // בנייד יש תפריט שיתוף מובנה — הוא הדבר שהמשתמש באמת מצפה לו:
@@ -817,7 +871,7 @@
     // כדי שהלוגו יישאר ממורכז בדיוק
     header.innerHTML = `
       <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <a href="${esc(SITE.homeUrl || '/')}" aria-label="${esc(homeLabel)}"
+        <a href="${esc(SITE.homeUrl || '/')}" aria-label="${esc(homeLabel)}" data-track="home_click"
            class="cta-btn flex h-11 items-center gap-1.5 justify-self-start rounded-xl border-[3px] border-ink
                   bg-white px-3 text-sm font-bold shadow-hard-sm sm:px-4 sm:text-base">
           <span aria-hidden="true">→</span>
@@ -856,7 +910,7 @@
   /* ---------------------------------------------------------------------- */
 
   initAnalytics();
-  track('page_view', { referrer: document.referrer ? new URL(document.referrer).hostname : 'direct' });
+  track('page_view');
 
   // קישורים שמסומנים ב-data-track נמדדים כאן, במקום אחד
   document.addEventListener('click', (e) => {
