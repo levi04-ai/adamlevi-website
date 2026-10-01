@@ -225,6 +225,22 @@
         }
         .cast-card h3 { font-size: 1.15rem; font-weight: 700; color: #f3eee5; }
 
+        /* ===== QUIZ CTA ===== */
+        .quiz-cta {
+            max-width: 900px; margin: 3.5rem auto 0; text-align: center;
+            background: rgba(225,139,19,0.08);
+            border: 1px solid rgba(225,139,19,0.35);
+            border-radius: 16px; padding: 2.5rem 1.8rem;
+        }
+        .quiz-cta h3 {
+            font-size: clamp(1.4rem, 2.6vw, 1.9rem); font-weight: 700;
+            color: #f3eee5; margin-bottom: 0.6rem; letter-spacing: -0.01em;
+        }
+        .quiz-cta p {
+            color: rgba(243,238,229,0.72); font-size: 1.02rem;
+            line-height: 1.7; margin-bottom: 1.6rem;
+        }
+
         /* ===== CONTACT FORM (same as the home page) ===== */
         .contact-section { padding: 5rem 3.5rem 4rem; }
         .contact-form {
@@ -379,6 +395,7 @@
                 <div class="btn-row rv d3" style="margin-top:2rem;">
                     <a href="#episodes" class="btn-main">לצפייה בפרקים <i class="fas fa-play" style="font-size:0.75rem"></i></a>
                     <a href="https://www.youtube.com/playlist?list=PLR-Abr40QNCW-gCE-Sw-Gho0jD8NHjTpJ" target="_blank" rel="noopener" class="btn-sec">לפלייליסט ביוטיוב <i class="fab fa-youtube"></i></a>
+                    <a href="/quiz/" class="btn-sec">איזו דמות אתה? <i class="fas fa-user-check" style="font-size:0.8rem"></i></a>
                 </div>
             </div>
             <div class="hero-art rv d2">
@@ -601,6 +618,13 @@
                 <picture><source srcset="/img/series/char-dima.webp" type="image/webp"><img src="/img/series/char-dima.jpg" alt="דימה" loading="lazy" decoding="async"></picture>
                 <h3>דימה</h3>
             </div>
+        </div>
+
+        <!-- קישור למבחן האישיות -->
+        <div class="quiz-cta rv">
+            <h3>אז איזו מהן אתה?</h3>
+            <p>8 שאלות קצרות, בלי תשובות נכונות, ובסוף מגלים מי אתה במשרד.</p>
+            <a href="/quiz/" class="btn-main">בוא נגלה איזו דמות אתה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
         </div>
 
     </section>

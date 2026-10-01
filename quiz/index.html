@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>המבחן שיקבע: איזו דמות אתה ב'אופן ספייס'?</title>
+<meta name="description" content="8 שאלות שיגלו מי אתם במשרד — אריק, דנה, קובי או דימה. מבחן האישיות של סדרת האנימציה אופן ספייס.">
+<link rel="canonical" href="https://adamlevi.net/quiz/">
+
+<!-- Open Graph — התצוגה המקדימה כששולחים את הקישור בוואטסאפ / פייסבוק.
+     הכתובות חייבות להיות מוחלטות, אחרת התצוגה המקדימה לא תעבוד. -->
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="אופן ספייס">
+<meta property="og:locale"      content="he_IL">
+<meta property="og:url"         content="https://adamlevi.net/quiz/">
+<meta property="og:title"       content="המבחן שיקבע: איזו דמות אתה ב&#39;אופן ספייס&#39;?">
+<meta property="og:description" content="8 שאלות שיגלו מי אתם במשרד — אריק, דנה, קובי או דימה.">
+<meta property="og:image"       content="https://adamlevi.net/quiz/images/og-cover.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="המבחן שיקבע: איזו דמות אתה ב&#39;אופן ספייס&#39;?">
+<meta name="twitter:description" content="8 שאלות שיגלו מי אתם במשרד — אריק, דנה, קובי או דימה.">
+<meta name="twitter:image"       content="https://adamlevi.net/quiz/images/og-cover.jpg">
+
+<!-- פונט -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Heebo', 'Assistant', 'system-ui', 'sans-serif'] },
+      colors: {
+        wall:  '#E7CAA6',
+        ink:   '#2C292E',
+        card:  '#FFF8EE',
+        brand: '#E18B13',
+        muted: '#61606A'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  html, body { height: 100%; }
+  body {
+    background: #E7CAA6;
+    color: #2C292E;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* צל קשיח — חלק מהשפה הוויזואלית של הסדרה */
+  .shadow-hard    { box-shadow: 6px 6px 0 #2C292E; }
+  .shadow-hard-sm { box-shadow: 3px 3px 0 #2C292E; }
+
+  /* מעברים בין מסכים */
+  .screen-enter { animation: screenIn .32s cubic-bezier(.2,.7,.3,1) both; }
+  .screen-leave { animation: screenOut .18s ease-in both; }
+  @keyframes screenIn  { from { opacity:0; transform: translateY(14px) scale(.985); }
+                         to   { opacity:1; transform: none; } }
+  @keyframes screenOut { from { opacity:1; transform: none; }
+                         to   { opacity:0; transform: translateY(-10px) scale(.99); } }
+
+  /* הופעה מדורגת של כפתורי התשובות */
+  .stagger > * { animation: itemIn .3s ease-out both; }
+  .stagger > *:nth-child(1) { animation-delay: .04s; }
+  .stagger > *:nth-child(2) { animation-delay: .09s; }
+  .stagger > *:nth-child(3) { animation-delay: .14s; }
+  .stagger > *:nth-child(4) { animation-delay: .19s; }
+  .stagger > *:nth-child(5) { animation-delay: .24s; }
+  .stagger > *:nth-child(6) { animation-delay: .29s; }
+  @keyframes itemIn { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform:none; } }
+
+  .answer-btn { transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
+  .answer-btn:hover  { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 #2C292E; background:#fff; }
+  .answer-btn:active { transform: translate(1px,1px);  box-shadow: 1px 1px 0 #2C292E; }
+  .answer-btn.picked { background:#2C292E; color:#FFF8EE; transform: translate(1px,1px); box-shadow: 1px 1px 0 #2C292E; }
+
+  .cta-btn { transition: transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+  .cta-btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #2C292E; }
+  .cta-btn:active { transform: translate(1px,1px);   box-shadow: 2px 2px 0 #2C292E; }
+
+  /* פס התקדמות */
+  .pip { transition: background-color .3s ease, transform .3s ease; }
+
+  /* מעטפת התצוגה המוקטנת של כרטיס הסטורי */
+  #story-frame { overflow: hidden; }
+  #story-card  { transform-origin: top right; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen-enter, .screen-leave, .stagger > * { animation: none !important; }
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased">
+
+  <main class="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col justify-center px-4 py-8 sm:px-6">
+    <!-- לוגו קבוע מעל הכרטיס -->
+    <header id="site-header" class="mb-5 flex justify-center"></header>
+
+    <div id="app"></div>
+
+    <!-- פוטר קבוע — מוצג בכל מסכי המבחן -->
+    <footer id="site-footer" class="mt-7 flex justify-center"></footer>
+  </main>
+
+  <!-- חיווי "הקישור הועתק" -->
+  <div id="toast"
+       class="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-3 rounded-xl border-2 border-ink bg-ink px-4 py-2 text-sm font-medium text-card opacity-0 transition-all duration-200">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
