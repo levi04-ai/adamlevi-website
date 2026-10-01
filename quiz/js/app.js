@@ -426,14 +426,17 @@
           <!-- מרכז -->
           <div style="display:flex; flex-direction:column; align-items:center; margin-top:-40px;">
 
-            <!-- התמונה. הצל נבנה כאלמנט ולא כ-box-shadow,
-                 כי html2canvas לא מרנדר box-shadow בשמירה לתמונה -->
+            <!-- התמונה. שני דברים שנעשים כאן בכוונה בגלל html2canvas:
+                 הצל נבנה כאלמנט ולא כ-box-shadow, והתמונה מוצגת כרקע CSS
+                 ולא כתגית img, כי הספרייה מתעלמת מ-object-fit ומותחת את התמונה. -->
             <div style="position:relative; width:820px; height:615px;">
               <div style="position:absolute; top:24px; right:-24px; width:820px; height:615px;
                           border-radius:40px; background:${accent};"></div>
-              <img src="${esc(resultImageOf(character))}" alt=""
-                   style="position:absolute; top:0; right:0; width:820px; height:615px;
-                          border-radius:40px; object-fit:cover; border:14px solid #2C292E;">
+              <div style="position:absolute; top:0; right:0; width:820px; height:615px;
+                          border-radius:40px; border:14px solid #2C292E; box-sizing:border-box;
+                          background-image:url('${esc(resultImageOf(character))}');
+                          background-size:cover; background-position:center center;
+                          background-repeat:no-repeat;"></div>
             </div>
 
             <div style="margin-top:56px; font-size:140px; font-weight:900; line-height:1; color:${accent};">
