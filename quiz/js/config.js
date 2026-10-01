@@ -36,7 +36,7 @@ const SITE = {
   // sheetEndpoint: הכתובת של סקריפט Google Sheets (Web app),
   // נראית כמו "https://script.google.com/macros/s/....../exec".
   // כל פעולה במבחן נרשמת כשורה בגיליון.
-  sheetEndpoint: "",
+  sheetEndpoint: "https://script.google.com/macros/s/AKfycbz8s4thR9-HJxYv6Yf9WaIp7jiDmHbj1t5J_CT_PO2h3yA6sA710mRnaBx4Cjdgv2PM_A/exec",
   //
   // ga4Id: אופציונלי. מזהה של Google Analytics 4, נראה כמו "G-AB12CD34EF".
   ga4Id: "",
