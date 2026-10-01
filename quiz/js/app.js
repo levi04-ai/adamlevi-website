@@ -394,8 +394,12 @@
 
         </div>
 
-        <!-- כרטיס הסטורי עצמו — מחוץ למסך, משמש רק לשמירת התמונה -->
-        <div id="story-frame" style="position:fixed; left:-99999px; top:0; pointer-events:none;"
+        <!-- כרטיס הסטורי עצמו — משמש רק לשמירת התמונה.
+             מוסתר בתוך קופסה בגודל אפס, ולא ע"י הזזה רחוק אל מחוץ למסך:
+             הזזה כזו מרחיבה את הדף (בעברית — שמאלה) לעשרות אלפי פיקסלים,
+             והטלפון מקטין את כל המסך כדי להכיל אותו. -->
+        <div id="story-frame" style="position:absolute; top:0; right:0; width:0; height:0;
+                                     overflow:hidden; pointer-events:none;"
              aria-hidden="true">
           ${storyCardHTML(winner)}
         </div>
@@ -568,7 +572,12 @@
         logging: false,
         onclone: (clonedDoc) => {
           const frame = clonedDoc.getElementById('story-frame');
-          if (frame) { frame.style.position = 'static'; frame.style.left = '0'; }
+          if (frame) {
+            frame.style.position = 'static';
+            frame.style.width = 'auto';
+            frame.style.height = 'auto';
+            frame.style.overflow = 'visible';
+          }
         }
       });
 
