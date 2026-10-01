@@ -26,6 +26,10 @@ const SITE = {
   // אם משאירים ריק "" — האתר משתמש בכתובת שבה הוא רץ בפועל.
   shareUrl: "https://www.adamlevi.net/quiz/",
 
+  // כפתור החזרה לאתר, בראש המבחן
+  homeUrl:    "https://www.adamlevi.net/",
+  homeButton: "לאתר הראשי",
+
   // עמוד הסדרה עם כל הפרקים
   episodesUrl:    "https://www.adamlevi.net/series/",
   episodesButton: "לצפייה בפרקים",

@@ -811,12 +811,26 @@
   function renderHeader() {
     const header = document.getElementById('site-header');
     if (!header) return;
+    const homeLabel = SITE.homeButton || 'לאתר הראשי';
+
+    // שלוש עמודות: כפתור החזרה בצד, הלוגו באמצע, ועמודה ריקה בצד השני
+    // כדי שהלוגו יישאר ממורכז בדיוק
     header.innerHTML = `
-      <span class="flex h-14 items-center rounded-xl border-[3px] border-ink px-5
-                   font-mono text-xl font-bold text-card shadow-hard sm:text-2xl"
-            style="background:#4A4551;">
-        ${esc(SITE.brandTag)}
-      </span>`;
+      <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <a href="${esc(SITE.homeUrl || '/')}" aria-label="${esc(homeLabel)}"
+           class="cta-btn flex h-11 items-center gap-1.5 justify-self-start rounded-xl border-[3px] border-ink
+                  bg-white px-3 text-sm font-bold shadow-hard-sm sm:px-4 sm:text-base">
+          <span aria-hidden="true">→</span>
+          <span class="hidden sm:inline">${esc(homeLabel)}</span>
+          <span class="sm:hidden">לאתר</span>
+        </a>
+        <span class="flex h-14 items-center rounded-xl border-[3px] border-ink px-5
+                     font-mono text-xl font-bold text-card shadow-hard sm:text-2xl"
+              style="background:#4A4551;">
+          ${esc(SITE.brandTag)}
+        </span>
+        <span aria-hidden="true"></span>
+      </div>`;
   }
 
   /** אייקוני מעקב וכפתור הפרקים — הכל בשורה אחת מתחת לכרטיס */
