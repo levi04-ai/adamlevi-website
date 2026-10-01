@@ -46,6 +46,75 @@
     }, 2200);
   }
 
+  /* ---------------------------------------------------------------------- */
+  /* מדידה                                                                   */
+  /* ---------------------------------------------------------------------- */
+
+  /** מזהה אקראי לביקור הזה, כדי שאפשר יהיה לספור אנשים ולא רק לחיצות */
+  const SESSION_ID = (() => {
+    try {
+      const saved = sessionStorage.getItem('os_quiz_session');
+      if (saved) return saved;
+      const id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      sessionStorage.setItem('os_quiz_session', id);
+      return id;
+    } catch (e) {
+      return Math.random().toString(36).slice(2, 10);
+    }
+  })();
+
+  const DEVICE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+
+  /** טוען את Google Analytics רק אם הוגדר מזהה בקובץ הקונפיג */
+  function initAnalytics() {
+    const id = String(SITE.ga4Id || '').trim();
+    if (!/^G-[A-Z0-9]+$/i.test(id)) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', id);
+
+    const tag = document.createElement('script');
+    tag.async = true;
+    tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+    document.head.appendChild(tag);
+  }
+
+  /** שליחת שורה לגיליון. text/plain כדי שהדפדפן לא יבצע בדיקת CORS מקדימה */
+  function sendToSheet(payload) {
+    const url = String(SITE.sheetEndpoint || '').trim();
+    if (!/^https:\/\/script\.google\.com\//.test(url)) return;
+
+    const body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        const ok = navigator.sendBeacon(url, new Blob([body], { type: 'text/plain;charset=utf-8' }));
+        if (ok) return;
+      }
+      fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        keepalive: true,
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body
+      }).catch(() => {});
+    } catch (e) { /* מדידה לעולם לא שוברת את המבחן */ }
+  }
+
+  /**
+   * רישום אירוע — לגיליון, ל-Google Analytics ול-Clarity, לפי מה שמוגדר.
+   * אם אף אחד לא מוגדר — לא קורה כלום והמבחן ממשיך לעבוד כרגיל.
+   */
+  function track(name, params) {
+    const data = params || {};
+    try {
+      sendToSheet(Object.assign({ event: name, session: SESSION_ID, device: DEVICE }, data));
+      if (typeof window.gtag === 'function') window.gtag('event', name, data);
+      if (typeof window.clarity === 'function') window.clarity('event', name);
+    } catch (e) { /* מדידה לעולם לא שוברת את המבחן */ }
+  }
+
   /** הכתובת שתשותף */
   function shareLink() {
     return SITE.shareUrl && SITE.shareUrl.trim()
@@ -201,7 +270,10 @@
         </p>
       </section>
     `, () => {
-      document.getElementById('btn-start').addEventListener('click', renderQuestion);
+      document.getElementById('btn-start').addEventListener('click', () => {
+        track('quiz_start');
+        renderQuestion();
+      });
     });
   }
 
@@ -269,6 +341,7 @@
     }
 
     button.classList.add('picked');
+    track('question_answered', { question_number: state.index + 1 });
 
     setTimeout(() => {
       state.index++;
@@ -298,6 +371,7 @@
   function renderResult() {
     const winnerKey = resolveWinner();
     const winner = CHARACTERS[winnerKey];
+    track('quiz_complete', { character: winnerKey });
 
     showScreen(`
       <section class="flex flex-col gap-4">
@@ -353,6 +427,7 @@
         <!-- הנעה לפעולה -->
         <div class="flex flex-col gap-2.5">
           <a href="${esc(SITE.episodesUrl)}" target="_blank" rel="noopener"
+             data-track="episodes_click" data-location="result"
              class="cta-btn block w-full rounded-xl border-[3px] border-ink bg-brand px-5 py-4 text-center text-lg font-black text-ink shadow-hard-sm">
             ${esc(SITE.episodesButton)}
           </a>
@@ -365,12 +440,21 @@
 
       </section>
     `, () => {
-      document.getElementById('btn-save').addEventListener('click', saveStoryImage);
+      document.getElementById('btn-save').addEventListener('click', () => {
+        track('save_image', { character: winnerKey });
+        saveStoryImage();
+      });
       document.getElementById('btn-copy').addEventListener('click', copyResultLink);
-      document.getElementById('btn-restart').addEventListener('click', renderIntro);
+      document.getElementById('btn-restart').addEventListener('click', () => {
+        track('quiz_restart', { character: winnerKey });
+        renderIntro();
+      });
 
       app.querySelectorAll('[data-platform]').forEach(btn => {
-        btn.addEventListener('click', () => shareTo(btn.dataset.platform, winner));
+        btn.addEventListener('click', () => {
+          track('share', { method: btn.dataset.platform, character: winnerKey });
+          shareTo(btn.dataset.platform, winner);
+        });
       });
     });
   }
@@ -657,10 +741,14 @@
     if (live && navigator.share) {
       try {
         await navigator.share({ title: SITE.title || '', text: message, url });
+        track('invite_friends', { method: 'native_share' });
         return;
       } catch (err) {
         // המשתמש ביטל — לא מציגים שגיאה, ולא ממשיכים להעתקה
-        if (err && err.name === 'AbortError') return;
+        if (err && err.name === 'AbortError') {
+          track('invite_friends', { method: 'cancelled' });
+          return;
+        }
         // כל שגיאה אחרת: ממשיכים לנתיב ההעתקה שלמטה
       }
     }
@@ -675,6 +763,7 @@
     }
 
     if (copied) {
+      track('invite_friends', { method: 'clipboard' });
       toast('הקישור למבחן הועתק!');
       return;
     }
@@ -682,6 +771,7 @@
     // ההעתקה נחסמה (הרשאה, דפדפן מוטמע, הקשר לא מאובטח).
     // טוסט שנעלם אחרי שתי שניות לא עוזר — מציגים את הקישור בחלון
     // שאפשר לסמן ממנו ולהעתיק ידנית.
+    track('invite_friends', { method: 'prompt' });
     window.prompt('העתק את הקישור למבחן:', `${message} ${url}`);
   }
 
@@ -699,6 +789,7 @@
         const p = FOLLOW[k];
         return `
           <a href="${esc(String(links[k]).trim())}" target="_blank" rel="noopener"
+             data-track="follow_click" data-network="${esc(k)}"
              aria-label="${esc(p.label)}" title="${esc(p.label)}"
              class="cta-btn flex ${sizeClass} items-center justify-center rounded-full border-[3px] border-ink shadow-hard-sm"
              style="background:${p.color};">
@@ -728,6 +819,7 @@
       <div class="flex flex-wrap items-center justify-center gap-3">
         ${followIcons()}
         <a href="${esc(SITE.episodesUrl)}" target="_blank" rel="noopener"
+           data-track="episodes_click" data-location="footer"
            class="cta-btn flex h-14 items-center rounded-full border-[3px] border-ink bg-white px-6
                   text-lg font-black shadow-hard-sm">
           ${esc(SITE.episodesButton)}
@@ -739,6 +831,17 @@
   /* ---------------------------------------------------------------------- */
   /* הפעלה                                                                   */
   /* ---------------------------------------------------------------------- */
+
+  initAnalytics();
+  track('page_view', { referrer: document.referrer ? new URL(document.referrer).hostname : 'direct' });
+
+  // קישורים שמסומנים ב-data-track נמדדים כאן, במקום אחד
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-track]');
+    if (!link) return;
+    const { track: name, ...params } = link.dataset;
+    track(name, params);
+  });
 
   renderHeader();
   renderFooter();

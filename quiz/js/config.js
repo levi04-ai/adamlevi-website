@@ -30,6 +30,17 @@ const SITE = {
   episodesUrl:    "https://www.adamlevi.net/series/",
   episodesButton: "לצפייה בפרקים",
 
+  // --- מדידה ---
+  // כל עוד שני השדות ריקים "" — שום דבר לא נשלח ושום דבר לא נמדד.
+  //
+  // sheetEndpoint: הכתובת של סקריפט Google Sheets (Web app),
+  // נראית כמו "https://script.google.com/macros/s/....../exec".
+  // כל פעולה במבחן נרשמת כשורה בגיליון.
+  sheetEndpoint: "",
+  //
+  // ga4Id: אופציונלי. מזהה של Google Analytics 4, נראה כמו "G-AB12CD34EF".
+  ga4Id: "",
+
   // --- הרשתות שלך ---
   // אייקונים בסוף המבחן שמובילים לעמודים שלך.
   // ⚠️ למלא את הכתובות. קישור שנשאר ריק "" — הכפתור שלו פשוט לא יוצג,
