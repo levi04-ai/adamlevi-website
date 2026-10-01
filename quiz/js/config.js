@@ -24,7 +24,7 @@ const SITE = {
   // הקישור שיישלח בשיתוף.
   // מוגדר במפורש כדי שהשיתוף יעבוד גם בבדיקה מקומית, לפני שהאתר באוויר.
   // אם משאירים ריק "" — האתר משתמש בכתובת שבה הוא רץ בפועל.
-  shareUrl: "https://adamlevi.net/quiz/",
+  shareUrl: "https://www.adamlevi.net/quiz/",
 
   // עמוד הסדרה עם כל הפרקים
   episodesUrl:    "https://www.adamlevi.net/series/",

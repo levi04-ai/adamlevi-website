@@ -652,6 +652,19 @@
     const url = shareLink();
     const live = isLive();
 
+    // בנייד יש תפריט שיתוף מובנה — הוא הדבר שהמשתמש באמת מצפה לו:
+    // נפתחת רשימת האפליקציות והוא בוחר לאן לשלוח.
+    if (live && navigator.share) {
+      try {
+        await navigator.share({ title: SITE.title || '', text: message, url });
+        return;
+      } catch (err) {
+        // המשתמש ביטל — לא מציגים שגיאה, ולא ממשיכים להעתקה
+        if (err && err.name === 'AbortError') return;
+        // כל שגיאה אחרת: ממשיכים לנתיב ההעתקה שלמטה
+      }
+    }
+
     const copied = await copyToClipboard(live ? `${message} ${url}` : message);
 
     if (!live) {
@@ -661,7 +674,15 @@
       return;
     }
 
-    toast(copied ? 'הקישור למבחן הועתק!' : 'העתק ידנית: ' + url);
+    if (copied) {
+      toast('הקישור למבחן הועתק!');
+      return;
+    }
+
+    // ההעתקה נחסמה (הרשאה, דפדפן מוטמע, הקשר לא מאובטח).
+    // טוסט שנעלם אחרי שתי שניות לא עוזר — מציגים את הקישור בחלון
+    // שאפשר לסמן ממנו ולהעתיק ידנית.
+    window.prompt('העתק את הקישור למבחן:', `${message} ${url}`);
   }
 
 
