@@ -285,7 +285,7 @@
             padding: 1.5rem;
         }
         .lb.open { display: flex; }
-        .lb-box { width: min(88vh, 100%); max-width: 720px; }
+        .lb-box { width: min(78vh, 100%); max-width: 720px; }
         .lb-frame {
             position: relative; width: 100%; aspect-ratio: 1/1;
             border-radius: 16px; overflow: hidden; background: #000;
@@ -293,7 +293,52 @@
             box-shadow: 0 30px 80px rgba(0,0,0,0.6);
         }
         .lb-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-        .lb-title { color: #f3eee5; font-size: 1.05rem; font-weight: 600; margin-top: 1rem; text-align: center; }
+        .lb-title { color: #f3eee5; font-size: 1.05rem; font-weight: 600; text-align: center; flex: 1; min-width: 0; }
+
+        /* פרק קודם / הבא — מתחת לנגן */
+        .lb-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: 1rem; }
+        .lb-nav {
+            display: inline-flex; align-items: center; gap: 0.45rem; flex: 0 0 auto;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+            color: #f3eee5; padding: 0.6rem 1rem; border-radius: 10px;
+            font-family: 'Heebo', sans-serif; font-size: 0.92rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; white-space: nowrap;
+        }
+        .lb-nav i { font-size: 0.75rem; }
+        .lb-nav:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
+        .lb-nav:disabled { opacity: 0.3; cursor: default; }
+
+        /* מסך "הפרק הבא" כשפרק נגמר */
+        .lb-next {
+            position: absolute; inset: 0; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(6,6,6,0.84); backdrop-filter: blur(4px); padding: 1.5rem;
+        }
+        .lb-next[hidden] { display: none; }
+        .lb-next-card { display: flex; align-items: center; gap: 1.1rem; max-width: 460px; }
+        .lb-next-card img {
+            width: 130px; height: 130px; flex: 0 0 auto; object-fit: cover;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+        }
+        .lb-next-label { display: block; color: #b8b3a3; font-size: 0.88rem; margin-bottom: 0.3rem; }
+        .lb-next-label b { color: #E18B13; font-size: 1rem; }
+        .lb-next-title { display: block; color: #f3eee5; font-size: 1.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 1rem; }
+        .lb-next-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .lb-next-actions .btn-main { padding: 0.7rem 1.3rem; font-size: 0.95rem; }
+        .lb-ghost {
+            background: transparent; color: #f3eee5; border: 1px solid rgba(243,238,229,0.3);
+            padding: 0.7rem 1.2rem; border-radius: 10px; cursor: pointer;
+            font-family: 'Heebo', sans-serif; font-size: 0.95rem; font-weight: 600;
+        }
+        .lb-ghost:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 520px) {
+            .lb-nav-txt { display: none; }
+            .lb-nav { padding: 0.65rem 0.85rem; }
+            .lb-next-card { flex-direction: column; text-align: center; gap: 0.8rem; }
+            .lb-next-card img { width: 96px; height: 96px; }
+            .lb-next-actions { justify-content: center; }
+        }
         .lb-close {
             position: absolute; top: 1.2rem; left: 1.2rem;
             width: 44px; height: 44px; border-radius: 50%;
@@ -674,8 +719,27 @@
     <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="נגן פרק">
         <button class="lb-close" id="lb-close" aria-label="סגירה"><i class="fas fa-xmark"></i></button>
         <div class="lb-box">
-            <div class="lb-frame" id="lb-frame"></div>
-            <p class="lb-title" id="lb-title"></p>
+            <div class="lb-frame" id="lb-frame">
+                <div id="lb-video"></div>
+                <div class="lb-next" id="lb-next" hidden>
+                    <div class="lb-next-card">
+                        <img id="lb-next-img" alt="">
+                        <div>
+                            <span class="lb-next-label">הפרק הבא מתחיל בעוד <b id="lb-next-count">5</b></span>
+                            <span class="lb-next-title" id="lb-next-title"></span>
+                            <div class="lb-next-actions">
+                                <button class="btn-main" id="lb-next-play"><i class="fas fa-play" style="font-size:0.75rem"></i> לנגן עכשיו</button>
+                                <button class="lb-ghost" id="lb-next-cancel">ביטול</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lb-bar">
+                <button class="lb-nav" id="lb-prev" aria-label="פרק קודם"><i class="fas fa-chevron-right"></i><span class="lb-nav-txt">פרק קודם</span></button>
+                <p class="lb-title" id="lb-title"></p>
+                <button class="lb-nav" id="lb-nextep" aria-label="פרק הבא"><span class="lb-nav-txt">פרק הבא</span><i class="fas fa-chevron-left"></i></button>
+            </div>
         </div>
     </div>
 
@@ -692,36 +756,157 @@
         const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('v'); }), { threshold: 0.08 });
         document.querySelectorAll('.rv').forEach(el => obs.observe(el));
 
-        // lightbox
-        const lb = document.getElementById('lb');
-        const lbFrame = document.getElementById('lb-frame');
-        const lbTitle = document.getElementById('lb-title');
+        // ---------------------------------------------------------------
+        // נגן הפרקים: פרק קודם / הבא, ומעבר אוטומטי לפרק הבא כשפרק נגמר.
+        // משתמשים ב-API של יוטיוב כי רק דרכו אפשר לדעת שהסרטון הסתיים.
+        // ---------------------------------------------------------------
+        const lb       = document.getElementById('lb');
+        const lbVideo  = document.getElementById('lb-video');
+        const lbTitle  = document.getElementById('lb-title');
+        const btnPrev  = document.getElementById('lb-prev');
+        const btnNext  = document.getElementById('lb-nextep');
+        const nextBox  = document.getElementById('lb-next');
+        const nextImg  = document.getElementById('lb-next-img');
+        const nextName = document.getElementById('lb-next-title');
+        const nextCnt  = document.getElementById('lb-next-count');
+        const AUTOPLAY_SECONDS = 5;
 
-        function closeLb() {
-            lb.classList.remove('open');
-            lbFrame.innerHTML = '';
-            document.body.style.overflow = '';
-        }
-        document.getElementById('lb-close').addEventListener('click', closeLb);
-        lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
-
-        document.querySelectorAll('.ep[data-yt]').forEach(card => {
+        const cards = [...document.querySelectorAll('.ep[data-yt]')];
+        cards.forEach(card => {
             if (!card.dataset.yt) {
                 card.classList.add('pending');
                 const dur = card.querySelector('.ep-dur');
                 if (dur) dur.textContent = 'בקרוב';
             }
-            card.addEventListener('click', () => {
-                const id = card.dataset.yt;
-                if (!id) return;
-                lbTitle.textContent = card.dataset.title || '';
-                lbFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id +
-                    '?autoplay=1&rel=0" title="' + (card.dataset.title || '') +
-                    '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-                lb.classList.add('open');
-                document.body.style.overflow = 'hidden';
+        });
+
+        // רצף הפרקים — בלי הבונוס, כדי שהקליפ לא יתנגן אוטומטית אחרי הפינאלה
+        const episodes = cards
+            .filter(c => c.dataset.yt && !c.classList.contains('bonus'))
+            .map(c => ({
+                id: c.dataset.yt,
+                title: c.dataset.title || '',
+                img: (c.querySelector('.ep-thumb img') || {}).src || '',
+                card: c
+            }));
+
+        let player = null;        // YT.Player
+        let current = -1;         // מיקום ברצף, או -1 לבונוס
+        let countdown = null;
+
+        // טעינת ה-API של יוטיוב פעם אחת, רק כשפותחים פרק לראשונה
+        let ytReady = null;
+        function loadYT() {
+            if (ytReady) return ytReady;
+            ytReady = new Promise(resolve => {
+                if (window.YT && window.YT.Player) return resolve();
+                const prev = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = () => { if (prev) prev(); resolve(); };
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(tag);
             });
+            return ytReady;
+        }
+
+        function stopCountdown() {
+            clearInterval(countdown);
+            countdown = null;
+            nextBox.hidden = true;
+        }
+
+        function updateBar(title) {
+            lbTitle.textContent = title;
+            const inSeries = current >= 0;
+            btnPrev.style.visibility = inSeries ? '' : 'hidden';
+            btnNext.style.visibility = inSeries ? '' : 'hidden';
+            btnPrev.disabled = !inSeries || current === 0;
+            btnNext.disabled = !inSeries || current === episodes.length - 1;
+        }
+
+        async function playVideo(id, title) {
+            stopCountdown();
+            updateBar(title);
+            await loadYT();
+            if (player && player.loadVideoById) {
+                player.loadVideoById(id);
+                return;
+            }
+            const slot = document.createElement('div');
+            lbVideo.innerHTML = '';
+            lbVideo.appendChild(slot);
+            player = new YT.Player(slot, {
+                host: 'https://www.youtube-nocookie.com',
+                videoId: id,
+                width: '100%',
+                height: '100%',
+                playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1 },
+                events: {
+                    onStateChange: e => { if (e.data === YT.PlayerState.ENDED) onEnded(); }
+                }
+            });
+        }
+
+        function playEpisode(i) {
+            if (i < 0 || i >= episodes.length) return;
+            current = i;
+            playVideo(episodes[i].id, episodes[i].title);
+        }
+
+        function onEnded() {
+            if (current < 0 || current >= episodes.length - 1) return;   // בונוס, או הפרק האחרון
+            const next = episodes[current + 1];
+            nextImg.src = next.img;
+            nextName.textContent = next.title;
+            let left = AUTOPLAY_SECONDS;
+            nextCnt.textContent = left;
+            nextBox.hidden = false;
+            clearInterval(countdown);
+            countdown = setInterval(() => {
+                left--;
+                nextCnt.textContent = left;
+                if (left <= 0) playEpisode(current + 1);
+            }, 1000);
+        }
+
+        function openLb() {
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLb() {
+            stopCountdown();
+            lb.classList.remove('open');
+            document.body.style.overflow = '';
+            if (player && player.destroy) player.destroy();
+            player = null;
+            lbVideo.innerHTML = '';
+            current = -1;
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (!card.dataset.yt) return;
+                openLb();
+                const i = episodes.findIndex(ep => ep.card === card);
+                if (i >= 0) playEpisode(i);
+                else { current = -1; playVideo(card.dataset.yt, card.dataset.title || ''); }
+            });
+        });
+
+        btnPrev.addEventListener('click', () => playEpisode(current - 1));
+        btnNext.addEventListener('click', () => playEpisode(current + 1));
+        document.getElementById('lb-next-play').addEventListener('click', () => playEpisode(current + 1));
+        document.getElementById('lb-next-cancel').addEventListener('click', stopCountdown);
+        document.getElementById('lb-close').addEventListener('click', closeLb);
+        lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+
+        document.addEventListener('keydown', e => {
+            if (!lb.classList.contains('open')) return;
+            if (e.key === 'Escape') closeLb();
+            // בעברית "קדימה" זה שמאלה — כמו מיקום הכפתורים
+            if (e.key === 'ArrowLeft'  && !btnNext.disabled) playEpisode(current + 1);
+            if (e.key === 'ArrowRight' && !btnPrev.disabled) playEpisode(current - 1);
         });
     </script>
 </body>
