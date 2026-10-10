@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Race to Balfour</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8F%81%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Rubik:ital,wght@0,500;0,700;0,800;0,900;1,800;1,900&family=Secular+One&display=swap">
@@ -774,7 +775,7 @@ const PLAYABLE = ROSTER.filter(c => c.model);
 const KARTS = [
   { id:'red', name:'The Classic', file:'k_red', size:1.0, speed:3, accel:3, handling:3, weight:3, perk:'Balanced at everything', seat:[-0.30,0.55], wheel:[0.30,0.95,0.20,0.66] },
   { id:'blue', name:'The Sport', file:'k_blue', size:0.9, speed:4, accel:2, handling:4, weight:2, perk:'Sharp in the bends, light in a crash', seat:[-0.45,0.47], wheel:[0.21,0.75,0.20,0.76] },
-  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:2, accel:3, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.45,1.07], wheel:[0.35,1.28,0.23,0.69] },
+  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:2, accel:3, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,1.02], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
   { id:'yellow', name:'The Speedster', file:'k_yellow', size:1.05, speed:5, accel:2, handling:2, weight:3, perk:'Fastest of all, wild in the bends', seat:[-0.20,0.42], wheel:[0.41,0.65,0.17,0.70] },
   { id:'limo', name:'The Limo', file:'k_limo', size:1.3, speed:4, accel:1, handling:2, weight:5, perk:'A tank: shoves everyone, barely budges', seat:[-0.35,1.02], wheel:[0.35,1.10,0.23,0.70] },
 ];
@@ -2256,7 +2257,7 @@ function kartParts(k){
   if (kartCache[k.id]) return kartCache[k.id];
   const s = k.size;
   const piv = normalized(k.file, { length:KART_LEN*s, yaw:Math.PI/2 }); piv.updateMatrixWorld(true);
-  const wc = new V3(0, k.wheel[1]*s, k.wheel[0]*s), wr = (k.wheel[2] + 0.07)*s;
+  const cw = k.cut || k.wheel, wc = new V3(0, cw[1]*s, cw[0]*s), wr = (cw[2] + 0.07)*s;   // where the model's own wheel is cut out
   const parts = [];
   piv.traverse(o => {
     if (!o.isMesh) return;
@@ -4122,7 +4123,7 @@ function buildIntro(){
     b.innerHTML = `<img alt="" src="${KIMG[k.id]}">`; b.setAttribute('aria-label', k.name);
     b.addEventListener('click', () => selectKart(k.id)); b.addEventListener('dblclick', goNext); kb.appendChild(b);
   });
-  { const b = document.createElement('button'); b.className = 'kcard soon'; b.disabled = true; b.setAttribute('aria-label', 'Motorbike (coming soon)');
+  if (false){ const b = document.createElement('button'); b.className = 'kcard soon'; b.disabled = true; b.setAttribute('aria-label', 'Motorbike (coming soon)');   // hidden until the bike model exists
     b.innerHTML = `<span class="sil" style="inset:22% 14% 18%"></span><span class="q">?</span>`; b.querySelector('.sil').style.setProperty('--sil', KSIL); kb.appendChild(b); }
   const tg = $('tgrid');
   TRACKS.forEach(t => {
