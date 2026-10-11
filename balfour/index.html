@@ -987,7 +987,7 @@ const FIELD = 6;
 const ITEMS = {
   bomb:{ icon:'💣', name:'Bomb', desc:'Lob it ahead: the fuse burns and it blasts everyone nearby' },
   wrench:{ icon:'🔧', name:'Monkey wrench', desc:'Spins down the road and homes in on the kart ahead' },
-  ruler:{ icon:'📏', name:'Ruler', desc:'Thrown ahead: spins out whoever it hits' }, rotation:{ icon:'🔄', name:'Rotation', desc:'Spins the rival around' },
+  ruler:{ icon:'📏', name:'Ruler', desc:'Snaps around the kart it hits like a slap bracelet and slows it down' }, rotation:{ icon:'🔄', name:'Rotation', desc:'Spins the rival around' },
   glove:{ icon:'🥊', name:'Boxing glove', desc:'A punch that knocks the kart aside' }, megaphone:{ icon:'📢', name:'Megaphone', desc:'Blasts everyone around you away' },
   coins:{ icon:'🪙', name:'Gold coins', desc:'Karts slip on them' }, croc:{ icon:'🐊', name:'Crocodile', desc:'Thrown back, it bites' }, shofar:{ icon:'📯', name:'Shofar', desc:'Makes the karts ahead dizzy' },
   shield:{ icon:'🛡️', name:'Shield', desc:'Nothing can hit you for 6 seconds' },
@@ -3279,7 +3279,7 @@ $('mute').addEventListener('click', () => { muted = !muted; $('mute').textConten
 // ============================================================ game state
 let state = 'loading', countT = 0, raceT = 0, finishOrder = [], bigT = 0, stateT = 0;
 const player = () => racers.find(r => r.player) || racers[0];
-window.__tk = { wrench(){ return wrenchMesh(); }, get GLB(){ return GLB; }, get stand(){ return standees; }, get scene(){ return scene; }, get camd(){ const p = player(); return [+Math.hypot(camera.position.x-p.x, camera.position.z-p.z).toFixed(2), +(camera.position.y - p.y - GH(p.x,p.z)).toFixed(2), +camera.fov.toFixed(1)]; }, get hz(){ return hazards.map(h => [h.kind, +h.t.toFixed(2), +h.x.toFixed(1), +h.z.toFixed(1), +h.y.toFixed(2), !!h.landed, +(h.lat||0).toFixed(1), +(h.sp||0).toFixed(1), window.__tk.racers.map(r => +Math.hypot(r.x-h.x, r.z-h.z).toFixed(0)).join(" ")]); }, T, GH, at, THREE, get ramps(){ return ramps.map(r => r.i0); }, lookBack(i, up, lat){ const q = at(i, lat||0), h = T[((i%N)+N)%N].h + Math.PI; freeCam = { pos:new V3(q.x, up, q.z), look:new V3(q.x + Math.sin(h)*20, 0.6, q.z + Math.cos(h)*20) }; }, wheels(){ return KARTS.map(k => [k.id, kartParts(k).wheels.map(w => [w.c.x.toFixed(2), w.c.y.toFixed(2), w.c.z.toFixed(2), w.R.toFixed(2), w.parts.length])]); }, look(i, yaw, up){ const q = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x, up||7, q.z), look:new V3(q.x + Math.sin(yaw)*60, (up||7) + 2, q.z + Math.cos(yaw)*60) }; }, mode(m){ setMode(m); }, cam(spec){ const [i, back, up, lat] = spec.split(',').map(Number); const q = at(i, lat||0), f = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x - f.tx*back, up, q.z - f.tz*back), look:new V3(q.x + f.tx*20, 1, q.z + f.tz*20) }; }, sim(sec){ for (let i=0;i<sec*60;i++){ update(1/60); if (state === 'done') break; } }, get p(){ return player(); }, get raceT(){ return +raceT.toFixed(1); }, get state(){ return state; }, get racers(){ return racers; }, pick(c, k){ pick = { char:c, kart:k }; }, start(){ startRace(); }, skip(){ skipFly(); }, fin(){ onPlayerFinish(); }, get vicOn(){ return vicOn; }, get vicB(){ return vicBits; } };
+window.__tk = { wrench(){ return wrenchMesh(); }, get GLB(){ return GLB; }, get stand(){ return standees; }, get scene(){ return scene; }, get camd(){ const p = player(); return [+Math.hypot(camera.position.x-p.x, camera.position.z-p.z).toFixed(2), +(camera.position.y - p.y - GH(p.x,p.z)).toFixed(2), +camera.fov.toFixed(1)]; }, get hz(){ return hazards.map(h => [h.kind, +h.t.toFixed(2), +h.x.toFixed(1), +h.z.toFixed(1), +h.y.toFixed(2), !!h.landed, +(h.lat||0).toFixed(1), +(h.sp||0).toFixed(1), window.__tk.racers.map(r => +Math.hypot(r.x-h.x, r.z-h.z).toFixed(0)).join(" ")]); }, T, GH, at, THREE, get ramps(){ return ramps.map(r => r.i0); }, lookBack(i, up, lat){ const q = at(i, lat||0), h = T[((i%N)+N)%N].h + Math.PI; freeCam = { pos:new V3(q.x, up, q.z), look:new V3(q.x + Math.sin(h)*20, 0.6, q.z + Math.cos(h)*20) }; }, wheels(){ return KARTS.map(k => [k.id, kartParts(k).wheels.map(w => [w.c.x.toFixed(2), w.c.y.toFixed(2), w.c.z.toFixed(2), w.R.toFixed(2), w.parts.length])]); }, look(i, yaw, up){ const q = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x, up||7, q.z), look:new V3(q.x + Math.sin(yaw)*60, (up||7) + 2, q.z + Math.cos(yaw)*60) }; }, mode(m){ setMode(m); }, cam(spec){ const [i, back, up, lat] = spec.split(',').map(Number); const q = at(i, lat||0), f = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x - f.tx*back, up, q.z - f.tz*back), look:new V3(q.x + f.tx*20, 1, q.z + f.tz*20) }; }, sim(sec){ for (let i=0;i<sec*60;i++){ update(1/60); if (state === 'done') break; } }, get p(){ return player(); }, get raceT(){ return +raceT.toFixed(1); }, get state(){ return state; }, get racers(){ return racers; }, pick(c, k){ pick = { char:c, kart:k }; }, start(){ startRace(); }, skip(){ skipFly(); }, fin(){ onPlayerFinish(); }, use(){ useItem(player()); }, get slaps(){ return slaps.map(s => [s.r.id, +s.t.toFixed(2), +(s.r.slapT||0).toFixed(2)]); }, get vicOn(){ return vicOn; }, get vicB(){ return vicBits; } };
 function big(text, dur, small){ const b = $('big'); b.textContent = text; b.classList.toggle('small', !!small); b.classList.remove('show'); void b.offsetWidth; b.classList.add('show'); bigT = dur; }
 function say(r, text, dur){ if (!text) return; r.bubble.innerHTML = `<img alt="" src="${ICONS[r.id]}"><span></span>`; r.bubble.lastChild.textContent = text; r.bubble.classList.add('show'); r.bubbleT = dur||2; }
 function rankOf(r){ return 1 + racers.filter(o => o!==r && ((o.finished && !r.finished) || (o.finished===r.finished && (o.finished ? o.fTime < r.fTime : o.prog > r.prog)))).length; }
@@ -3331,6 +3331,40 @@ function hit(r){
   for (let k=0;k<lost*5;k++) FXA.emit(r.x, r.y+1.2, r.z, rnd(-4,4), rnd(3,7), rnd(-4,4), 0.7, 0.45, 1,0.8,0.2,1, -14);
   if (r.player){ tone(260,70,0.45,'sawtooth',0.14); hitStop = 0.09; camShake = Math.max(camShake, 0.35); }
 }
+const slaps = [];
+function slap(r){
+  if (r.finished) return;
+  if (r.shieldT > 0 || r.bigT > 0 || r.flyT > 0){ if (r.shieldT > 0 && r.player) tone(1200, 800, 0.12, 'sine', 0.1); return; }
+  for (const s of slaps) if (s.r === r){ s.t = Math.min(s.t, 0.5); r.slapT = 3; return; }   // already wrapped: just renew it
+  r.slapT = 3; r.v *= 0.55; r.drift = 0; r.driftDir = 0;
+  const mat = new THREE.MeshStandardMaterial({ map:rulerTex(), roughness:0.45, side:THREE.DoubleSide, transparent:true });
+  const mesh = new THREE.Mesh(new THREE.BufferGeometry(), mat); mesh.castShadow = true; scene.add(mesh);
+  slaps.push({ r, t:0, mesh, built:-1 });
+  const near = r.player || Math.hypot(player().x-r.x, player().z-r.z) < 40;
+  if (near){ noiseSnd(0.08, 0.5, 0, 3200, 2); tone(1400, 700, 0.09, 'square', 0.08); tone(500, 900, 0.18, 'triangle', 0.08, 0.08); }
+  if (r.player){ camShake = Math.max(camShake, 0.25); hitStop = 0.05; }
+}
+const backOut = u => 1 + 2.4*Math.pow(u - 1, 3) + 1.4*Math.pow(u - 1, 2);
+function updateSlaps(dt){
+  for (let i=slaps.length-1;i>=0;i--){
+    const s = slaps[i], r = s.r; s.t += dt; r.slapT = Math.max(0, (r.slapT||0) - dt);
+    // the band curls from flat to a closed ring in a quarter of a second, overshoots and settles
+    const u = Math.min(1, s.t/0.24), wrap = Math.min(1, backOut(u));
+    const steps = Math.round(wrap*40);
+    if (steps !== s.built){ s.built = steps; s.mesh.geometry.dispose();
+      const th = Math.max(0.15, wrap*Math.PI*2);
+      s.mesh.geometry = new THREE.CylinderGeometry(1, 1, 0.42, Math.max(4, Math.round(48*wrap)), 1, true, Math.PI - th/2, th); }
+    const rw = r.rad*0.8 + 0.25, rl = r.halfLen + 0.2, bounce = s.t < 0.7 ? Math.sin(s.t*18)*Math.exp(-s.t*5)*0.18 : 0;
+    if (r.slapT <= 0 && s.end == null){ s.end = s.t; if (r.player || Math.hypot(player().x-r.x, player().z-r.z) < 40) tone(800, 1600, 0.12, 'triangle', 0.07); }
+    const pop = r.slapT <= 0 ? Math.min(1, (s.t - s.end)/0.35) : 0;
+    s.mesh.scale.set(rw*(1 + bounce + pop*0.6), 1 + bounce*1.5, rl*(1 - bounce*0.5 + pop*0.6));
+    s.mesh.position.set(r.x, r.y + GH(r.x, r.z) + 0.62*(r.sizeK||1) + pop*1.2, r.z);
+    s.mesh.rotation.set(Math.sin(s.t*7)*0.06, r.h + (r.spinA||0), Math.sin(s.t*5.3)*0.05);
+    s.mesh.material.opacity = 1 - pop;
+    if (pop >= 1 || r.finished && s.end == null && s.t > 1){ scene.remove(s.mesh); s.mesh.geometry.dispose(); s.mesh.material.dispose(); r.slapT = 0; slaps.splice(i, 1); }
+  }
+}
+function clearSlaps(){ for (const s of slaps){ scene.remove(s.mesh); s.r.slapT = 0; } slaps.length = 0; }
 let hitStop = 0, qualityChecked = /hq/.test(location.hash), qFrames = 0, qTime = 0;
 function wrenchMesh(){
   // an adjustable ("Swedish") wrench like the reference photos: one flat chrome-steel piece - a long handle with a
@@ -3378,7 +3412,27 @@ function emojiMesh(ch){
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:t, transparent:true })); sp.scale.setScalar(1.4); sp.position.y = 0.7;
   const g = new THREE.Group(); g.add(sp); return g;
 }
+let RULER_TEX = null;
+function rulerTex(){
+  if (!RULER_TEX) RULER_TEX = canvasTex(1024, 96, (g,w,h) => {
+    const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#ffe066'); gr.addColorStop(0.5,'#ffd23f'); gr.addColorStop(1,'#f0b400'); g.fillStyle = gr; g.fillRect(0,0,w,h);
+    g.fillStyle = '#2a2200'; g.font = '700 22px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (let k=0;k<=60;k++){ const x = 12 + k*(w-24)/60, L = k % 10 === 0 ? 34 : k % 5 === 0 ? 24 : 14; g.fillRect(x-1.5, 0, 3, L); g.fillRect(x-1.5, h-L, 3, L); if (k % 10 === 0 && k > 0 && k < 60) g.fillText(String(k/2), x, h/2); }
+  });
+  return RULER_TEX;
+}
+function rulerMesh(){
+  // long axis along y (like the wrench), so it tumbles end over end and lies flat when it lands
+  const g = new THREE.Group();
+  const m = new THREE.MeshStandardMaterial({ map:rulerTex(), roughness:0.45, metalness:0.05 }), edge = new THREE.MeshStandardMaterial({ color:'#e0a800', roughness:0.5 });
+  const geo = new THREE.BoxGeometry(0.2, 1.0, 0.035);
+  // the canvas runs along the ruler's length
+  const uv = geo.attributes.uv, pos = geo.attributes.position; for (let k=0;k<uv.count;k++){ uv.setXY(k, pos.getY(k) + 0.5, pos.getX(k)/0.2 + 0.5); }
+  const b = new THREE.Mesh(geo, [edge, edge, edge, edge, m, m]); b.castShadow = true; g.add(b);
+  return g;
+}
 function itemMesh(kind){
+  if (kind === 'ruler') return rulerMesh();
   if (kind === 'bomb') return bombMesh();
   if (kind === 'oil') return oilMesh();
   if (kind === 'wrench') return wrenchMesh();
@@ -3421,12 +3475,13 @@ const blasts = [];
 function soundBlast(r, kind){
   const fx = Math.sin(r.h), fz = Math.cos(r.h), shofar = kind === 'shofar';
   const col = shofar ? '#ffd27a' : '#ff5a5a';
-  const ring = new THREE.Mesh(new THREE.RingGeometry(0.85, 1, 48), new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0.85, side:THREE.DoubleSide, depthWrite:false, blending:THREE.AdditiveBlending, fog:false }));
-  ring.rotation.x = -Math.PI/2; ring.position.set(r.x, r.y + GH(r.x, r.z) + 0.6, r.z); scene.add(ring);
-  blasts.push({ ring, t:0, max:shofar ? 28 : 14 });
+  const mkRing = (w) => { const m = new THREE.Mesh(new THREE.RingGeometry(1 - w, 1, 64), new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0, side:THREE.DoubleSide, depthWrite:false, blending:THREE.AdditiveBlending, fog:false }));
+    m.rotation.x = -Math.PI/2; m.position.set(r.x, r.y + GH(r.x, r.z) + 0.6, r.z); scene.add(m); return m; };
+  if (shofar){ for (let k=0;k<3;k++) blasts.push({ ring:mkRing(0.13), t:-k*0.55, dur:1.4, max:30, owner:r, wave:k, done:new Set(), hdg:r.h }); }
+  else blasts.push({ ring:mkRing(0.15), t:0, dur:0.6, max:14 });
   for (const o of racers){ if (o === r || o.finished) continue;
     const dx = o.x - r.x, dz = o.z - r.z, d = Math.hypot(dx, dz); if (d < 0.1) continue;
-    if (shofar){ if (d < 30 && (dx*fx + dz*fz) > d*0.35) hit(o); }
+    if (shofar) continue;
     else if (d < 14){ const k = (14 - d)/14; o.kx = (o.kx||0) + dx/d*16*k; o.kz = (o.kz||0) + dz/d*16*k; o.v *= 1 - 0.45*k; o.wobble = 0.6; if (k > 0.5) hit(o); } }
   if (r.player || Math.hypot(player().x-r.x, player().z-r.z) < 45){
     if (shofar){ tone(233, 233, 0.9, 'sawtooth', 0.12); tone(349, 349, 0.7, 'sawtooth', 0.08, 0.35); }
@@ -3434,9 +3489,18 @@ function soundBlast(r, kind){
   }
 }
 function updateBlasts(dt){
-  for (let i=blasts.length-1;i>=0;i--){ const b = blasts[i]; b.t += dt; const u = b.t/0.6, s = 1 + u*b.max;
-    b.ring.scale.set(s, s, s); b.ring.material.opacity = Math.max(0, 0.85*(1 - u));
-    if (u >= 1){ scene.remove(b.ring); b.ring.geometry.dispose(); blasts.splice(i, 1); } }
+  for (let i=blasts.length-1;i>=0;i--){ const b = blasts[i]; b.t += dt;
+    if (b.t < 0){ b.ring.material.opacity = 0; continue; }
+    const u = b.t/b.dur, e = 1 - Math.pow(1 - Math.min(1, u), 2), s = 1 + e*b.max;
+    if (b.owner){ const o = b.owner; b.ring.position.set(o.x, o.y + GH(o.x, o.z) + 0.6, o.z); }
+    b.ring.scale.set(s, s, s); b.ring.material.opacity = Math.max(0, 0.9*(1 - u)*(b.owner ? 1 - 0.2*b.wave : 1));
+    if (b.owner){   // the wave front reaches the karts ahead of the blower
+      const r = b.owner, fx = Math.sin(b.hdg), fz = Math.cos(b.hdg);
+      for (const o of racers){ if (o === r || o.finished || b.done.has(o)) continue;
+        const dx = o.x - r.x, dz = o.z - r.z, d = Math.hypot(dx, dz);
+        if (d <= s && d < 31 && (dx*fx + dz*fz) > d*0.35){ b.done.add(o);
+          if (b.wave === 0) hit(o); else { o.v *= 0.8; o.wobble = 0.7; if (o.player) camShake = Math.max(camShake, 0.18); } } } }
+    if (u >= 1){ scene.remove(b.ring); b.ring.geometry.dispose(); b.ring.material.dispose(); blasts.splice(i, 1); } }
 }
 function throwForward(r, it){
   const fx = Math.sin(r.h), fz = Math.cos(r.h);
@@ -3450,7 +3514,7 @@ function throwForward(r, it){
   } else {
     // a spinning wrench that follows the road and homes in on the nearest rival ahead
     const x = r.x + fx*(r.halfLen + 1.6), z = r.z + fz*(r.halfLen + 1.6);
-    const mesh = itemMesh(it === 'ruler' ? 'ruler' : 'wrench'); mesh.scale.multiplyScalar(it === 'ruler' ? 1.3 : 1.8); mesh.rotation.order = 'YXZ'; mesh.position.set(x, r.y + 1.3, z); scene.add(mesh);
+    const mesh = itemMesh(it === 'ruler' ? 'ruler' : 'wrench'); mesh.scale.multiplyScalar(it === 'ruler' ? 2.1 : 1.8); mesh.rotation.order = 'YXZ'; mesh.position.set(x, r.y + 1.3, z); scene.add(mesh);
     hazards.push({ x, z, y:r.y + 1.3, vy:7.6, h:r.h, sp:Math.max(r.v, 8)*0.9 + 18, idx:r.idx, lat:latOf(x, z, r.idx), proj:true, mesh, owner:r, t:0, kind:it });
     if (near){ tone(900, 500, 0.15, 'triangle', 0.1); noiseSnd(0.2, 0.15, 0, 3500, 1); }
   }
@@ -3510,6 +3574,7 @@ function updateRacer(r, dt){
   }
   // speed target
   let vmax = MAX_V*r.vmaxK*(1 + 0.012*(r.coins||0));
+  if (r.slapT > 0) vmax *= 0.62;
   if (!r.player){
     const bend = Math.abs(wrapA(T[(r.idx+16)%N].h - T[r.idx].h));
     vmax *= r.skill * DIFF[diffLevel].ai * (1 - 0.32*Math.min(1, bend/1.1));
@@ -3866,7 +3931,7 @@ function update(dt){
       }
     }
   }
-  updateBlasts(dt);
+  updateBlasts(dt); updateSlaps(dt);
   for (let i=hazards.length-1;i>=0;i--){
     const h = hazards[i]; h.t += dt;
     if (h.proj){
@@ -3887,7 +3952,7 @@ function update(dt){
       let gone = h.t > 7 || Math.abs(h.lat) > HALF_W + CURB_W + WALK_W;
       for (const r of racers){
         if (r === h.owner && h.t < 3) continue;
-        if (Math.abs(r.y - h.y) < 2.2 && Math.hypot(r.x-h.x, r.z-h.z) < (h.landed ? 0.9 : 1.4) + r.rad*0.5){ hit(r); gone = true; for (let k=0;k<22;k++) FXA.emit(h.x, h.y, h.z, rnd(-5,5), rnd(2,6), rnd(-5,5), 0.5, 0.4, 0.9,0.95,1,1, -12); if (r.player || h.owner.player) tone(1500, 300, 0.25, 'square', 0.1); break; }
+        if (Math.abs(r.y - h.y) < 2.2 && Math.hypot(r.x-h.x, r.z-h.z) < (h.landed ? 0.9 : 1.4) + r.rad*0.5){ if (h.kind === 'ruler') slap(r); else hit(r); gone = true; for (let k=0;k<22;k++) FXA.emit(h.x, h.y, h.z, rnd(-5,5), rnd(2,6), rnd(-5,5), 0.5, 0.4, 0.9,0.95,1,1, -12); if (r.player || h.owner.player) tone(1500, 300, 0.25, 'square', 0.1); break; }
       }
       if (gone){ scene.remove(h.mesh); hazards.splice(i,1); }
       continue;
@@ -4247,7 +4312,7 @@ function setPause(on){
 function backToSelect(){
   vicOn = false; for (const r of racers) if (r.bubble) r.bubble.classList.remove('show');
   setPause(false); stopMusic(); disposeGhost();
-  for (const h of hazards) scene.remove(h.mesh); hazards.length = 0;
+  for (const h of hazards) scene.remove(h.mesh); hazards.length = 0; clearSlaps();
   $('hud').hidden = true; $('controls').hidden = true; $('flyTitle').hidden = true; $('finish').hidden = true; $('pauseBtn').hidden = true;
   confettiOn = false;
   $('intro').hidden = false; state = 'intro'; blurredBackdrop(); buildPreview(); setStep('char'); startMusic('menu');
@@ -4262,7 +4327,7 @@ function startRace(){
   $('title').hidden = true;
   paused = false; $('pauseMenu').hidden = true; $('pauseBtn').hidden = false; stopMusic();
   MAX_V = DIFF[diffLevel].max; BOOST_V = MAX_V*1.45; musicSpeed = 1;
-  for (const h of hazards) scene.remove(h.mesh); hazards.length = 0;
+  for (const h of hazards) scene.remove(h.mesh); hazards.length = 0; clearSlaps();
   // the field: the other candidates (repeating while only some are modelled), each in a different kart
   const pool = PLAYABLE.filter(c => c.id !== pick.char), src = pool.length ? pool : PLAYABLE, ki = KARTS.findIndex(k => k.id === pick.kart);
   const field = [];
