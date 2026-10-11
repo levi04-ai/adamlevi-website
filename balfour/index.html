@@ -978,7 +978,7 @@ const PLAYABLE = ROSTER.filter(c => c.model);
 const KARTS = [
   { id:'red', name:'The Classic', file:'k_red_t', yaw:0, size:1.0, speed:3, accel:3, handling:3, weight:3, perk:'Balanced at everything', seat:[-0.30,0.55], wheel:[0.30,0.95,0.20,0.66], cut:[0.36,1.0,0.3] },
   { id:'blue', name:'The Sport', file:'k_blue', size:0.9, speed:4, accel:2, handling:4, weight:2, perk:'Sharp in the bends, light in a crash', seat:[-0.45,0.47], wheel:[0.21,0.75,0.20,0.76] },
-  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:2, accel:3, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,1.02], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
+  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:3, accel:2, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,1.02], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
   { id:'yellow', name:'The Speedster', file:'k_yellow', size:1.05, speed:5, accel:2, handling:2, weight:3, perk:'Fastest of all, wild in the bends', seat:[-0.20,0.42], wheel:[0.41,0.65,0.17,0.70] },
   { id:'limo', name:'The Limo', file:'k_limo', size:1.3, speed:4, accel:1, handling:2, weight:5, perk:'A tank: shoves everyone, barely budges', seat:[-0.35,1.02], wheel:[0.35,1.10,0.23,0.70] },
 ];
@@ -2779,7 +2779,7 @@ function makeRacer(cid, kid){
   scene.add(holder);
   const bubble = document.createElement('div'); bubble.className = 'bubble'; $('bubbles').appendChild(bubble);
   const r = { uid:++uidSeq, id:cid, def:c, kart:k, player:false, holder, body, wheels, bubble, bubbleT:0, drv, height:drv.top*VS, halfLen:KART_LEN*k.size*VS/2,
-    vmaxK:0.9 + 0.05*k.speed, accK:0.72 + 0.12*k.accel, turnK:0.8 + 0.09*k.handling, mass:0.55 + 0.27*k.weight, rad:1.05*k.size*VS, skill:0.94,
+    vmaxK:0.96 + 0.03*k.speed, accK:0.72 + 0.12*k.accel, turnK:0.8 + 0.09*k.handling, mass:0.55 + 0.27*k.weight, rad:1.05*k.size*VS, skill:0.94,
     x:0, z:0, y:ROAD_Y, h:0, v:0, vy:0, phase:Math.random()*6 };
   addSprites(r);
   holder.traverse(o => { if (o.isMesh){ const ms = Array.isArray(o.material) ? o.material : [o.material]; for (const m of ms) addRim(m); } });
@@ -3364,7 +3364,8 @@ function updateSlaps(dt){
     if (pop >= 1 || r.finished && s.end == null && s.t > 1){ scene.remove(s.mesh); s.mesh.geometry.dispose(); s.mesh.material.dispose(); r.slapT = 0; slaps.splice(i, 1); }
   }
 }
-function clearSlaps(){ for (const s of slaps){ scene.remove(s.mesh); s.r.slapT = 0; } slaps.length = 0; }
+function clearSlaps(){ for (const s of slaps){ scene.remove(s.mesh); s.r.slapT = 0; } slaps.length = 0;
+  for (const b of blasts){ scene.remove(b.ring); b.ring.geometry.dispose(); } blasts.length = 0; }
 let hitStop = 0, qualityChecked = /hq/.test(location.hash), qFrames = 0, qTime = 0;
 function wrenchMesh(){
   // an adjustable ("Swedish") wrench like the reference photos: one flat chrome-steel piece - a long handle with a
@@ -3475,9 +3476,9 @@ const blasts = [];
 function soundBlast(r, kind){
   const fx = Math.sin(r.h), fz = Math.cos(r.h), shofar = kind === 'shofar';
   const col = shofar ? '#ffd27a' : '#ff5a5a';
-  const mkRing = (w) => { const m = new THREE.Mesh(new THREE.RingGeometry(1 - w, 1, 64), new THREE.MeshBasicMaterial({ color:col, transparent:true, opacity:0, side:THREE.DoubleSide, depthWrite:false, blending:THREE.AdditiveBlending, fog:false }));
+  const mkRing = (w) => { const m = new THREE.Mesh(new THREE.RingGeometry(1 - w, 1, 64), new THREE.MeshBasicMaterial({ color:shofar ? '#fff1b8' : col, transparent:true, opacity:0, side:THREE.DoubleSide, depthWrite:false, blending:shofar ? THREE.NormalBlending : THREE.AdditiveBlending, fog:false }));
     m.rotation.x = -Math.PI/2; m.position.set(r.x, r.y + GH(r.x, r.z) + 0.6, r.z); scene.add(m); return m; };
-  if (shofar){ for (let k=0;k<3;k++) blasts.push({ ring:mkRing(0.13), t:-k*0.55, dur:1.4, max:30, owner:r, wave:k, done:new Set(), hdg:r.h }); }
+  if (shofar){ for (let k=0;k<3;k++) blasts.push({ ring:mkRing(0.2), t:-k*0.55, dur:1.4, max:30, owner:r, wave:k, done:new Set(), hdg:r.h }); }
   else blasts.push({ ring:mkRing(0.15), t:0, dur:0.6, max:14 });
   for (const o of racers){ if (o === r || o.finished) continue;
     const dx = o.x - r.x, dz = o.z - r.z, d = Math.hypot(dx, dz); if (d < 0.1) continue;
@@ -3515,7 +3516,7 @@ function throwForward(r, it){
     // a spinning wrench that follows the road and homes in on the nearest rival ahead
     const x = r.x + fx*(r.halfLen + 1.6), z = r.z + fz*(r.halfLen + 1.6);
     const mesh = itemMesh(it === 'ruler' ? 'ruler' : 'wrench'); mesh.scale.multiplyScalar(it === 'ruler' ? 2.1 : 1.8); mesh.rotation.order = 'YXZ'; mesh.position.set(x, r.y + 1.3, z); scene.add(mesh);
-    hazards.push({ x, z, y:r.y + 1.3, vy:7.6, h:r.h, sp:Math.max(r.v, 8)*0.9 + 18, idx:r.idx, lat:latOf(x, z, r.idx), proj:true, mesh, owner:r, t:0, kind:it });
+    hazards.push({ x, z, y:r.y + 1.3, vy:it === 'ruler' ? 4.4 : 7.6, h:r.h, sp:Math.max(r.v, 8)*0.9 + 18, idx:r.idx, lat:latOf(x, z, r.idx), proj:true, mesh, owner:r, t:0, kind:it });
     if (near){ tone(900, 500, 0.15, 'triangle', 0.1); noiseSnd(0.2, 0.15, 0, 3500, 1); }
   }
   r.count = (r.count||1) - 1; if (r.count <= 0){ r.item = null; r.count = 0; }
@@ -3569,7 +3570,9 @@ function updateRacer(r, dt){
       r.itemT -= dt;
       const fwd = r.item && !MYSTERY.includes(r.item);
       const chance = fwd ? racers.some(o => o !== r && o.prog > r.prog && o.prog - r.prog < 16) : racers.some(o => o !== r && o.prog < r.prog && r.prog - o.prog < 10);
-      if (r.item && (r.itemT <= 0 || chance)){ useItem(r); r.itemT = rnd(1.5, 4); }
+      // aimed throws (ruler, wrench) wait for someone 3-20 m ahead, unless they have been held for a long time
+      const aimed = r.item === 'ruler' || r.item === 'wrench', inRange = racers.some(o => o !== r && !o.finished && o.prog - r.prog > 2 && o.prog - r.prog < 14);
+      if (r.item && (aimed ? inRange || r.itemT < -8 : r.itemT <= 0 || chance)){ useItem(r); r.itemT = rnd(1.5, 4); }
     }
   }
   // speed target
@@ -3939,12 +3942,13 @@ function update(dt){
       let tgt = null, best = 32;
       for (const o of racers){ if (o === h.owner || o.finished) continue; const dx = o.x-h.x, dz = o.z-h.z, d = Math.hypot(dx,dz); if (d < best && dx*Math.sin(h.h) + dz*Math.cos(h.h) > d*0.55){ best = d; tgt = o; } }
       const aim = tgt ? tgt : at(h.idx + 8, clamp(h.lat, -HALF_W + 1.5, HALF_W - 1.5));
+      if (h.landed && h.kind === 'ruler' && tgt) h.h += clamp(wrapA(Math.atan2(aim.x - h.x, aim.z - h.z) - h.h), -dt*2.2, dt*2.2);
       if (!h.landed){
         if (tgt) h.h += clamp(wrapA(Math.atan2(aim.x - h.x, aim.z - h.z) - h.h), -dt*1.6, dt*1.6);
         h.vy -= 11*dt; h.y += h.vy*dt;
         h.spin = (h.spin || 0) + dt*9;
         if (h.y <= ROAD_Y + 0.15){ h.y = ROAD_Y + 0.15; h.landed = h.t; h.sp *= 0.5; if (Math.hypot(player().x-h.x, player().z-h.z) < 40) thud(); for (let k=0;k<10;k++) FXN.emit(h.x, h.y + GH(h.x, h.z), h.z, rnd(-2,2), rnd(0.5,2), rnd(-2,2), 0.6, 0.6, 0.75,0.72,0.68,0.6, 0, 1); }
-      } else { h.sp = Math.max(0, h.sp - dt*13); }
+      } else { h.sp = Math.max(0, h.sp - dt*(h.kind === 'ruler' ? 4 : 13)); }
       h.x += Math.sin(h.h)*h.sp*dt; h.z += Math.cos(h.h)*h.sp*dt; h.lat = latOf(h.x, h.z, h.idx);
       h.mesh.position.set(h.x, h.y + GH(h.x, h.z), h.z);
       h.mesh.rotation.set(h.landed ? Math.PI/2 : h.spin, h.h, h.landed ? 0 : 0.5);   // end over end in the air, flat on the road once down
@@ -3952,7 +3956,8 @@ function update(dt){
       let gone = h.t > 7 || Math.abs(h.lat) > HALF_W + CURB_W + WALK_W;
       for (const r of racers){
         if (r === h.owner && h.t < 3) continue;
-        if (Math.abs(r.y - h.y) < 2.2 && Math.hypot(r.x-h.x, r.z-h.z) < (h.landed ? 0.9 : 1.4) + r.rad*0.5){ if (h.kind === 'ruler') slap(r); else hit(r); gone = true; for (let k=0;k<22;k++) FXA.emit(h.x, h.y, h.z, rnd(-5,5), rnd(2,6), rnd(-5,5), 0.5, 0.4, 0.9,0.95,1,1, -12); if (r.player || h.owner.player) tone(1500, 300, 0.25, 'square', 0.1); break; }
+        const ru = h.kind === 'ruler';
+        if (Math.abs(r.y - h.y) < (ru ? 3.2 : 2.2) && Math.hypot(r.x-h.x, r.z-h.z) < (h.landed ? 0.9 : 1.4) + (ru ? 0.5 : 0) + r.rad*0.5){ if (h.kind === 'ruler') slap(r); else hit(r); gone = true; for (let k=0;k<22;k++) FXA.emit(h.x, h.y, h.z, rnd(-5,5), rnd(2,6), rnd(-5,5), 0.5, 0.4, 0.9,0.95,1,1, -12); if (r.player || h.owner.player) tone(1500, 300, 0.25, 'square', 0.1); break; }
       }
       if (gone){ scene.remove(h.mesh); hazards.splice(i,1); }
       continue;
@@ -4343,7 +4348,7 @@ function startRace(){
   disposeGhost();
   if (mode === 'tt'){ const g = store.get('ghost'); if (g && CHAR[g.char] && CHAR[g.char].model && KART[g.kart]) ghost = { data:g, r:makeGhost(g.char, g.kart) }; }
   rec = []; lapStart = 0; lapTimes = [];
-  field.forEach((r,j) => { if (!r.player) r.skill = 0.95 + 0.01*j; });
+  { const sk = field.map((_, j) => 0.95 + 0.01*j).sort(() => Math.random() - 0.5); field.forEach((r,j) => { if (!r.player) r.skill = sk[j]; }); }
   setRacers(field);
   $('intro').hidden = true; $('finish').hidden = true;
   confettiOn = false;
