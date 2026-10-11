@@ -824,6 +824,24 @@
   #tapPlay .tpLoad[hidden]{display:none;}
 
   body.st-done #mute{top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;left:12px!important;right:auto!important;}
+
+  #lbForm{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0;}
+  #lbForm[hidden]{display:none;}
+  #lbForm input{font:700 15px Rubik,sans-serif;padding:9px 14px;border-radius:999px;border:2px solid #c9d6ee;min-width:0;flex:1 1 140px;max-width:220px;color:#13286e;}
+  #lbForm .cta{padding:9px 16px!important;font-size:15px!important;}
+  #lbOpen{margin-top:4px;}
+  #lbPanel{position:fixed;inset:0;z-index:57;display:flex;align-items:center;justify-content:center;background:rgba(8,16,60,.55);padding:16px;}
+  #lbPanel[hidden]{display:none;}
+  #lbPanel .lbCard{background:#fff;border-radius:26px;padding:16px 18px;width:min(460px,100%);max-height:calc(100dvh - 32px);overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35);text-align:center;}
+  #lbPanel h2{font:italic 900 22px Rubik,sans-serif;color:#13286e;margin:4px 0 10px;}
+  #lbList{list-style:none;margin:0 0 12px;padding:0;text-align:left;}
+  #lbList li{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:12px;font:700 15px Rubik,sans-serif;color:#13286e;}
+  #lbList li:nth-child(odd){background:#f1f5ff;}
+  #lbList li:nth-child(1) .lbR{color:#e0a800;} #lbList .lbR{width:22px;text-align:right;}
+  #lbList img{width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:50% 5%;background:#dfe8ff;}
+  #lbList .lbN{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} #lbList .lbD{font-size:11px;opacity:.6;} #lbList .lbT{font-variant-numeric:tabular-nums;}
+  #lbList .lbEmpty{justify-content:center;opacity:.7;}
+  @media (max-height:520px){ #lbForm input{font-size:13px;padding:6px 10px;} #lbList li{padding:3px 6px;font-size:13px;} #lbList img{width:24px;height:24px;} }
 </style>
 
 <div id="app">
@@ -858,6 +876,7 @@
   <button id="mute" aria-label="Mute">🔊</button>
   <button id="pauseBtn" aria-label="Pause" hidden><svg viewBox="0 0 48 48" fill="currentColor"><rect x="13" y="10" width="8" height="28" rx="2.5"/><rect x="27" y="10" width="8" height="28" rx="2.5"/></svg></button>
   <div id="flash"></div>
+  <div id="lbPanel" hidden><div class="lbCard"><h2>🏆 Top times · Jerusalem Cup</h2><ol id="lbList"></ol><button class="cta" id="lbClose" type="button">Close</button></div></div>
   <div id="pauseMenu" hidden>
     <div class="pmCard">
       <h2 class="outline">Paused</h2>
@@ -933,6 +952,9 @@
         <button class="pmBtn dark" id="toMenu">Main menu</button>
       </div>
       <p class="note" id="shareNote" hidden>Link copied</p>
+      <form id="lbForm" hidden autocomplete="off"><input id="lbName" maxlength="16" placeholder="Your name for the leaderboard" aria-label="Your name"><button class="cta" id="lbSend" type="submit">Submit time</button></form>
+      <p class="note" id="lbMsg" hidden></p>
+      <button class="pmBtn dark" id="lbOpen" type="button" hidden>🏆 Leaderboard</button>
     </div>
   </div>
 </div>
@@ -4348,7 +4370,7 @@ let pick = { char:'yaniv', kart:'red' };
 try { const sv = JSON.parse(localStorage.getItem('balfour.pick') || 'null'); if (sv && CHAR[sv.char] && CHAR[sv.char].model) pick = { char:sv.char, kart:KART[sv.kart] ? sv.kart : CHAR[sv.char].kart }; } catch(e){}
 function savePick(){ try { localStorage.setItem('balfour.pick', JSON.stringify(pick)); } catch(e){} }
 function startRace(){
-  vicOn = false;
+  vicOn = false; lbStart();
   initAudio(); savePick(); clearStandees();
   $('title').hidden = true;
   paused = false; $('pauseMenu').hidden = true; $('pauseBtn').hidden = false; stopMusic();
@@ -4692,7 +4714,7 @@ function showResults(){
     $('finTitle').innerHTML = place === 1 ? 'Elected!' : (['','1st','2nd','3rd'][place] || place + 'th') + ' place';
     $('placeLine').textContent = place === 1 ? 'You won the race to Balfour' : (wv.def.last || wv.def.name || 'They') + ' made it to Balfour first. There is always the next election';
     startVictory(wv); }
-  $('finish').hidden = false; $('hud').hidden = true; $('controls').hidden = true;
+  $('finish').hidden = false; $('hud').hidden = true; $('controls').hidden = true; lbResults();
   setTimeout(() => { if (!$('finish').hidden) $('again').focus({ preventScroll:true }); }, 400);
   if (!showVic && record) startConfetti();
 }
@@ -4735,6 +4757,37 @@ async function saveResultImage(){
   const file = new File([blob], 'race-to-balfour.jpg', { type:'image/jpeg' });
   try { if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'המרוץ לבלפור' }); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'race-to-balfour.jpg'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+// leaderboard: a signed token is fetched when the race starts; the result is submitted with it
+const LB_ON = /(^|\.)adamlevi\.net$/.test(location.hostname);
+let raceToken = null;
+function lbStart(){ raceToken = null; if (!LB_ON || mode === 'tt') return; fetch('/api/balfour/start', { method:'POST' }).then(r => r.ok ? r.json() : null).then(j => { if (j && j.token) raceToken = j.token; }).catch(() => {}); }
+const CHAR_ICON = id => CUT[id] || ICONS[id] || '';
+async function lbLoad(){
+  const ol = $('lbList'); ol.innerHTML = '<li class="lbEmpty">Loading…</li>';
+  try { const j = await (await fetch('/api/balfour/top')).json(); const top = j.top || [];
+    ol.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>';
+    top.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><span class="lbD">${['Easy','Normal','Fast'][e.diff] || ''}</span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; ol.appendChild(li); });
+  } catch(e){ ol.innerHTML = '<li class="lbEmpty">The leaderboard is offline right now</li>'; }
+}
+function lbOpen(){ $('lbPanel').hidden = false; lbLoad(); }
+async function lbSubmit(ev){
+  ev.preventDefault(); const name = $('lbName').value.trim(); if (name.length < 2) { $('lbName').focus(); return; }
+  try { localStorage.setItem('balfour.name', name); } catch(e){}
+  const p = player(), body = { token:raceToken, name, time:+(p.fTime||0).toFixed(2), laps:lapTimes.slice(0, LAPS).map(x => +x.toFixed(2)), char:pick.char, kart:pick.kart, diff:diffLevel };
+  $('lbSend').disabled = true;
+  try { const r = await fetch('/api/balfour/submit', { method:'POST', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(body) }); const j = await r.json();
+    $('lbForm').hidden = true; raceToken = null; $('lbMsg').hidden = false;
+    $('lbMsg').textContent = r.ok ? (j.rank ? `You are #${j.rank} on the leaderboard!` : 'Saved. Not in the top 200 yet') : 'This time could not be saved';
+    if (r.ok) lbOpen();
+  } catch(e){ $('lbMsg').hidden = false; $('lbMsg').textContent = 'The leaderboard is offline right now'; }
+  $('lbSend').disabled = false;
+}
+function lbResults(){
+  $('lbOpen').hidden = !LB_ON; $('lbMsg').hidden = true;
+  const ok = LB_ON && mode !== 'tt' && raceToken && player().finished && lapTimes.length >= LAPS;
+  $('lbForm').hidden = !ok;
+  if (ok){ try { $('lbName').value = localStorage.getItem('balfour.name') || ''; } catch(e){} }
 }
 async function shareResult(){
   if (!lastResult) return;
@@ -4986,6 +5039,7 @@ async function init(){
   $('flyTitle').addEventListener('pointerdown', skipFly);
   $('again').addEventListener('click', startRace);
   $('share').addEventListener('click', shareResult);
+  $('lbForm').addEventListener('submit', lbSubmit); $('lbOpen').addEventListener('click', lbOpen); $('lbClose').addEventListener('click', () => $('lbPanel').hidden = true);
   $('saveImg').addEventListener('click', saveResultImage);
   $('toMenu').addEventListener('click', backToSelect);
   requestAnimationFrame(t => { last = t; frame(t); });
