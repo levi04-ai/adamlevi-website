@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Race to Balfour</title>
+<meta name="theme-color" content="#0d1f4f"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Race%20to%20Balfour%22%2C%22short_name%22%3A%22Balfour%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22landscape%22%2C%22background_color%22%3A%22%230d1f4f%22%2C%22theme_color%22%3A%22%230d1f4f%22%7D">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8F%81%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -677,7 +679,7 @@
   }
   /* ===== v2 responsive layer (design review 1) ===== */
   /* portrait is a first-class layout now: never block it */
-  #rotate{display:none!important;}
+
   /* mute: top-right in menus so it never sits on a title */
   body.st-intro #mute, body.st-loading #mute{left:auto!important;right:calc(14px + env(safe-area-inset-right,0px))!important;top:calc(12px + env(safe-area-inset-top,0px))!important;}
   /* countdown tip moves under the big numbers */
@@ -724,6 +726,27 @@
     #finish .finBtns{position:static;grid-row:1 / span 3;align-self:center;}
     #finish .podium img{width:48px!important;height:48px!important;} #finish .podium div:first-child img{width:64px!important;height:64px!important;}
   }
+
+  /* ===== phones: landscape only + full-screen gate ===== */
+  #rotate{display:none;}
+  @media (orientation: portrait){ body.touch #rotate{display:flex!important;} }
+  #rotate{position:fixed;inset:0;z-index:60;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;color:#fff;
+    background:linear-gradient(180deg, rgba(10,20,60,.55), rgba(10,20,60,.9)), var(--keyart) center/cover no-repeat, #0d1f4f;font-family:var(--display);}
+  #rotate p{font-size:28px;margin:0;font-style:italic;font-weight:900;} #rotate small{font-size:15px;opacity:.8;font-family:inherit;}
+  #rotate .phone{width:56px;height:96px;border:5px solid #fff;border-radius:12px;position:relative;animation:rotPhone 2.2s ease-in-out infinite;}
+  #rotate .phone i{position:absolute;left:50%;bottom:6px;width:12px;height:4px;margin-left:-6px;border-radius:2px;background:#fff;}
+  @keyframes rotPhone{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
+  #tapPlay{position:fixed;inset:0;z-index:59;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(90deg, rgba(10,20,60,.85), rgba(10,20,60,.25)), var(--keyart) center/cover no-repeat, #0d1f4f;}
+  #tapPlay[hidden]{display:none;}
+  #tapPlay .tpInner{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:0 6vw;width:100%;}
+  #tapPlay .tpSmall{color:#9fd0ff;font-weight:800;letter-spacing:.14em;font-size:13px;}
+  #tapPlay .tpBig1{color:#fff;font-family:"Rubik",sans-serif;font-style:italic;font-weight:900;font-size:clamp(30px,7vh,56px);line-height:1;}
+  #tapPlay .tpBig2{color:#ffcc00;font-family:"Rubik",sans-serif;font-style:italic;font-weight:900;font-size:clamp(56px,16vh,120px);line-height:.95;text-shadow:0 6px 0 rgba(0,0,0,.3);}
+  #tapPlay button{margin-top:14px;font-family:"Rubik",sans-serif;font-weight:900;font-size:24px;color:#3a2600;border:0;border-radius:999px;padding:14px 34px;
+    background:linear-gradient(180deg,#ffe66b,#ffcc00 55%,#f2a600);box-shadow:0 6px 0 #c96f00,0 12px 20px rgba(0,0,0,.35);animation:tpPulse 1.4s ease-in-out infinite;}
+  #tapPlay .tpNote{color:rgba(255,255,255,.7);font-size:13px;margin:6px 0 0;}
+  @keyframes tpPulse{50%{transform:scale(1.05)}}
 </style>
 
 <div id="app">
@@ -766,7 +789,8 @@
     </div>
   </div>
 
-  <div id="rotate"><div>📱↻</div><p>Turn your phone sideways</p></div>
+  <div id="rotate"><div class="phone"><i></i></div><p>Turn your phone sideways</p><small>Race to Balfour plays in landscape</small></div>
+  <div id="tapPlay" hidden><div class="tpInner"><div class="tpSmall">JERUSALEM · ELECTION DAY 27.10</div><div class="tpBig1">RACE TO</div><div class="tpBig2">BALFOUR</div><button id="tapPlayBtn">▶ Tap to play</button><p class="tpNote">Opens full screen</p></div></div>
   <div class="overlay" id="loading">
     <div class="load">
       <p class="kicker">Jerusalem · Election Day 27.10</p>
@@ -3992,7 +4016,7 @@ const proj = new V3();
 let wrongT = 0;
 function updateMarkers(dt){
   const p = player(), tag = $('youTag');
-  const showYou = p && (state === 'count' || (state === 'race' && raceT < 6)) && racers.length > 1;
+  const showYou = false;   // owner: no YOU tag
   { const tip = $('raceTip'), want = p && !AUTO && ((state === 'count') || (state === 'race' && raceT < 6 && !p.didDrift));
     if (want && tip.hidden){ tip.innerHTML = state === 'count' ? (isTouch ? 'Touch the screen on <b>2</b> for a rocket start' : 'Hold <b>↑</b> on <b>2</b> for a rocket start') : (isTouch ? 'Hold one side in a turn to <b>drift</b> · let go for a <b>boost</b>' : 'Hold <b>Shift</b> while turning to <b>drift</b> · let go for a <b>boost</b>'); }
     if (want && state === 'race' && tip.dataset.k !== 'race'){ tip.dataset.k = 'race'; tip.innerHTML = isTouch ? 'Hold one side in a turn to <b>drift</b> · let go for a <b>boost</b>' : 'Hold <b>Shift</b> while turning to <b>drift</b> · let go for a <b>boost</b>'; }
@@ -4142,7 +4166,7 @@ function startRace(){
   const field = [];
   // every rival in a different kart (shuffled), so the grid looks like a real field
   const kartBag = KARTS.map(k => k.id).filter(id => id !== pick.kart).sort(() => Math.random() - 0.5).concat(pick.kart);
-  if (mode === 'race') for (let j=0;j<FIELD-1;j++){ const c = src[j % src.length]; field.push(makeRacer(c.id, kartBag[j % kartBag.length])); }
+  if (mode === 'race') for (let j=0;j<Math.min(FIELD-1, pool.length);j++){ const c = pool[j]; field.push(makeRacer(c.id, c.kart && c.kart !== pick.kart ? c.kart : kartBag[j % kartBag.length])); }   // every rival is a different candidate
   const me = makeRacer(pick.char, pick.kart); me.player = true; me.skill = 1;
   field.push(me);   // start at the back: overtakes are the fun
   if (mode === 'tt') MAX_V = DIFF[1].max, BOOST_V = MAX_V*1.45;
@@ -4410,6 +4434,14 @@ function frame(now){
 }
 
 const TIPS = ['<b>Drift</b> through a bend and let go when the sparks turn purple for the biggest boost.', '<b>Police fences</b> on Balfour fall over when you hit them, but they cost you speed.', '<b>The Limo</b> is heavy: it shoves lighter karts out of the way.', '<b>Grass corners</b> are only a shortcut with a boost, or in the Buggy.', 'In <b>Time trial</b> you race your own best run as a ghost.'];
+function goFullLandscape(){
+  const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (p && p.catch) p.catch(() => {}); } catch(e){} };
+  try { const p = req ? req.call(el, { navigationUI:'hide' }) : null; if (p && p.then) p.then(lock).catch(lock); else lock(); } catch(e){ lock(); }
+  $('tapPlay').hidden = true;
+}
+document.addEventListener('fullscreenchange', () => { if (isTouch && !document.fullscreenElement && state !== 'loading') $('tapPlay').hidden = false; });
+if (isTouch){ $('tapPlay').hidden = false; $('tapPlayBtn').addEventListener('click', goFullLandscape); }
 async function init(){
   document.documentElement.style.setProperty('--keyart', KEYART ? `url(${KEYART})` : 'none');
   $('loadTip').innerHTML = 'Tip: ' + TIPS[Math.floor(Math.random()*TIPS.length)];
@@ -4434,9 +4466,10 @@ async function init(){
   await progress(1, 'Ready');
   $('loading').hidden = true; enterSelect();
   // browsers only allow sound (and full screen) after the first touch or key
-  const firstTouch = () => { initAudio(); if (state === 'intro') startMusic('menu'); if (isTouch){ const el = document.documentElement; (el.requestFullscreen ? el.requestFullscreen() : Promise.reject()).catch(() => {}); } removeEventListener('pointerdown', firstTouch); removeEventListener('keydown', firstTouch); };
+  const firstTouch = () => { initAudio(); if (state === 'intro') startMusic('menu'); removeEventListener('pointerdown', firstTouch); removeEventListener('keydown', firstTouch); };
   addEventListener('pointerdown', firstTouch); addEventListener('keydown', firstTouch);
   $('startBtn').addEventListener('click', enterSelect);
+  if (isTouch) $('tapPlay').hidden = !!document.fullscreenElement;
   $('go').addEventListener('click', goNext);
   $('stepBack').addEventListener('click', goBack);
   $('pauseBtn').addEventListener('click', () => setPause(true));
