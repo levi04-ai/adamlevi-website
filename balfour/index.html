@@ -912,6 +912,7 @@
   .lbInline .lbEmpty{justify-content:center;opacity:.7;}
   @media (max-height:520px){ #finish.vic .finBtns .cta, #finish.vic .finBtns .pmBtn{font-size:13px!important;padding:7px 10px!important;} #finish.vic .finBtns .iconBtn{width:34px;height:34px;}
     .lbInline li{font-size:12px;padding:2px 6px;} .lbInline img{width:18px;height:18px;} #finish.vic .lapList{display:none!important;} }
+  body.touch.st-done #mute{display:none!important;}
 </style>
 
 <div id="app">
@@ -1020,7 +1021,7 @@
         <button class="pmBtn dark" id="toMenu">Main menu</button>
       </div>
       <p class="note" id="shareNote" hidden>Link copied</p>
-      <form id="lbForm" hidden autocomplete="off"><input id="lbName" maxlength="16" placeholder="Your name for the leaderboard" aria-label="Your name"><button class="cta" id="lbSend" type="submit">Submit time</button></form>
+      <form id="lbForm" hidden autocomplete="off"><input id="lbName" maxlength="16" placeholder="Your name" aria-label="Your name"><button class="cta" id="lbSend" type="submit">Submit time</button></form>
       <p class="note" id="lbMsg" hidden></p>
       <button class="pmBtn dark" id="lbOpen" type="button" hidden>🏆 Leaderboard</button>
       <div class="lbInline" id="lbInlineWrap" hidden><h3>🏆 Top times</h3><ol id="lbInline"></ol></div>
@@ -2550,7 +2551,7 @@ const SPARK = [hex('#5cc8ff'), hex('#ff9d2e'), hex('#d66bff')];
 let racers = [];
 const blobMat = () => new THREE.MeshBasicMaterial({ map:TEX.blob, transparent:true, depthWrite:false });
 // a little slower than before, and the computer drivers push harder
-const DIFF = [ { ai:0.95, max:30, rb:0.12 }, { ai:1.06, max:30, rb:0.035 }, { ai:1.13, max:30, rb:0.0 } ];
+const DIFF = [ { ai:0.95, max:30, rb:0.12 }, { ai:1.06, max:30, rb:0.035 }, { ai:1.17, max:30, rb:0.0 } ];
 let diffLevel = 1;
 const KART_LEN = 2.6, CHAR_H = 1.75, VS = 1.25;   // VS: display scale of kart + driver
 const wpos = b => b.getWorldPosition(new V3());
@@ -4568,8 +4569,8 @@ function buildVictory(){
   B.podTop = 1.0;   // the winner stands on the stage, behind a lectern
   const lecTex = canvasTex(256, 320, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#1f4fd1'); gr.addColorStop(1,'#0b2a8c'); g.fillStyle = gr; g.fillRect(0,0,w,h);
     g.fillStyle = '#fff'; g.fillRect(0,44,w,10); g.fillRect(0,h-54,w,10);
-    g.strokeStyle = '#ffcc00'; g.lineWidth = 7; g.beginPath(); g.arc(w/2, h/2, 62, 0, Math.PI*2); g.stroke();
-    g.fillStyle = '#ffcc00'; g.font = '900 46px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('27.10', w/2, h/2 + 2); });
+    g.strokeStyle = '#ffcc00'; g.lineWidth = 7; g.beginPath(); g.arc(w/2, h/2, 78, 0, Math.PI*2); g.stroke();
+    g.fillStyle = '#ffcc00'; g.font = '900 40px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('27.10', w/2, h/2 + 2); });
   const lec = new THREE.Group(), wood = new THREE.MeshStandardMaterial({ color:'#13286e', roughness:0.55 });
   const front = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.45, 0.62), [wood, wood, wood, wood, new THREE.MeshStandardMaterial({ map:lecTex, roughness:0.5 }), wood]); front.position.y = 0.725; lec.add(front);
   const top = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.08, 0.78), gold); top.position.set(0, 1.48, -0.04); top.rotation.x = -0.18; lec.add(top);
