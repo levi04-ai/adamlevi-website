@@ -970,7 +970,6 @@
       <button class="pmBtn" id="pmRestart">Restart race</button>
       <button class="pmBtn" id="pmMenu">Main menu</button>
       <button class="pmBtn" id="pmSound">Sound: on</button>
-      <label class="steerRow">Steering <input class="steerRange" type="range" min="0.4" max="1.8" step="0.1" value="1"><b class="steerVal">100%</b></label>
     </div>
   </div>
 
@@ -1000,7 +999,6 @@
       <div class="kgrid" id="karts"></div>
       <div class="tpane" id="tracks"><h3 class="cup">Jerusalem Cup</h3><div class="tgrid" id="tgrid"></div>
         <div class="opts"><div class="optRow"><span class="optLab">Mode</span><div class="seg" id="modes"><button data-m="race" class="on">Race</button><button data-m="tt">Time trial</button></div></div>
-        <div class="optRow"><span class="optLab">Steering</span><label class="steerRow seg"><input class="steerRange" type="range" min="0.4" max="1.8" step="0.1" value="1"><b class="steerVal">100%</b></label></div>
         <div class="optRow" id="diffRow"><span class="optLab">Difficulty</span><div class="seg" id="diff"><button data-d="0">Easy</button><button data-d="1" class="on">Medium</button><button data-d="2">Hard</button></div></div></div></div>
     </section>
     <aside class="stage">
@@ -2333,7 +2331,7 @@ function updatePanels(dt){
         if (Math.abs(along) < q.W/2 + r.rad*0.4 && Math.abs(across) < r.rad*0.8 + 0.25 && Math.abs(r.y - ROAD_Y) < 1.5){
           q.fallen = true; q.t = 0; q.dir = Math.sign(Math.sin(r.h)*tx + Math.cos(r.h)*tz) || 1;
           q.vx = Math.sin(r.h)*r.v*0.35; q.vz = Math.cos(r.h)*r.v*0.35;
-          r.v *= 0.72; r.wobble = 0.6; r.yr = (r.yr||0) + rnd(-0.8, 0.8);
+          r.v *= 0.72; r.wobble = 0.6; r.yr = (r.yr||0) + rnd(-0.25, 0.25);
           for (let k=0;k<18;k++) FXA.emit(q.x, 0.8, q.z, rnd(-4,4), rnd(1,5), rnd(-4,4), 0.4, 0.3, 1,0.9,0.6,1, -12);
           if (r.player){ tone(900, 300, 0.2, 'square', 0.1); noiseSnd(0.3, 0.4, 0, 2400, 1.2); camShake = Math.max(camShake, 0.25); }
           break;
@@ -2570,7 +2568,7 @@ const blobMat = () => new THREE.MeshBasicMaterial({ map:TEX.blob, transparent:tr
 // a little slower than before, and the computer drivers push harder
 const DIFF = [ { ai:0.97, max:30, rb:0.1 }, { ai:1.1, max:30, rb:0.02 }, { ai:1.2, max:30, rb:0.0 } ];
 let diffLevel = 1;
-let steerSens = 1; try { const v = parseFloat(localStorage.getItem('balfour.steer')); if (v >= 0.4 && v <= 1.8) steerSens = v; } catch(e){}
+const steerSens = 1;
 function setSteerSens(v){ steerSens = clamp(v, 0.4, 1.8); try { localStorage.setItem('balfour.steer', String(steerSens)); } catch(e){} document.querySelectorAll('.steerVal').forEach(el => el.textContent = Math.round(steerSens*100) + '%'); document.querySelectorAll('.steerRange').forEach(el => { if (+el.value !== steerSens) el.value = steerSens; }); }
 const KART_LEN = 2.6, CHAR_H = 1.75, VS = 1.25;   // VS: display scale of kart + driver
 const wpos = b => b.getWorldPosition(new V3());
@@ -3737,7 +3735,7 @@ function updateRacer(r, dt){
     const sr = (isTouch ? 3.6 : 7)*Math.sqrt(steerSens); r.steerIn = (r.steerIn||0) + clamp(want*steerSens - (r.steerIn||0), -dt*sr, dt*sr);
     steer = r.steerIn;
     brake = keys.down; gas = !brake && !(r.stallT > 0); drift = keys.drift; if (r.stallT > 0) r.stallT -= dt;
-    if (isTouch){ r.holdTurn = (want !== 0 && r.v > 14) ? (r.holdTurn||0) + dt : 0; if (r.holdTurn > 0.6) drift = true; }
+    if (isTouch){ r.holdTurn = (want !== 0 && want === r.holdSide && r.v > 14) ? (r.holdTurn||0) + dt : 0; r.holdSide = want; if (r.holdTurn > 0.8) drift = true; }
   } else if (state === 'race' || state === 'done'){
     const look = 8 + Math.floor(r.v*0.22);
     const lane = r.finished ? 0 : r.lane + Math.sin(raceT*0.35 + r.phase)*2.2;
@@ -3822,8 +3820,9 @@ function updateRacer(r, dt){
   // steering & drifting
   const grip = Math.min(1, Math.abs(r.v)/7) * (r.v < 0 ? -1 : 1);
   let rate = TURN*r.turnK;
+  if (r.player) rate *= 1 - 0.3*clamp((Math.abs(r.v) - 18)/22, 0, 1);   // calmer steering at speed, sharp when slow
   if (r.player){
-    if (drift && Math.abs(steer) > 0.3 && r.v > 12 && !r.driftDir && !r.air && r.y <= WALK_Y + 0.01){ r.driftDir = Math.sign(steer); r.hop = 0.18; r.vy = 3.2; r.didDrift = true; }
+    if (drift && Math.abs(steer) > 0.3 && r.v > 12 && !r.driftDir && !r.air && r.y <= WALK_Y + 0.01){ r.driftDir = Math.sign(steer); r.hop = isTouch ? 0.06 : 0.18; r.vy = isTouch ? 0.8 : 3.2; r.didDrift = true; }
     if (r.driftDir && (!drift || r.v < 8)){
       const stage = r.drift > 2.1 ? 3 : r.drift > 1.3 ? 2 : r.drift > 0.55 ? 1 : 0;
       if (stage && racing){ r.boostT = Math.max(r.boostT, [0,0.75,1.3,2.0][stage]); r.boostK = [1,0.94,1,1.04][stage]; r.flameTier = stage; boostSound(r); if (r.player){ camShake = Math.max(camShake, 0.05*stage); if (stage === 3) tone(1320, 1760, 0.18, 'triangle', 0.06); } }
@@ -4096,7 +4095,7 @@ function update(dt){
         };
         apply(A, -nx*J, -nz*J, mA); apply(B, nx*J, nz*J, mB);
         const spinK = 0.09;
-        const twist = (R, ux, uz, m) => { const fx = Math.sin(R.h), fz = Math.cos(R.h), lon = ux*fx + uz*fz, lat = ux*(-fz) + uz*fx; R.yr = clamp((R.yr||0) + spinK*lon*lat*J/m*2, -3, 3); };
+        const twist = (R, ux, uz, m) => { const fx = Math.sin(R.h), fz = Math.cos(R.h), lon = ux*fx + uz*fz, lat = ux*(-fz) + uz*fx; R.yr = clamp((R.yr||0) + spinK*lon*lat*J/m*1.2, -1.2, 1.2); };
         twist(A, nx, nz, mA); twist(B, -nx, -nz, mB);
         if (A.bigT > 0) hit(B); if (B.bigT > 0) hit(A);
         A.bumpT = B.bumpT = 0.3;
@@ -4395,7 +4394,8 @@ function updateMarkers(dt){
   if (showYou){ proj.set(p.x, p.y + GH(p.x, p.z) + Math.min(p.height, 2.1) + 0.35, p.z).project(camera); tag.style.left = ((proj.x+1)/2*innerWidth) + 'px'; tag.style.top = ((1-proj.y)/2*innerHeight) + 'px'; }
   if (state === 'race' && p && !p.finished){
     const t = T[p.idx], dot = Math.sin(p.h)*t.tx + Math.cos(p.h)*t.tz;
-    wrongT = dot < -0.3 && p.v > 1.5 ? wrongT + dt : Math.max(0, wrongT - dt*3);
+    wrongT = dot < -0.3 && (p.v > 1.5 || p.v < -1) ? wrongT + dt : Math.max(0, wrongT - dt*3);
+    if (wrongT > 1 && !p.spinT){ const want = Math.atan2(t.tx, t.tz); p.h += clamp(wrapA(want - p.h), -dt*2.2, dt*2.2); }
   } else wrongT = 0;
   $('wrongWay').hidden = wrongT < 1;
 }
@@ -5203,7 +5203,10 @@ function frame(now){
 }
 
 const TIPS = ['<b>Drift</b> through a bend and let go when the sparks turn purple for the biggest boost.', '<b>Police fences</b> on Balfour fall over when you hit them, but they cost you speed.', '<b>The Limo</b> is heavy: it shoves lighter karts out of the way.', '<b>Grass corners</b> are only a shortcut with a boost, or in the Buggy.', 'In <b>Time trial</b> you race your own best run as a ghost.'];
+const IS_IOS = /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IOS_APP = IS_IOS && (navigator.standalone || matchMedia('(display-mode: standalone)').matches);
 function goFullLandscape(){
+  if (IS_IOS){ $('tapPlay').hidden = true; return; }
   const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
   const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (p && p.catch) p.catch(() => {}); } catch(e){} };
   try { const p = req ? req.call(el, { navigationUI:'hide' }) : null; if (p && p.then) p.then(lock).catch(lock); else lock(); } catch(e){ lock(); }
@@ -5211,7 +5214,8 @@ function goFullLandscape(){
 }
 document.addEventListener('fullscreenchange', () => { if (isTouch && !document.fullscreenElement && state !== 'loading'){ $('tapPlay').hidden = false; setPause(true); } });
 if (isTouch) matchMedia('(orientation: portrait)').addEventListener('change', e => { if (e.matches) setPause(true); });
-if (isTouch){ $('tapPlay').hidden = false; $('tapPlayBtn').addEventListener('click', goFullLandscape); }
+if (isTouch){ $('tapPlay').hidden = false; $('tapPlayBtn').addEventListener('click', goFullLandscape);
+  if (IS_IOS){ const n = document.querySelector('#tapPlay .tpNote'); if (n) n.innerHTML = IOS_APP ? '' : 'For full screen on iPhone: tap <b>Share ⤴</b> then <b>Add to Home Screen</b>'; } }
 async function init(){
   document.documentElement.style.setProperty('--keyart', KEYART ? `url(${KEYART})` : 'none');
   $('loadTip').innerHTML = 'Tip: ' + TIPS[Math.floor(Math.random()*TIPS.length)];
@@ -5250,7 +5254,6 @@ async function init(){
   $('flyTitle').addEventListener('pointerdown', skipFly);
   $('again').addEventListener('click', startRace);
   $('share').addEventListener('click', shareResult);
-  document.querySelectorAll('.steerRange').forEach(el => { el.addEventListener('input', () => setSteerSens(+el.value)); el.addEventListener('keydown', e => e.stopPropagation()); }); setSteerSens(steerSens);
   $('lbForm').addEventListener('submit', lbSubmit); $('lbOpen').addEventListener('click', lbOpen); $('lbClose').addEventListener('click', () => $('lbPanel').hidden = true);
   $('saveImg').addEventListener('click', saveResultImage);
   $('toMenu').addEventListener('click', backToSelect);
