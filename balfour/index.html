@@ -921,6 +921,12 @@
   @keyframes hfIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
   @media (max-height:520px){ #hitFeed{top:calc(78px + env(safe-area-inset-top,0px));} #hitFeed .hf{font-size:11px;padding:2px 10px;} }
   #loading:not([hidden]){background-image:radial-gradient(ellipse 46% 52% at 50% 46%, rgba(8,16,48,.78), rgba(8,16,48,.35) 70%, rgba(8,16,48,.15)), var(--keyart)!important;background-size:cover!important;background-position:center!important;}
+
+  .steerRow{display:flex;align-items:center;gap:10px;color:#fff;font:800 15px Rubik,sans-serif;}
+  #pauseMenu .steerRow{justify-content:space-between;padding:6px 6px 0;}
+  .steerRow input{flex:1;min-width:110px;accent-color:#ffcc00;}
+  .steerRow b{min-width:44px;text-align:right;color:#ffcc00;}
+  #intro .steerRow.seg{padding:6px 14px;}
 </style>
 
 <div id="app">
@@ -964,6 +970,7 @@
       <button class="pmBtn" id="pmRestart">Restart race</button>
       <button class="pmBtn" id="pmMenu">Main menu</button>
       <button class="pmBtn" id="pmSound">Sound: on</button>
+      <label class="steerRow">Steering <input class="steerRange" type="range" min="0.4" max="1.8" step="0.1" value="1"><b class="steerVal">100%</b></label>
     </div>
   </div>
 
@@ -993,6 +1000,7 @@
       <div class="kgrid" id="karts"></div>
       <div class="tpane" id="tracks"><h3 class="cup">Jerusalem Cup</h3><div class="tgrid" id="tgrid"></div>
         <div class="opts"><div class="optRow"><span class="optLab">Mode</span><div class="seg" id="modes"><button data-m="race" class="on">Race</button><button data-m="tt">Time trial</button></div></div>
+        <div class="optRow"><span class="optLab">Steering</span><label class="steerRow seg"><input class="steerRange" type="range" min="0.4" max="1.8" step="0.1" value="1"><b class="steerVal">100%</b></label></div>
         <div class="optRow" id="diffRow"><span class="optLab">Difficulty</span><div class="seg" id="diff"><button data-d="0">Easy</button><button data-d="1" class="on">Medium</button><button data-d="2">Hard</button></div></div></div></div>
     </section>
     <aside class="stage">
@@ -2562,6 +2570,8 @@ const blobMat = () => new THREE.MeshBasicMaterial({ map:TEX.blob, transparent:tr
 // a little slower than before, and the computer drivers push harder
 const DIFF = [ { ai:0.97, max:30, rb:0.1 }, { ai:1.1, max:30, rb:0.02 }, { ai:1.2, max:30, rb:0.0 } ];
 let diffLevel = 1;
+let steerSens = 1; try { const v = parseFloat(localStorage.getItem('balfour.steer')); if (v >= 0.4 && v <= 1.8) steerSens = v; } catch(e){}
+function setSteerSens(v){ steerSens = clamp(v, 0.4, 1.8); try { localStorage.setItem('balfour.steer', String(steerSens)); } catch(e){} document.querySelectorAll('.steerVal').forEach(el => el.textContent = Math.round(steerSens*100) + '%'); document.querySelectorAll('.steerRange').forEach(el => { if (+el.value !== steerSens) el.value = steerSens; }); }
 const KART_LEN = 2.6, CHAR_H = 1.75, VS = 1.25;   // VS: display scale of kart + driver
 const wpos = b => b.getWorldPosition(new V3());
 function rotateWorld(bone, q){
@@ -3469,7 +3479,7 @@ function hitBuildings(r){
     }
     r.x = px + nx*1.3; r.z = pz + nz*1.3;
     const dx = Math.sin(r.h), dz = Math.cos(r.h), dn = dx*nx + dz*nz;
-    if (dn < 0){ const a = -dn, e = a > 0.55 ? 1.25 : 1.0; r.h = Math.atan2(dx - e*dn*nx, dz - e*dn*nz); r.v *= clamp(1 - 0.75*a*a - 0.1*a, 0.3, 0.97); if (a > 0.35){ r.driftDir = 0; r.drift = 0; } if (r.player && a > 0.5) camShake = Math.max(camShake, 0.18); }
+    if (dn < 0){ const a = -dn, want = Math.atan2(dx - dn*nx + nx*0.15, dz - dn*nz + nz*0.15); r.h += clamp(wrapA(want - r.h), -dt*5, dt*5); r.v *= Math.pow(clamp(1 - 0.55*a*a - 0.08*a, 0.4, 0.98), dt*20); if (a > 0.45){ r.driftDir = 0; r.drift = 0; } if (r.player && a > 0.5 && r.wallT <= 0) camShake = Math.max(camShake, 0.15); }
     if (r.player && r.wallT <= 0){ tone(120,60,0.15,'square',0.08); r.wallT = 0.25; for (let k=0;k<8;k++) FXA.emit(r.x, r.y+0.5, r.z, rnd(-3,3), rnd(2,5), rnd(-3,3), 0.35, 0.3, 1,0.85,0.4,1, -12); }
     return;
   }
@@ -3724,7 +3734,7 @@ function updateRacer(r, dt){
   let steer = 0, gas = false, brake = false, drift = false;
   if (r.player && racing && !AUTO){
     const want = (keys.right?1:0) - (keys.left?1:0);
-    const sr = isTouch ? 3.6 : 7; r.steerIn = (r.steerIn||0) + clamp(want - (r.steerIn||0), -dt*sr, dt*sr);
+    const sr = (isTouch ? 3.6 : 7)*Math.sqrt(steerSens); r.steerIn = (r.steerIn||0) + clamp(want*steerSens - (r.steerIn||0), -dt*sr, dt*sr);
     steer = r.steerIn;
     brake = keys.down; gas = !brake && !(r.stallT > 0); drift = keys.drift; if (r.stallT > 0) r.stallT -= dt;
     if (isTouch){ r.holdTurn = (want !== 0 && r.v > 14) ? (r.holdTurn||0) + dt : 0; if (r.holdTurn > 0.6) drift = true; }
@@ -3915,13 +3925,16 @@ function updateRacer(r, dt){
     r.x -= p.nx*s*(push+0.05); r.z -= p.nz*s*(push+0.05);
     // bounce off the wall: reflect the heading and lose speed in proportion to the impact angle
     const dx = Math.sin(r.h), dz = Math.cos(r.h), dn = dx*p.nx + dz*p.nz;
-    if (dn*s > 0.05){
-      const a = Math.abs(dn), e = a > 0.55 ? 1.25 : 1.0, rx = dx - e*dn*p.nx, rz = dz - e*dn*p.nz;
-      r.h = Math.atan2(rx, rz);
-      r.v *= clamp(1 - 0.75*a*a - 0.1*a, 0.3, 0.97);
-      if (a > 0.35){ r.driftDir = 0; r.drift = 0; }
-      if (r.player && a > 0.5) camShake = Math.max(camShake, 0.18);
-    } else r.v *= 0.99;
+    if (dn*s > 0.02){
+      const a = Math.abs(dn), fw = Math.sign(dx*p.tx + dz*p.tz) || 1;
+      // along the wall the way the kart was heading (mostly forward along the road), pushed slightly inward
+      const rx = p.tx*fw - s*p.nx*0.18, rz = p.tz*fw - s*p.nz*0.18;
+      const want = Math.atan2(rx, rz), turn = wrapA(want - r.h);
+      r.h += clamp(turn, -dt*5, dt*5);   // turn smoothly along the wall (~5 deg a frame): no snapping, never spun round
+      r.v *= Math.pow(clamp(1 - 0.55*a*a - 0.08*a, 0.4, 0.98), dt*20);
+      if (a > 0.45){ r.driftDir = 0; r.drift = 0; }
+      if (r.player && a > 0.5 && r.wallT <= 0) camShake = Math.max(camShake, 0.15);
+    } else r.v *= 0.995;
     if (r.player && r.wallT <= 0){ tone(120,60,0.15,'square',0.08); r.wallT = 0.25; for (let k=0;k<8;k++) FXA.emit(r.x, r.y+0.5, r.z, rnd(-3,3), rnd(2,5), rnd(-3,3), 0.35, 0.3, 1,0.85,0.4,1, -12); }
   }
   if (r.wallT > 0) r.wallT -= dt;
@@ -3933,7 +3946,7 @@ function updateRacer(r, dt){
       if ((o.inst || o.grp) && r.v > 6){ knock(o, r); continue; }
       const nx = dx/d, nz = dz/d; r.x += nx*(min-d); r.z += nz*(min-d);
       const fx = Math.sin(r.h), fz = Math.cos(r.h), into = -(fx*nx + fz*nz);
-      if (into > 0){ const tx = fx + nx*into, tz = fz + nz*into; r.h = Math.atan2(tx, tz); r.v *= 1 - 0.18*into; if (r.player && r.wallT <= 0){ tone(140, 70, 0.12, 'square', 0.07); r.wallT = 0.3; } }
+      if (into > 0){ const tx = fx + nx*into, tz = fz + nz*into; r.h += clamp(wrapA(Math.atan2(tx, tz) - r.h), -dt*6, dt*6); r.v *= 1 - 0.18*into*dt*20; if (r.player && r.wallT <= 0){ tone(140, 70, 0.12, 'square', 0.07); r.wallT = 0.3; } }
     }
   }
   // boost pads
@@ -5231,6 +5244,7 @@ async function init(){
   $('flyTitle').addEventListener('pointerdown', skipFly);
   $('again').addEventListener('click', startRace);
   $('share').addEventListener('click', shareResult);
+  document.querySelectorAll('.steerRange').forEach(el => { el.addEventListener('input', () => setSteerSens(+el.value)); el.addEventListener('keydown', e => e.stopPropagation()); }); setSteerSens(steerSens);
   $('lbForm').addEventListener('submit', lbSubmit); $('lbOpen').addEventListener('click', lbOpen); $('lbClose').addEventListener('click', () => $('lbPanel').hidden = true);
   $('saveImg').addEventListener('click', saveResultImage);
   $('toMenu').addEventListener('click', backToSelect);
