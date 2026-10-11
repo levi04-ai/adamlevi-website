@@ -882,6 +882,36 @@
     #intro .stepTitle{display:none!important;}
     #intro[data-step="track"] .stage .mapPane{display:none!important;}
   }
+
+  /* ===== results card, pass 43 ===== */
+  #finish.vic .card{background:rgba(10,20,55,.9)!important;border:2px solid rgba(255,255,255,.22)!important;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,.45)!important;max-height:calc(100dvh - 32px);overflow:auto!important;}
+  #finish.vic .card::before{background:linear-gradient(#ffcc00,#f2a600)!important;color:#3a2600!important;}
+  #finish.vic .date{background:rgba(255,255,255,.12)!important;color:#fff!important;}
+  #finish.vic .logo{color:#ffcc00!important;text-shadow:0 3px 0 rgba(0,0,0,.35)!important;}
+  #finish.vic #placeLine{color:#dfe8ff!important;}
+  #finish.vic .note{color:rgba(255,255,255,.75)!important;}
+  #finish.vic #bestLine{display:none;}
+  #finish.vic .lapList{color:#fff;opacity:.8;font-size:12px!important;gap:6px!important;} #finish.vic .lapList li{background:rgba(255,255,255,.1)!important;color:#fff!important;}
+  #finish.vic .finBtns{display:grid!important;grid-template-columns:1fr 1fr auto auto;gap:8px!important;align-items:center;}
+  #finish.vic .finBtns .cta, #finish.vic .finBtns .pmBtn{border-radius:999px!important;font:800 16px Rubik,sans-serif!important;padding:10px 14px!important;box-shadow:none!important;transform:none!important;}
+  #finish.vic .finBtns .cta{background:#ffcc00!important;color:#3a2600!important;border:2px solid rgba(255,255,255,.55)!important;}
+  #finish.vic .finBtns .pmBtn{background:rgba(255,255,255,.1)!important;color:#fff!important;border:2px solid rgba(255,255,255,.25)!important;}
+  #finish.vic .finBtns .iconBtn{width:44px;height:44px;padding:0!important;font-size:18px!important;display:grid;place-items:center;}
+  #finish.vic #again{order:1;} #finish.vic #toMenu{order:2;} #finish.vic #share{order:3;} #finish.vic #saveImg{order:4;}
+  #finish.vic #lbForm input{background:rgba(255,255,255,.95);}
+  #finish.vic #lbForm .cta{background:#ffcc00!important;color:#3a2600!important;border-radius:999px!important;box-shadow:none!important;}
+  .lbInline{width:100%;text-align:left;margin-top:4px;}
+  .lbInline[hidden]{display:none;}
+  .lbInline h3{margin:2px 0 6px;font:900 15px Rubik,sans-serif;color:#ffcc00;text-align:center;}
+  .lbInline ol{list-style:none;margin:0;padding:0;}
+  .lbInline li{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:10px;font:700 14px Rubik,sans-serif;color:#fff;}
+  .lbInline li:nth-child(odd){background:rgba(255,255,255,.07);}
+  .lbInline li:nth-child(1) .lbR{color:#ffcc00;} .lbInline .lbR{width:18px;text-align:right;}
+  .lbInline img{width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:50% 5%;background:#2b3a7a;}
+  .lbInline .lbN{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .lbInline .lbT{font-variant-numeric:tabular-nums;}
+  .lbInline .lbEmpty{justify-content:center;opacity:.7;}
+  @media (max-height:520px){ #finish.vic .finBtns .cta, #finish.vic .finBtns .pmBtn{font-size:13px!important;padding:7px 10px!important;} #finish.vic .finBtns .iconBtn{width:34px;height:34px;}
+    .lbInline li{font-size:12px;padding:2px 6px;} .lbInline img{width:18px;height:18px;} #finish.vic .lapList{display:none!important;} }
 </style>
 
 <div id="app">
@@ -985,14 +1015,15 @@
       <p class="note" id="bestLine"></p>
       <div class="finBtns">
         <button class="cta" id="again">Race again</button>
-        <button class="pmBtn dark" id="share">Share result</button>
-        <button class="pmBtn dark" id="saveImg">Save image</button>
+        <button class="pmBtn dark iconBtn" id="share" aria-label="Share result" title="Share">⤴</button>
+        <button class="pmBtn dark iconBtn" id="saveImg" aria-label="Save image" title="Save image">⬇</button>
         <button class="pmBtn dark" id="toMenu">Main menu</button>
       </div>
       <p class="note" id="shareNote" hidden>Link copied</p>
       <form id="lbForm" hidden autocomplete="off"><input id="lbName" maxlength="16" placeholder="Your name for the leaderboard" aria-label="Your name"><button class="cta" id="lbSend" type="submit">Submit time</button></form>
       <p class="note" id="lbMsg" hidden></p>
       <button class="pmBtn dark" id="lbOpen" type="button" hidden>🏆 Leaderboard</button>
+      <div class="lbInline" id="lbInlineWrap" hidden><h3>🏆 Top times</h3><ol id="lbInline"></ol></div>
     </div>
   </div>
 </div>
@@ -4484,10 +4515,34 @@ function buildVictory(){
   const navy = new THREE.MeshStandardMaterial({ color:'#13286e', roughness:0.6 }), gold = new THREE.MeshStandardMaterial({ color:'#ffc21a', roughness:0.35, metalness:0.3, emissive:'#5a3a00', emissiveIntensity:0.4 });
   const stage = new THREE.Mesh(new THREE.CylinderGeometry(3.0, 3.2, 1.0, 48), navy); stage.position.y = 0.5; vic.add(stage);
   const lip = new THREE.Mesh(new THREE.TorusGeometry(3.05, 0.07, 8, 64), gold); lip.rotation.x = Math.PI/2; lip.position.y = 1.0; vic.add(lip);
-  const podTex = canvasTex(256, 160, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#fff6d6'); gr.addColorStop(1,'#ffd34d'); g.fillStyle = gr; g.fillRect(0,0,w,h);
-    g.fillStyle = '#13286e'; g.font = '900 120px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('1', w/2, h/2 + 6); });
-  const pod = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.75, 1.3), [gold, gold, gold, gold, new THREE.MeshStandardMaterial({ map:podTex, roughness:0.5 }), gold]); pod.position.set(0, 1.375, 0.4); vic.add(pod);
-  B.podTop = 1.75;
+  B.podTop = 1.0;   // the winner stands on the stage, behind a lectern
+  const lecTex = canvasTex(256, 320, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#1f4fd1'); gr.addColorStop(1,'#0b2a8c'); g.fillStyle = gr; g.fillRect(0,0,w,h);
+    g.fillStyle = '#fff'; g.fillRect(0,44,w,10); g.fillRect(0,h-54,w,10);
+    g.strokeStyle = '#ffcc00'; g.lineWidth = 7; g.beginPath(); g.arc(w/2, h/2, 62, 0, Math.PI*2); g.stroke();
+    g.fillStyle = '#ffcc00'; g.font = '900 46px Rubik, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('27.10', w/2, h/2 + 2); });
+  const lec = new THREE.Group(), wood = new THREE.MeshStandardMaterial({ color:'#13286e', roughness:0.55 });
+  const front = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.45, 0.62), [wood, wood, wood, wood, new THREE.MeshStandardMaterial({ map:lecTex, roughness:0.5 }), wood]); front.position.y = 0.725; lec.add(front);
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.08, 0.78), gold); top.position.set(0, 1.48, -0.04); top.rotation.x = -0.18; lec.add(top);
+  for (const sx of [-0.16, 0.16]){   // two goose-neck microphones
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.55, 6), new THREE.MeshStandardMaterial({ color:'#222', metalness:0.6, roughness:0.4 }));
+    neck.position.set(sx, 1.72, -0.12); neck.rotation.x = -0.55; neck.rotation.z = -sx*1.2; lec.add(neck);
+    const mic = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), new THREE.MeshStandardMaterial({ color:'#333', roughness:0.7 })); mic.scale.set(1, 1.5, 1); mic.position.set(sx*0.55, 1.95, -0.26); lec.add(mic); }
+  lec.scale.setScalar(0.74); lec.position.set(0, 1.0, 1.05); vic.add(lec); B.lectern = lec;
+  // the party behind him on a riser, applauding
+  const riser = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.35, 1.4), navy); riser.position.set(0, 1.17, -2.5); vic.add(riser);
+  const PN = 9, suits = ['#1b2238','#232a44','#2b3150','#1d1d24','#30364f'], pskins = ['#f1c8a5','#e3ae8c','#c98b62','#f5d6bf'], phair = ['#2a1d14','#8a8a8a','#1b1b1b','#5b3a22','#d9d9d9'];
+  const pb = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.3, 0.85, 4, 10).translate(0, 0.75, 0), new THREE.MeshLambertMaterial(), PN);
+  const ph = new THREE.InstancedMesh(new THREE.SphereGeometry(0.23, 12, 10).translate(0, 1.62, 0), new THREE.MeshLambertMaterial(), PN);
+  const pa = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.085, 0.55, 3, 6).translate(0, 0.3, 0), new THREE.MeshLambertMaterial(), PN*2);
+  const phr = new THREE.InstancedMesh(new THREE.SphereGeometry(0.245, 12, 8, 0, Math.PI*2, 0, Math.PI*0.42).translate(0, 1.64, -0.02), new THREE.MeshLambertMaterial(), PN);
+  const pshirt = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.2, 0.42).translate(0, 1.18, 0.305), new THREE.MeshLambertMaterial({ color:'#f4f4f4' }), PN);
+  B.party = [];
+  for (let i=0;i<PN;i++){ const x = (i - (PN-1)/2)*0.9 + (i % 2 ? 0.1 : -0.1), z = -2.6 + (i % 2)*0.3, sc = 0.82 + ((i*37) % 10)/70;
+    B.party.push({ x, z, s:sc, ph:i*0.9 });
+    pb.setColorAt(i, new THREE.Color(suits[i % suits.length])); ph.setColorAt(i, new THREE.Color(pskins[i % pskins.length])); phr.setColorAt(i, new THREE.Color(phair[(i*2) % phair.length]));
+    pa.setColorAt(i*2, new THREE.Color(suits[i % suits.length])); pa.setColorAt(i*2+1, new THREE.Color(suits[i % suits.length])); }
+  for (const m of [pb, ph, phr, pa, pshirt]){ m.frustumCulled = false; vic.add(m); }
+  Object.assign(B, { pb, ph, phr, pa, pshirt });
   // the big screen behind: the winner's face between flag stripes
   const banner = canvasTex(1024, 512, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#1f4fd1'); gr.addColorStop(1,'#0b2a8c'); g.fillStyle = gr; g.fillRect(0,0,w,h);
     g.fillStyle = 'rgba(255,255,255,.14)'; g.fillRect(0,38,w,30); g.fillRect(0,h-68,w,30);
@@ -4544,7 +4599,7 @@ function buildVictory(){
   conf.frustumCulled = false; vic.add(conf); B.conf = conf;
   // the V sign that pops above the raised hand
   B.v = new THREE.Sprite(new THREE.SpriteMaterial({ map:canvasTex(128, 128, (g,w,h) => { g.font = '100px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('✌️', w/2, h/2 + 6); }), depthTest:false, transparent:true }));
-  B.v.renderOrder = 5; B.v.scale.setScalar(0.5); vic.add(B.v);
+  B.v.renderOrder = 5; B.v.scale.setScalar(0); B.v.visible = false;
 }
 // below the armpits a vertex belongs either to the arm or to the body, never both: Meshy's auto-rig blends the
 // jacket's hips into the hanging hands, which tears into long sheets as soon as the arms go up
@@ -4607,7 +4662,7 @@ function startVictory(r){
   if (!vicBits) buildVictory();
   const B = vicBits;
   if (B.winner && B.winner.g.parent) vic.remove(B.winner.g);
-  const w = makeStandee(r.id); w.def = r.def; splitArmWeights(w.g); w.g.position.set(0, B.podTop, 0.4); w.g.rotation.y = 0; vic.add(w.g); B.winner = w;
+  const w = makeStandee(r.id); w.def = r.def; splitArmWeights(w.g); w.g.position.set(0, B.podTop, 0.35); w.g.rotation.y = 0; vic.add(w.g); B.winner = w;
   // the arms are re-aimed every frame from their lowered rest pose
   w.rest = {}; for (const n of ['LeftArm','LeftForeArm','LeftHand','RightArm','RightForeArm','RightHand','Spine02','neck']) if (w.bones[n]) w.rest[n] = w.bones[n].quaternion.clone();
   w.cut = cullStretched(w); w.g.position.y = B.podTop;
@@ -4682,8 +4737,8 @@ function updateVictory(dt){
   const asp = innerWidth/innerHeight, short = innerHeight < 560;
   vicCam.aspect = asp; vicCam.fov = asp < 1.2 ? 52 : short ? 42 : 38;
   const intro = Math.min(1, t/2.6), e = 1 - Math.pow(1 - intro, 3);
-  vicCam.position.set(Math.sin(t*0.2)*0.9, 2.85 + (1-e)*1.4, 8.8 - e*1.2);
-  vicCam.lookAt(Math.sin(t*0.2)*0.3, B.podTop + 1.05, 0);
+  vicCam.position.set(Math.sin(t*0.2)*0.6, 3.05 + (1-e)*1.0, 7.6 - e*1.2);
+  vicCam.lookAt(Math.sin(t*0.2)*0.2, B.podTop + 1.6, 0);
   if (window.__vicClose){ vicCam.position.set(window.__vicClose, B.podTop + 1.3, 4.2); vicCam.lookAt(0, B.podTop + 1.2, 0.4); }
   let offX = 0; const card = document.querySelector('#finish .card');
   if (card && asp > 1.1){ const rc = card.getBoundingClientRect(); if (rc.width > 50 && rc.left > innerWidth*0.4) offX = -((rc.left/2) - innerWidth/2); }
@@ -4694,8 +4749,13 @@ function updateVictory(dt){
     poseWinner(w, t, B.podTop);
     const b = w.bones, sL = -(Math.sign(wpos(b.RightArm).x - w.g.position.x) || -1);
     const hand = b.LeftHand ? wpos(b.LeftHand) : null;
-    if (hand){ B.v.position.copy(hand).add(_vp.set(sL*0.03, 0.2, 0.12)); const pop = Math.min(1, Math.max(0, (t - 0.6)*3)); B.v.scale.setScalar(0.5*pop*(1 + Math.sin(t*6)*0.06)); }
+
   }
+  if (B.party){ for (let i=0;i<B.party.length;i++){ const q = B.party[i], y = 1.35 + Math.max(0, Math.sin(t*3.1 + q.ph))*0.05, clap = Math.abs(Math.sin(t*7 + q.ph));
+      _vq.setFromAxisAngle(_ax.y, 0); _vs.setScalar(q.s); B.pb.setMatrixAt(i, _vm.compose(_vp.set(q.x, y, q.z), _vq, _vs)); B.ph.setMatrixAt(i, _vm); B.phr.setMatrixAt(i, _vm); B.pshirt.setMatrixAt(i, _vm);
+      for (const sd of [-1, 1]){ _ve.set(-1.25, 0, sd*(0.35 + clap*0.35), 'YXZ'); _vq.setFromEuler(_ve);
+        B.pa.setMatrixAt(i*2 + (sd > 0 ? 1 : 0), _vm.compose(_vp.set(q.x + sd*0.33*q.s, y + 1.2*q.s, q.z + 0.05), _vq, _vs)); } }
+    for (const m of [B.pb, B.ph, B.phr, B.pa, B.pshirt]) m.instanceMatrix.needsUpdate = true; }
   // crowd
   const C = B.crowd;
   for (let i=0;i<C.length;i++){
@@ -4767,7 +4827,7 @@ function resultImage(){
   const W = 1080, H = 1350, B = vicBits; if (!B || !B.winner) return null;
   // render the stage at picture size: same scene, a portrait camera framed on the winner
   const cam = new THREE.PerspectiveCamera(36, W/H, 0.1, 200);
-  cam.position.set(0.5, 2.8, 7.2); cam.lookAt(0, B.podTop + 0.95, 0);
+  cam.position.set(0.4, 2.7, 6.0); cam.lookAt(0, B.podTop + 1.5, 0);
   const pr = renderer.getPixelRatio(), sz = renderer.getSize(new THREE.Vector2());
   renderer.setPixelRatio(1); renderer.setSize(W, H, false);
   renderer.render(vic, cam);
@@ -4808,9 +4868,10 @@ let raceToken = null;
 function lbStart(){ raceToken = null; if (!LB_ON || mode === 'tt') return; fetch('/api/balfour/start', { method:'POST' }).then(r => r.ok ? r.json() : null).then(j => { if (j && j.token) raceToken = j.token; }).catch(() => {}); }
 const CHAR_ICON = id => CUT[id] || ICONS[id] || '';
 async function lbLoad(){
-  const ol = $('lbList'); ol.innerHTML = '<li class="lbEmpty">Loading…</li>';
+  const ol = $('lbList'), il = $('lbInline'); ol.innerHTML = '<li class="lbEmpty">Loading…</li>';
   try { const j = await (await fetch('/api/balfour/top')).json(); const top = j.top || [];
     ol.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>';
+    if (il){ il.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>'; top.slice(0, 8).forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; il.appendChild(li); }); }
     top.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><span class="lbD">${['Easy','Medium','Hard'][e.diff] || ''}</span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; ol.appendChild(li); });
   } catch(e){ ol.innerHTML = '<li class="lbEmpty">The leaderboard is offline right now</li>'; }
 }
@@ -4823,12 +4884,12 @@ async function lbSubmit(ev){
   try { const r = await fetch('/api/balfour/submit', { method:'POST', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify(body) }); const j = await r.json();
     $('lbForm').hidden = true; raceToken = null; $('lbMsg').hidden = false;
     $('lbMsg').textContent = r.ok ? (j.rank ? `You are #${j.rank} on the leaderboard!` : 'Saved. Not in the top 200 yet') : 'This time could not be saved';
-    if (r.ok) lbOpen();
+    if (r.ok) lbLoad();
   } catch(e){ $('lbMsg').hidden = false; $('lbMsg').textContent = 'The leaderboard is offline right now'; }
   $('lbSend').disabled = false;
 }
 function lbResults(){
-  $('lbOpen').hidden = !LB_ON; $('lbMsg').hidden = true;
+  $('lbOpen').hidden = true; $('lbMsg').hidden = true; $('lbInlineWrap').hidden = !LB_ON; if (LB_ON) lbLoad();
   const ok = LB_ON && mode !== 'tt' && raceToken && player().finished && lapTimes.length >= LAPS;
   $('lbForm').hidden = !ok;
   if (ok){ try { $('lbName').value = localStorage.getItem('balfour.name') || ''; } catch(e){} }
