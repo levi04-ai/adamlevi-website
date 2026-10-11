@@ -4202,7 +4202,7 @@ function updateMarkers(dt){
     if (want && state === 'race' && raceT < 1.3) { tip.hidden = true; } else if (want && tip.hidden){ tip.innerHTML = state === 'count' ? (isTouch ? 'Touch the screen on <b>2</b> for a rocket start' : 'Hold <b>↑</b> on <b>2</b> for a rocket start') : (isTouch ? 'Hold one side in a turn to <b>drift</b> · let go for a <b>boost</b>' : 'Hold <b>Shift</b> while turning to <b>drift</b> · let go for a <b>boost</b>'); }
     if (want && state === 'race' && tip.dataset.k !== 'race'){ tip.dataset.k = 'race'; tip.innerHTML = isTouch ? 'Hold one side in a turn to <b>drift</b> · let go for a <b>boost</b>' : 'Hold <b>Shift</b> while turning to <b>drift</b> · let go for a <b>boost</b>'; }
     if (state === 'count') tip.dataset.k = 'count';
-    tip.hidden = !want; }
+    tip.hidden = !want || (state === 'race' && raceT < 1.3); }
   tag.hidden = !showYou;
   if (showYou){ proj.set(p.x, p.y + GH(p.x, p.z) + Math.min(p.height, 2.1) + 0.35, p.z).project(camera); tag.style.left = ((proj.x+1)/2*innerWidth) + 'px'; tag.style.top = ((1-proj.y)/2*innerHeight) + 'px'; }
   if (state === 'race' && p && !p.finished){
