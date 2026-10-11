@@ -1084,7 +1084,7 @@ let MAX_V = 30, BOOST_V = 44;
 const ACCEL = 13, TURN = 2.0;
 // the candidates: everyone shares one seated rig, so any driver fits any kart
 const ROSTER = [
-  { id:'bibi', first:'Benjamin', last:'Netanyahu', name:'Bibi', color:'#1f4fd1', skin:'e3ae8c', item:'bomb', model:'c_bibi', kart:'limo' },
+  { id:'bibi', first:'Benjamin', last:'Netanyahu', name:'Bibi', color:'#1f4fd1', skin:'e3ae8c', item:'bomb', model:'c_bibi', kart:'limo', seatLift:0.12 },
   { id:'eisenkot', first:'Gadi', last:'Eisenkot', name:'Gadi', color:'#2b7a4b', item:'ruler', model:'c_eisenkot', kart:'orange' },
   { id:'bennett', first:'Naftali', last:'Bennett', name:'Bennett', color:'#3f51b5', item:'rotation', kart:'blue' },
   { id:'lapid', first:'Yair', last:'Lapid', name:'Lapid', color:'#00a3e0', item:'glove', kart:'yellow' },
@@ -1101,7 +1101,7 @@ const PLAYABLE = ROSTER.filter(c => c.model);
 const KARTS = [
   { id:'red', name:'The Classic', file:'k_red_t', yaw:0, size:1.0, speed:3, accel:3, handling:3, weight:3, perk:'Balanced at everything', seat:[-0.30,0.55], wheel:[0.30,0.95,0.20,0.66], cut:[0.36,1.0,0.3] },
   { id:'blue', name:'The Sport', file:'k_blue', size:0.9, speed:4, accel:2, handling:4, weight:2, perk:'Sharp in the bends, light in a crash', seat:[-0.45,0.52], wheel:[0.21,0.75,0.20,0.76] },
-  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:3, accel:2, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,0.74], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
+  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:3, accel:2, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,0.9], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
   { id:'yellow', name:'The Speedster', file:'k_yellow', size:1.05, speed:5, accel:2, handling:2, weight:3, perk:'Fastest of all, wild in the bends', seat:[-0.20,0.49], wheel:[0.41,0.65,0.17,0.70] },
   { id:'limo', name:'The Limo', file:'k_limo', size:1.3, speed:4, accel:1, handling:2, weight:5, perk:'A tank: shoves everyone, barely budges', seat:[-0.35,1.02], wheel:[0.35,1.10,0.23,0.70] },
 ];
@@ -2804,7 +2804,7 @@ function makeDriver(c, k, body){
   const spin = steeringWheel(R); wheel.add(spin); body.add(wheel);
   body.updateMatrixWorld(true);
   // hips on the seat, torso leaning a little toward the wheel, head looking ahead
-  const seat = new V3(0, k.seat[1]*s, k.seat[0]*s);
+  const seat = new V3(0, k.seat[1]*s + (c.seatLift||0), k.seat[0]*s);   // seatLift: short, big-headed figures sit a little higher so the wheel stays below the chin
   const place = () => { const h = wpos(bones.Hips); holder.position.add(seat.clone().sub(h)); holder.updateMatrixWorld(true); };
   place();
   // a gentle forward lean spread over the lower and upper back, so the bend reads as a curved back, not a kink at the pelvis
