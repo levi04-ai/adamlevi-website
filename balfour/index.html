@@ -1082,9 +1082,9 @@ const PLAYABLE = ROSTER.filter(c => c.model);
 // (seat: [z, y] of the hips; wheel: [z, y, radius, tilt]) measured on a 2.6 m long kart
 const KARTS = [
   { id:'red', name:'The Classic', file:'k_red_t', yaw:0, size:1.0, speed:3, accel:3, handling:3, weight:3, perk:'Balanced at everything', seat:[-0.30,0.55], wheel:[0.30,0.95,0.20,0.66], cut:[0.36,1.0,0.3] },
-  { id:'blue', name:'The Sport', file:'k_blue', size:0.9, speed:4, accel:2, handling:4, weight:2, perk:'Sharp in the bends, light in a crash', seat:[-0.45,0.47], wheel:[0.21,0.75,0.20,0.76] },
-  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:3, accel:2, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,1.02], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
-  { id:'yellow', name:'The Speedster', file:'k_yellow', size:1.05, speed:5, accel:2, handling:2, weight:3, perk:'Fastest of all, wild in the bends', seat:[-0.20,0.42], wheel:[0.41,0.65,0.17,0.70] },
+  { id:'blue', name:'The Sport', file:'k_blue', size:0.9, speed:4, accel:2, handling:4, weight:2, perk:'Sharp in the bends, light in a crash', seat:[-0.45,0.52], wheel:[0.21,0.75,0.20,0.76] },
+  { id:'orange', name:'The Buggy', file:'k_orange', size:1.15, speed:3, accel:2, handling:3, weight:4, offroad:true, perk:'No slowdown on grass or sidewalks', seat:[-0.86,0.74], wheel:[0.02,1.3,0.23,0.75], cut:[0.35,1.28,0.23] },
+  { id:'yellow', name:'The Speedster', file:'k_yellow', size:1.05, speed:5, accel:2, handling:2, weight:3, perk:'Fastest of all, wild in the bends', seat:[-0.20,0.49], wheel:[0.41,0.65,0.17,0.70] },
   { id:'limo', name:'The Limo', file:'k_limo', size:1.3, speed:4, accel:1, handling:2, weight:5, perk:'A tank: shoves everyone, barely budges', seat:[-0.35,1.02], wheel:[0.35,1.10,0.23,0.70] },
 ];
 const KART = Object.fromEntries(KARTS.map(k => [k.id, k]));
@@ -2718,10 +2718,54 @@ function charScale(src){
   src.scene.traverse(o => { if (o.isBone && !hips && /^hips$/i.test(o.name)) hips = o; });
   return src.userData.cs = hips ? UPPER_H / (box.max.y - hips.getWorldPosition(new V3()).y) : CHAR_H / (box.max.y - box.min.y);
 }
+function cullSeated(root){
+  let m = null; root.traverse(o => { if (o.isSkinnedMesh) m = o; }); if (!m || !m.geometry.index) return 0;
+  root.updateMatrixWorld(true); m.skeleton.update();
+  const g = m.geometry = m.geometry.clone(), P = g.attributes.position, ix = g.index.array, n = P.count;
+  const sk = new Float32Array(n*3), a = new V3(), b = new V3(), c = new V3(), A = new V3(), B = new V3(), C = new V3();
+  for (let v=0;v<n;v++){ m.getVertexPosition(v, a); sk[v*3] = a.x; sk[v*3+1] = a.y; sk[v*3+2] = a.z; }
+  // the skinned space can be scaled against the bind space: normalise by the median edge ratio
+  const ratios = [];
+  for (let t=0;t<ix.length;t+=9){ a.fromBufferAttribute(P, ix[t]); b.fromBufferAttribute(P, ix[t+1]); const d0 = a.distanceTo(b); if (d0 > 1e-6){ A.fromArray(sk, ix[t]*3); B.fromArray(sk, ix[t+1]*3); ratios.push(A.distanceTo(B)/d0); } }
+  ratios.sort((x, y) => x - y); const med = ratios[ratios.length >> 1] || 1;
+  const keep = []; let cut = 0;
+  for (let t=0;t<ix.length;t+=3){
+    a.fromBufferAttribute(P, ix[t]); b.fromBufferAttribute(P, ix[t+1]); c.fromBufferAttribute(P, ix[t+2]);
+    A.fromArray(sk, ix[t]*3); B.fromArray(sk, ix[t+1]*3); C.fromArray(sk, ix[t+2]*3);
+    const r = Math.max(A.distanceTo(B)/(a.distanceTo(b)*med + 1e-6), B.distanceTo(C)/(b.distanceTo(c)*med + 1e-6), C.distanceTo(A)/(c.distanceTo(a)*med + 1e-6));
+    const big = Math.max(A.distanceTo(B), B.distanceTo(C), C.distanceTo(A)) > 0.02*med;
+    if (r > 1.9 && big){ cut++; continue; } keep.push(ix[t], ix[t+1], ix[t+2]); }
+  g.setIndex(keep); m.userData.seatCut = cut; return cut;
+}
+// below the hip joints a vertex follows either a thigh or the body, never a blend of both: the blend is what
+// pulls the jacket into sheets between chest and knee once the legs bend to sit
+function splitLegWeights(root){
+  root.traverse(o => {
+    if (!o.isSkinnedMesh || o.userData.legSplit) return;
+    const sk = o.skeleton, g = o.geometry = o.geometry.clone(); o.userData.legSplit = true;
+    const id = n => sk.bones.findIndex(b => b.name === n), bp = n => new V3().setFromMatrixPosition(sk.boneInverses[id(n)].clone().invert());
+    const L = id('LeftUpLeg'), R = id('RightUpLeg'), H = id('Hips'); if (L < 0 || R < 0 || H < 0) return;
+    const legL = new Set(['LeftUpLeg','LeftLeg','LeftFoot','LeftToeBase'].map(id)), legR = new Set(['RightUpLeg','RightLeg','RightFoot','RightToeBase'].map(id));
+    const hipY = Math.max(bp('LeftUpLeg').y, bp('RightUpLeg').y) + 0.04*(bp('Head').y - bp('Hips').y);
+    const P = g.attributes.position, J = g.attributes.skinIndex, W = g.attributes.skinWeight;
+    for (let v=0;v<P.count;v++){
+      if (P.getY(v) > hipY) continue;
+      let wl = 0, wr = 0, wo = 0;
+      for (let c=0;c<4;c++){ const j = J.getComponent(v, c), w = W.getComponent(v, c); if (legL.has(j)) wl += w; else if (legR.has(j)) wr += w; else wo += w; }
+      if (wl + wr <= 0 || wo <= 0) continue;
+      const leg = wl >= wr ? legL : legR, toLeg = (wl + wr) >= 0.35;
+      let sum = 0;
+      for (let c=0;c<4;c++){ const j = J.getComponent(v, c), isLeg = leg.has(j); if (isLeg !== toLeg) W.setComponent(v, c, 0); sum += W.getComponent(v, c); }
+      if (sum > 0) for (let c=0;c<4;c++) W.setComponent(v, c, W.getComponent(v, c)/sum);
+      else { J.setComponent(v, 0, toLeg ? (leg === legL ? L : R) : H); W.setComponent(v, 0, 1); for (let c=1;c<4;c++) W.setComponent(v, c, 0); }
+    }
+    W.needsUpdate = true; J.needsUpdate = true;
+  });
+}
 function makeDriver(c, k, body){
   const src = GLB[c.model];
   if (!src.userData.h){ src.scene.updateMatrixWorld(true); src.userData.h = new THREE.Box3().setFromObject(src.scene).getSize(new V3()).y; }
-  const root = SkeletonUtils.clone(src.scene);
+  const root = SkeletonUtils.clone(src.scene); splitLegWeights(root);
   const bones = {};
   root.traverse(o => {
     if (o.isBone) bones[o.name] = o;
@@ -2770,8 +2814,14 @@ function makeDriver(c, k, body){
       const side = Math.sign(wpos(up).x) || sd, hip = wpos(up);
       const legLen = hip.distanceTo(wpos(low)) + wpos(low).distanceTo(wpos(foot));
       const fz = Math.min(hip.z + legLen*0.9, k.wheel[0]*s + 0.35);
-      armIK(up, low, foot, new V3(side*0.16, footY, fz), new V3(side*0.15, 0.8, 1.2).transformDirection(body.matrixWorld), 20);
+      const qUp = up.quaternion.clone(), qLow = low.quaternion.clone(), T = new V3(side*0.16, footY, fz);
+      armIK(up, low, foot, T, new V3(side*0.15, 0.8, 1.2).transformDirection(body.matrixWorld), 20);
+      const thighDir = wpos(low).sub(wpos(up)).normalize();
+      up.quaternion.copy(qUp); low.quaternion.copy(qLow); up.updateMatrixWorld(true);
+      rotateWorld(up, _q.setFromUnitVectors(wpos(low).sub(wpos(up)).normalize(), thighDir));
+      rotateWorld(low, _q.setFromUnitVectors(wpos(foot).sub(wpos(low)).normalize(), T.clone().sub(wpos(low)).normalize()));
     } }
+  root.updateMatrixWorld(true); cullSeated(root);
   const drv = { root, bones, spin, arms, holder, top:0 };
   poseArms(drv, body, 20);
   drv.top = wpos(bones.Head).y + 0.3;
