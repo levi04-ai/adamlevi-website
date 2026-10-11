@@ -617,16 +617,21 @@
 
   @media (max-aspect-ratio: 11/10){
     #intro[data-step="track"] .mapPane{width:min(68vw,300px)!important;margin-top:56px!important;}
-    body.touch #raceTip{top:auto!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:calc(100vw - 32px);}
+    body.touch #raceTip{top:auto!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:min(230px, calc(100vw - 150px));left:calc(50% - 30px)!important;}
     body.touch.st-race #raceTip ~ #rank{opacity:.35;}
   }
   #finish .card{min-width:0;} #finish .logo{overflow-wrap:anywhere;}
+
+  @media (max-height:520px) and (min-aspect-ratio: 11/10){
+    body:not(.touch) #rank{gap:2px!important;transform:scale(.6);transform-origin:top left;}
+    #intro[data-step="track"] .mapPane{max-height:calc(100vh - 150px);width:auto!important;margin-top:44px;}
+  }
   /* ===== v2 layer, design round 2 ===== */
   /* mode + difficulty only on the track step */
   #intro:not([data-step="track"]) .selFoot .opts{display:none!important;}
   body.st-race #mute, body.st-count #mute{display:none!important;}
   @media (max-aspect-ratio: 11/10){
-    body.touch #itemBox{left:12px!important;top:calc(8px + env(safe-area-inset-top,0px))!important;width:56px!important;height:56px!important;}
+    body.touch #itemBox{box-sizing:border-box!important;left:12px!important;top:calc(8px + env(safe-area-inset-top,0px))!important;width:56px!important;height:56px!important;}
     body.touch #pauseBtn{left:auto!important;right:12px!important;top:calc(8px + env(safe-area-inset-top,0px))!important;}
     body.touch #lapTime{top:calc(8px + env(safe-area-inset-top,0px))!important;}
     body.touch #coinLap{top:calc(46px + env(safe-area-inset-top,0px))!important;}
@@ -637,7 +642,7 @@
     #big{font-size:clamp(90px,28vw,160px)!important;top:38%!important;}
     #big.small{font-size:clamp(34px,10vw,56px)!important;}
     /* results */
-    #finish .card{width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important;box-sizing:border-box;padding:16px!important;}
+    #finish .card{width:calc(100vw - 32px)!important;max-width:calc(100vw - 32px)!important;margin:auto!important;box-sizing:border-box;padding:16px!important;}
     #finish .logo{font-size:clamp(32px,9vw,44px)!important;line-height:1.05;}
     #finish #placeLine{font-size:18px!important;}
     #finish .podium{display:grid!important;grid-template-columns:repeat(3,1fr);gap:8px!important;width:100%;}
@@ -693,7 +698,7 @@
     #intro .selFoot #stepBack{order:2;min-height:56px;}
     #intro .selFoot #go{order:3;flex:1;min-height:56px;font-size:22px;margin:0!important;}
     /* race HUD */
-    body.touch #minimap{width:min(150px,38vw)!important;height:min(150px,38vw)!important;top:calc(64px + env(safe-area-inset-top,0px))!important;right:10px!important;}
+    body.touch #minimap{width:96px!important;height:96px!important;top:calc(60px + env(safe-area-inset-top,0px))!important;right:12px!important;}
     body.touch #bItem{width:84px!important;height:84px!important;right:16px!important;bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;}
     body.touch #rank{top:calc(110px + env(safe-area-inset-top,0px))!important;}
   }
@@ -3579,8 +3584,8 @@ function updateRacer(r, dt){
     } else if (d >= r.onRamp.len + 4 || Math.abs(lat2) >= r.onRamp.half) r.onRamp = null;
   }
   if (r.player){
-    if (r.air && keys.drift && !r.prevDrift && !r.trickDone && !r.stunt && !r.tumble){ r.trick = 0.5; r.trickDone = true; tone(900, 1400, 0.15, 'square', 0.07); }
-    r.prevDrift = keys.drift;
+    if (r.air && (keys.drift || keys.touchAny) && !r.prevDrift && !r.trickDone && !r.stunt && !r.tumble){ r.trick = 0.5; r.trickDone = true; tone(900, 1400, 0.15, 'square', 0.07); }
+    r.prevDrift = keys.drift || keys.touchAny;
   }
   // computer drivers that get wedged (a barricade, a building corner) hop back onto the road
   if (racing){
