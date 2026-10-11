@@ -929,6 +929,7 @@
       <div class="finBtns">
         <button class="cta" id="again">Race again</button>
         <button class="pmBtn dark" id="share">Share result</button>
+        <button class="pmBtn dark" id="saveImg">Save image</button>
         <button class="pmBtn dark" id="toMenu">Main menu</button>
       </div>
       <p class="note" id="shareNote" hidden>Link copied</p>
@@ -3296,7 +3297,7 @@ $('mute').addEventListener('click', toggleMute); $('pmSound').addEventListener('
 // ============================================================ game state
 let state = 'loading', countT = 0, raceT = 0, finishOrder = [], bigT = 0, stateT = 0;
 const player = () => racers.find(r => r.player) || racers[0];
-window.__tk = { wrench(){ return wrenchMesh(); }, get GLB(){ return GLB; }, get stand(){ return standees; }, get scene(){ return scene; }, get camd(){ const p = player(); return [+Math.hypot(camera.position.x-p.x, camera.position.z-p.z).toFixed(2), +(camera.position.y - p.y - GH(p.x,p.z)).toFixed(2), +camera.fov.toFixed(1)]; }, get hz(){ return hazards.map(h => [h.kind, +h.t.toFixed(2), +h.x.toFixed(1), +h.z.toFixed(1), +h.y.toFixed(2), !!h.landed, +(h.lat||0).toFixed(1), +(h.sp||0).toFixed(1), window.__tk.racers.map(r => +Math.hypot(r.x-h.x, r.z-h.z).toFixed(0)).join(" ")]); }, T, GH, at, THREE, get ramps(){ return ramps.map(r => r.i0); }, lookBack(i, up, lat){ const q = at(i, lat||0), h = T[((i%N)+N)%N].h + Math.PI; freeCam = { pos:new V3(q.x, up, q.z), look:new V3(q.x + Math.sin(h)*20, 0.6, q.z + Math.cos(h)*20) }; }, wheels(){ return KARTS.map(k => [k.id, kartParts(k).wheels.map(w => [w.c.x.toFixed(2), w.c.y.toFixed(2), w.c.z.toFixed(2), w.R.toFixed(2), w.parts.length])]); }, look(i, yaw, up){ const q = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x, up||7, q.z), look:new V3(q.x + Math.sin(yaw)*60, (up||7) + 2, q.z + Math.cos(yaw)*60) }; }, mode(m){ setMode(m); }, cam(spec){ const [i, back, up, lat] = spec.split(',').map(Number); const q = at(i, lat||0), f = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x - f.tx*back, up, q.z - f.tz*back), look:new V3(q.x + f.tx*20, 1, q.z + f.tz*20) }; }, sim(sec){ for (let i=0;i<sec*60;i++){ update(1/60); if (state === 'done') break; } }, get p(){ return player(); }, get raceT(){ return +raceT.toFixed(1); }, get state(){ return state; }, get racers(){ return racers; }, pick(c, k){ pick = { char:c, kart:k }; }, start(){ startRace(); }, skip(){ skipFly(); }, fin(){ onPlayerFinish(); }, use(){ useItem(player()); }, get slaps(){ return slaps.map(s => [s.r.id, +s.t.toFixed(2), +(s.r.slapT||0).toFixed(2)]); }, get vicOn(){ return vicOn; }, get vicB(){ return vicBits; }, vic(id){ startVictory(racers.find(r => r.id === id)); } };
+window.__tk = { wrench(){ return wrenchMesh(); }, get GLB(){ return GLB; }, get stand(){ return standees; }, get scene(){ return scene; }, get camd(){ const p = player(); return [+Math.hypot(camera.position.x-p.x, camera.position.z-p.z).toFixed(2), +(camera.position.y - p.y - GH(p.x,p.z)).toFixed(2), +camera.fov.toFixed(1)]; }, get hz(){ return hazards.map(h => [h.kind, +h.t.toFixed(2), +h.x.toFixed(1), +h.z.toFixed(1), +h.y.toFixed(2), !!h.landed, +(h.lat||0).toFixed(1), +(h.sp||0).toFixed(1), window.__tk.racers.map(r => +Math.hypot(r.x-h.x, r.z-h.z).toFixed(0)).join(" ")]); }, T, GH, at, THREE, get ramps(){ return ramps.map(r => r.i0); }, lookBack(i, up, lat){ const q = at(i, lat||0), h = T[((i%N)+N)%N].h + Math.PI; freeCam = { pos:new V3(q.x, up, q.z), look:new V3(q.x + Math.sin(h)*20, 0.6, q.z + Math.cos(h)*20) }; }, wheels(){ return KARTS.map(k => [k.id, kartParts(k).wheels.map(w => [w.c.x.toFixed(2), w.c.y.toFixed(2), w.c.z.toFixed(2), w.R.toFixed(2), w.parts.length])]); }, look(i, yaw, up){ const q = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x, up||7, q.z), look:new V3(q.x + Math.sin(yaw)*60, (up||7) + 2, q.z + Math.cos(yaw)*60) }; }, mode(m){ setMode(m); }, cam(spec){ const [i, back, up, lat] = spec.split(',').map(Number); const q = at(i, lat||0), f = T[((i%N)+N)%N]; freeCam = { pos:new V3(q.x - f.tx*back, up, q.z - f.tz*back), look:new V3(q.x + f.tx*20, 1, q.z + f.tz*20) }; }, sim(sec){ for (let i=0;i<sec*60;i++){ update(1/60); if (state === 'done') break; } }, get p(){ return player(); }, get raceT(){ return +raceT.toFixed(1); }, get state(){ return state; }, get racers(){ return racers; }, pick(c, k){ pick = { char:c, kart:k }; }, start(){ startRace(); }, skip(){ skipFly(); }, fin(){ onPlayerFinish(); }, use(){ useItem(player()); }, get slaps(){ return slaps.map(s => [s.r.id, +s.t.toFixed(2), +(s.r.slapT||0).toFixed(2)]); }, get vicOn(){ return vicOn; }, get vicB(){ return vicBits; }, vic(id){ startVictory(racers.find(r => r.id === id)); }, img(){ const c = resultImage(); return c ? c.toDataURL("image/jpeg", 0.85) : null; } };
 function big(text, dur, small){ const b = $('big'); b.textContent = text; b.classList.toggle('small', !!small); b.classList.remove('show'); void b.offsetWidth; b.classList.add('show'); bigT = dur; }
 function say(r, text, dur){ if (!text) return; r.bubble.innerHTML = `<img alt="" src="${ICONS[r.id]}"><span></span>`; r.bubble.lastChild.textContent = text; r.bubble.classList.add('show'); r.bubbleT = dur||2; }
 function rankOf(r){ return 1 + racers.filter(o => o!==r && ((o.finished && !r.finished) || (o.finished===r.finished && (o.finished ? o.fTime < r.fTime : o.prog > r.prog)))).length; }
@@ -4540,7 +4541,7 @@ function startVictory(r){
   if (!vicBits) buildVictory();
   const B = vicBits;
   if (B.winner && B.winner.g.parent) vic.remove(B.winner.g);
-  const w = makeStandee(r.id); splitArmWeights(w.g); w.g.position.set(0, B.podTop, 0.4); w.g.rotation.y = 0; vic.add(w.g); B.winner = w;
+  const w = makeStandee(r.id); w.def = r.def; splitArmWeights(w.g); w.g.position.set(0, B.podTop, 0.4); w.g.rotation.y = 0; vic.add(w.g); B.winner = w;
   // the arms are re-aimed every frame from their lowered rest pose
   w.rest = {}; for (const n of ['LeftArm','LeftForeArm','LeftHand','RightArm','RightForeArm','RightHand','Spine02','neck']) if (w.bones[n]) w.rest[n] = w.bones[n].quaternion.clone();
   w.cut = cullStretched(w); w.g.position.y = B.podTop;
@@ -4694,6 +4695,43 @@ function showResults(){
   $('finish').hidden = false; $('hud').hidden = true; $('controls').hidden = true;
   setTimeout(() => { if (!$('finish').hidden) $('again').focus({ preventScroll:true }); }, 400);
   if (!showVic && record) startConfetti();
+}
+const HE_NAME = { bibi:'ביבי', yaniv:'יניב', feiglin:'פייגלין', eisenkot:'אייזנקוט', golan:'גולן' };
+function resultImage(){
+  const W = 1080, H = 1350, B = vicBits; if (!B || !B.winner) return null;
+  // render the stage at picture size: same scene, a portrait camera framed on the winner
+  const cam = new THREE.PerspectiveCamera(36, W/H, 0.1, 200);
+  cam.position.set(0.5, 2.8, 7.2); cam.lookAt(0, B.podTop + 0.95, 0);
+  const pr = renderer.getPixelRatio(), sz = renderer.getSize(new THREE.Vector2());
+  renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+  renderer.render(vic, cam);
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  g.drawImage(renderer.domElement, 0, 0, W, H);
+  renderer.setPixelRatio(pr); renderer.setSize(sz.x, sz.y, false);
+  // headline
+  let gr = g.createLinearGradient(0, 0, 0, 300); gr.addColorStop(0, 'rgba(8,16,60,.92)'); gr.addColorStop(1, 'rgba(8,16,60,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, 300);
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.fillStyle = '#9fd0ff'; g.font = '800 34px Rubik, Arial'; g.fillText('THE NEW PRIME MINISTER', W/2, 80);
+  const wv = B.winner.def || {}, name = wv.first ? wv.first + ' ' + wv.last : (wv.name || '');
+  let fs = 104; g.font = `italic 900 ${fs}px Rubik, Arial`; while (g.measureText(name).width > W - 80 && fs > 50){ fs -= 4; g.font = `italic 900 ${fs}px Rubik, Arial`; }
+  g.lineWidth = 12; g.strokeStyle = '#0d1f4f'; g.lineJoin = 'round'; g.strokeText(name, W/2, 80 + fs); g.fillStyle = '#ffcc00'; g.fillText(name, W/2, 80 + fs);
+  // result strip
+  const y0 = H - 250; g.fillStyle = 'rgba(255,255,255,.96)'; g.beginPath(); g.roundRect(40, y0, W - 80, 210, 36); g.fill();
+  g.fillStyle = '#1f4fd1'; g.beginPath(); g.roundRect(40, y0, W - 80, 52, [36, 36, 0, 0]); g.fill();
+  g.fillStyle = '#fff'; g.font = '800 26px Rubik, Arial'; g.fillText('RACE TO BALFOUR  ·  ELECTION NIGHT 27.10', W/2, y0 + 36);
+  const R = lastResult || {}, me = HE_NAME[R.me] || '', win = HE_NAME[R.win] || '';
+  const line = R.place === 1 ? `נבחרתי! הבאתי את ${me} ראשון לבלפור` : `הגעתי ${R.place || ''} עם ${me}. ${win} הגיע ראשון`;
+  g.direction = 'rtl'; g.fillStyle = '#13286e'; let f2 = 50; g.font = `900 ${f2}px Rubik, Arial`; while (g.measureText(line).width > W - 140 && f2 > 30){ f2 -= 2; g.font = `900 ${f2}px Rubik, Arial`; }
+  g.fillText(line, W/2, y0 + 118); g.direction = 'ltr';
+  g.fillStyle = '#1f4fd1'; g.font = '800 34px Rubik, Arial'; g.fillText((R.ts ? R.ts + '   ·   ' : '') + 'adamlevi.net/balfour', W/2, y0 + 176);
+  return c;
+}
+async function saveResultImage(){
+  const c = resultImage(); if (!c) return;
+  const blob = await new Promise(res => c.toBlob(res, 'image/jpeg', 0.9)); if (!blob) return;
+  const file = new File([blob], 'race-to-balfour.jpg', { type:'image/jpeg' });
+  try { if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'המרוץ לבלפור' }); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'race-to-balfour.jpg'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
 }
 async function shareResult(){
   if (!lastResult) return;
@@ -4945,6 +4983,7 @@ async function init(){
   $('flyTitle').addEventListener('pointerdown', skipFly);
   $('again').addEventListener('click', startRace);
   $('share').addEventListener('click', shareResult);
+  $('saveImg').addEventListener('click', saveResultImage);
   $('toMenu').addEventListener('click', backToSelect);
   requestAnimationFrame(t => { last = t; frame(t); });
 }
