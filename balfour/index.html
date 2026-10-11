@@ -842,6 +842,46 @@
   #lbList .lbN{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} #lbList .lbD{font-size:11px;opacity:.6;} #lbList .lbT{font-variant-numeric:tabular-nums;}
   #lbList .lbEmpty{justify-content:center;opacity:.7;}
   @media (max-height:520px){ #lbForm input{font-size:13px;padding:6px 10px;} #lbList li{padding:3px 6px;font-size:13px;} #lbList img{width:24px;height:24px;} }
+
+  /* ===== pass 41: centred loading, step bar, pill buttons ===== */
+  #loading:not([hidden]){display:flex!important;align-items:center!important;justify-content:center!important;padding:0 16px!important;}
+  #loading .load{align-items:center!important;text-align:center;margin:auto;}
+  #loading .tip, #loading #loadText{text-align:center;}
+  .selHead{display:flex;flex-direction:column;gap:6px;}
+  .stepper{display:flex;gap:6px;list-style:none;margin:0;padding:4px;border-radius:999px;background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.25);width:max-content;}
+  .stepper li{display:flex;align-items:center;gap:7px;padding:5px 14px 5px 6px;border-radius:999px;color:rgba(255,255,255,.65);font:800 14px/1 Rubik,sans-serif;}
+  .stepper li b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.18);font-size:12px;}
+  .stepper li.cur{background:#ffcc00;color:#3a2600;} .stepper li.cur b{background:rgba(0,0,0,.15);}
+  .stepper li.done{color:#fff;} .stepper li.done b{background:#3ee07a;color:#06361a;}
+  #intro .tpane .opts{display:flex!important;flex-direction:column;gap:10px;margin-top:14px;}
+  #intro .optRow{display:flex;align-items:center;gap:12px;}
+  #intro .optLab{min-width:86px;color:#fff;font:800 13px Rubik,sans-serif;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 2px 4px rgba(0,0,0,.5);}
+  #intro .optRow[hidden]{display:none;}
+  /* buttons: the dark pill with the yellow pick everywhere */
+  #intro #go{background:#ffcc00!important;color:#3a2600!important;border:2px solid rgba(255,255,255,.55)!important;border-radius:999px!important;box-shadow:0 0 0 4px rgba(0,0,0,.35), 0 8px 18px rgba(0,0,0,.35)!important;font:900 20px Rubik,sans-serif!important;padding:12px 28px!important;transform:none!important;}
+  #intro #go span{transform:none!important;}
+  #intro #stepBack{background:rgba(0,0,0,.35)!important;color:#fff!important;border:2px solid rgba(255,255,255,.25)!important;border-radius:999px!important;box-shadow:none!important;font:800 16px Rubik,sans-serif!important;padding:10px 20px!important;transform:none!important;}
+  #intro #stepBack span{transform:none!important;}
+  #intro .selFoot #howKeys{display:none;} #intro[data-step="char"] .selFoot #howKeys{display:block;background:rgba(0,0,0,.35);color:#fff;border:2px solid rgba(255,255,255,.2);}
+  #pauseMenu{background:rgba(8,16,48,.55)!important;}
+  #pauseMenu .pmCard{background:rgba(10,20,55,.88)!important;border:2px solid rgba(255,255,255,.25)!important;box-shadow:0 20px 50px rgba(0,0,0,.45)!important;border-radius:30px!important;}
+  #pauseMenu .pmCard h2{color:#fff!important;}
+  #pauseMenu .pmBtn, #pauseMenu .cta{border-radius:999px!important;font:800 18px Rubik,sans-serif!important;padding:11px 22px!important;box-shadow:none!important;transform:none!important;}
+  #pauseMenu .pmBtn{background:rgba(255,255,255,.1)!important;color:#fff!important;border:2px solid rgba(255,255,255,.25)!important;}
+  #pauseMenu .cta{background:#ffcc00!important;color:#3a2600!important;border:2px solid rgba(255,255,255,.55)!important;}
+  @media (max-height:520px){
+    .stepper li{padding:3px 10px 3px 4px;font-size:11px;} .stepper li b{width:18px;height:18px;font-size:10px;}
+    #intro .tpane .opts{gap:6px;margin-top:8px;} #intro .optLab{min-width:70px;font-size:11px;}
+    #intro #go{font-size:17px!important;padding:9px 20px!important;}
+  }
+
+  .stepper li{font-size:16px;padding:6px 16px 6px 7px;} .stepper li b{width:26px;height:26px;font-size:13px;}
+  #intro[data-step="track"] .stage .mapPane{display:block!important;position:fixed;right:7vw;top:50%;transform:translateY(-50%);width:min(440px,32vw,62vh)!important;max-height:none!important;aspect-ratio:1;margin:0!important;}
+  @media (max-height:520px){
+    .stepper li{font-size:11px;padding:3px 10px 3px 4px;} .stepper li b{width:18px;height:18px;font-size:10px;}
+    #intro .stepTitle{display:none!important;}
+    #intro[data-step="track"] .stage .mapPane{display:none!important;}
+  }
 </style>
 
 <div id="app">
@@ -907,11 +947,13 @@
   </div>
 
   <div id="intro" class="sel" hidden data-step="char">
-    <header class="selHead"><h2 class="stepTitle" id="stepTitle"></h2></header>
+    <header class="selHead"><ol class="stepper" id="stepper"><li data-s="char"><b>1</b>Candidate</li><li data-s="kart"><b>2</b>Kart</li><li data-s="track"><b>3</b>Race</li></ol><h2 class="stepTitle" id="stepTitle"></h2></header>
     <section class="selList">
       <div class="cgrid" id="cards"></div>
       <div class="kgrid" id="karts"></div>
-      <div class="tpane" id="tracks"><h3 class="cup">Jerusalem Cup</h3><div class="tgrid" id="tgrid"></div></div>
+      <div class="tpane" id="tracks"><h3 class="cup">Jerusalem Cup</h3><div class="tgrid" id="tgrid"></div>
+        <div class="opts"><div class="optRow"><span class="optLab">Mode</span><div class="seg" id="modes"><button data-m="race" class="on">Race</button><button data-m="tt">Time trial</button></div></div>
+        <div class="optRow" id="diffRow"><span class="optLab">Difficulty</span><div class="seg" id="diff"><button data-d="0">Easy</button><button data-d="1" class="on">Medium</button><button data-d="2">Hard</button></div></div></div></div>
     </section>
     <aside class="stage">
       <div class="mapPane"><canvas id="routeMap" width="720" height="720"></canvas></div>
@@ -919,10 +961,6 @@
     </aside>
     <footer class="selFoot">
       <button class="btn ghost" id="stepBack"><span>Back</span></button>
-      <div class="opts">
-        <div class="seg" id="modes"><button data-m="race" class="on">Race</button><button data-m="tt">Time trial</button></div>
-        <div class="seg" id="diff"><button data-d="0">Easy</button><button data-d="1" class="on">Normal</button><button data-d="2">Fast</button></div>
-      </div>
       <p class="hint" id="ttNote" hidden></p>
       <p class="hint" id="howKeys">Arrows steer · auto gas · ↓ brake · Shift drift · Space item · C look back</p>
       <button class="btn primary" id="go"><span>Next</span></button>
@@ -1584,8 +1622,9 @@ function simpleTrees(list, kind){
   let trunk, crown, tc, cc;
   if (kind === 'cypress'){
     trunk = new THREE.CylinderGeometry(0.18, 0.26, 1.6, 6); trunk.translate(0, 0.8, 0);
-    const parts = [[0,4.2,1.25,4.6],[0,7.2,0.85,2.6]].map(([x,y,r,hh]) => { const g = new THREE.SphereGeometry(1, 14, 12); g.scale(r, hh/2, r); g.translate(x,y,0); return g.toNonIndexed(); });
-    crown = mergeGeometries(parts); tc = '#6b513a'; cc = '#40703a';
+    // one tall smooth spindle (two stacked balls looked like a tree cut in half)
+    const prof = [[0,1.5],[0.55,1.7],[1.0,2.3],[1.22,3.3],[1.28,4.4],[1.2,5.6],[1.0,6.8],[0.75,7.9],[0.45,8.8],[0.18,9.5],[0,9.8]].map(([r,y]) => new THREE.Vector2(r, y));
+    crown = new THREE.LatheGeometry(prof, 16); tc = '#6b513a'; cc = '#40703a';
   } else if (kind === 'pine'){
     // Jerusalem pine: a tall bare trunk with a wide, flat, layered crown
     trunk = new THREE.CylinderGeometry(0.24, 0.42, 7.5, 7); trunk.translate(0, 3.75, 0); trunk.rotateZ(0.06);
@@ -2480,7 +2519,7 @@ const SPARK = [hex('#5cc8ff'), hex('#ff9d2e'), hex('#d66bff')];
 let racers = [];
 const blobMat = () => new THREE.MeshBasicMaterial({ map:TEX.blob, transparent:true, depthWrite:false });
 // a little slower than before, and the computer drivers push harder
-const DIFF = [ { ai:0.95, max:27, rb:0.12 }, { ai:1.07, max:30, rb:0.035 }, { ai:1.14, max:33, rb:0.015 } ];
+const DIFF = [ { ai:0.95, max:30, rb:0.12 }, { ai:1.06, max:30, rb:0.035 }, { ai:1.13, max:30, rb:0.0 } ];
 let diffLevel = 1;
 const KART_LEN = 2.6, CHAR_H = 1.75, VS = 1.25;   // VS: display scale of kart + driver
 const wpos = b => b.getWorldPosition(new V3());
@@ -3290,7 +3329,7 @@ addEventListener('keydown', e => {
     if (k && (e.code === 'ArrowLeft' || e.code === 'ArrowUp')){ cycle(-k); e.preventDefault(); return; }
     if (introStep === 'track' && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)){ trackKey(e.code); e.preventDefault(); return; }
     if (e.code === 'Backspace' || e.code === 'Escape'){ goBack(); e.preventDefault(); return; }
-    if (e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); goNext(); return; }
+    if (e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); if (introStep === 'track' && trackRow === 0 && mode !== 'tt'){ trackRow = 1; trackFocus(); if (AC) tone(600, 600, 0.05, 'square', 0.05); return; } goNext(); return; }
   }
   if (keyMap[e.code]){ keys[keyMap[e.code]] = true; e.preventDefault(); return; }
   if (e.code === 'Space'){ e.preventDefault(); if (state === 'race') useItem(player()); }
@@ -3519,14 +3558,14 @@ function soundBlast(r, kind){
   const mkRing = (w) => { const m = new THREE.Mesh(new THREE.RingGeometry(1 - w, 1, 64), new THREE.MeshBasicMaterial({ color:shofar ? '#ffc21a' : col, transparent:true, opacity:0, side:THREE.DoubleSide, depthWrite:false, blending:shofar ? THREE.NormalBlending : THREE.AdditiveBlending, fog:false }));
     m.rotation.x = -Math.PI/2; m.position.set(r.x, r.y + GH(r.x, r.z) + 0.6, r.z); scene.add(m); return m; };
   if (shofar){ for (let k=0;k<3;k++) blasts.push({ ring:mkRing(0.2), t:-k*0.55, dur:1.4, max:30, owner:r, wave:k, done:new Set(), hdg:r.h }); }
-  else blasts.push({ ring:mkRing(0.15), t:0, dur:0.6, max:14 });
+  else { for (let k=0;k<3;k++) blasts.push({ ring:mkRing(0.22), t:-k*0.5, dur:1.1, max:16, owner:r, wave:k, done:new Set(), hdg:r.h, radial:true }); }
   for (const o of racers){ if (o === r || o.finished) continue;
     const dx = o.x - r.x, dz = o.z - r.z, d = Math.hypot(dx, dz); if (d < 0.1) continue;
-    if (shofar) continue;
+    if (shofar || true) continue;
     else if (d < 14){ const k = (14 - d)/14; o.kx = (o.kx||0) + dx/d*16*k; o.kz = (o.kz||0) + dz/d*16*k; o.v *= 1 - 0.45*k; o.wobble = 0.6; if (k > 0.5) hit(o); } }
   if (r.player || Math.hypot(player().x-r.x, player().z-r.z) < 45){
     if (shofar){ tone(233, 233, 0.9, 'sawtooth', 0.12); tone(349, 349, 0.7, 'sawtooth', 0.08, 0.35); }
-    else { noiseSnd(0.5, 0.25, 0, 1800, 0.9); tone(180, 120, 0.5, 'square', 0.12); }
+    else { for (let k=0;k<3;k++){ noiseSnd(0.45, 0.22, k*0.5, 1800, 0.9); tone(180, 120, 0.45, 'square', 0.1, k*0.5); } }
   }
 }
 function updateBlasts(dt){
@@ -3539,6 +3578,11 @@ function updateBlasts(dt){
       const r = b.owner, fx = Math.sin(b.hdg), fz = Math.cos(b.hdg);
       for (const o of racers){ if (o === r || o.finished || b.done.has(o)) continue;
         const dx = o.x - r.x, dz = o.z - r.z, d = Math.hypot(dx, dz);
+        if (b.radial){   // megaphone: all around, shoves away from him
+          if (d <= s && d < 16 && d > 0.1){ b.done.add(o); const k = (16 - d)/16, push = b.wave === 0 ? 16 : 9;
+            o.kx = (o.kx||0) + dx/d*push*k; o.kz = (o.kz||0) + dz/d*push*k; o.v *= 1 - (b.wave === 0 ? 0.4 : 0.2)*k; o.wobble = 0.7;
+            if (b.wave === 0 && k > 0.5) hit(o); if (o.player) camShake = Math.max(camShake, 0.2); }
+          continue; }
         if (d <= s && d < 31 && (dx*fx + dz*fz) > d*0.35){ b.done.add(o);
           if (b.wave === 0) hit(o); else { o.v *= 0.8; o.wobble = 0.7; if (o.player) camShake = Math.max(camShake, 0.18); } } } }
     if (u >= 1){ scene.remove(b.ring); b.ring.geometry.dispose(); b.ring.material.dispose(); blasts.splice(i, 1); } }
@@ -4767,7 +4811,7 @@ async function lbLoad(){
   const ol = $('lbList'); ol.innerHTML = '<li class="lbEmpty">Loading…</li>';
   try { const j = await (await fetch('/api/balfour/top')).json(); const top = j.top || [];
     ol.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>';
-    top.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><span class="lbD">${['Easy','Normal','Fast'][e.diff] || ''}</span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; ol.appendChild(li); });
+    top.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><span class="lbD">${['Easy','Medium','Hard'][e.diff] || ''}</span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; ol.appendChild(li); });
   } catch(e){ ol.innerHTML = '<li class="lbEmpty">The leaderboard is offline right now</li>'; }
 }
 function lbOpen(){ $('lbPanel').hidden = false; lbLoad(); }
@@ -4818,7 +4862,7 @@ function fillTicker(){}
 // a generic head-and-shoulders silhouette for locked tiles
 const SIL = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Ccircle cx='50' cy='32' r='22'/%3E%3Cpath d='M8 120c0-30 18-50 42-50s42 20 42 50z'/%3E%3C/svg%3E\")";
 const KSIL = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 70'%3E%3Ccircle cx='22' cy='50' r='18'/%3E%3Ccircle cx='98' cy='50' r='18'/%3E%3Cpath d='M20 38l28-18h24l14 10h18l6 8H84L70 30H52L36 42z'/%3E%3C/svg%3E\")";
-const TRACKS = [{ id:'balfour', name:'Balfour', open:true }, { id:'knesset', name:'Knesset Loop' }, { id:'promenade', name:'Tel Aviv Promenade' }, { id:'haifa', name:'Haifa Port' }];
+const TRACKS = [{ id:'balfour', name:'Balfour', open:true }, { id:'promenade', name:'Tel Aviv Promenade' }];
 function buildIntro(){
   const box = $('cards');
   [...ROSTER].sort((a, b) => !!b.model - !!a.model).forEach(c => {
@@ -4887,8 +4931,10 @@ function setMode(m){
 }
 function setStep(st){
   introStep = st; $('intro').dataset.step = st;
-  $('stepTitle').textContent = st === 'char' ? 'Choose your candidate' : st === 'kart' ? 'Choose a kart' : 'Choose a track';
-  $('go').innerHTML = st === 'track' ? '<span>Race!</span>' : '<span>Next</span>';
+  $('stepTitle').textContent = st === 'char' ? 'Choose your candidate' : st === 'kart' ? 'Choose a kart' : 'Track and race';
+  $('go').innerHTML = st === 'char' ? '<span>Next: Kart ▶</span>' : st === 'kart' ? '<span>Next: Race ▶</span>' : '<span>Start race ▶</span>';
+  $('stepBack').style.visibility = st === 'char' ? 'hidden' : '';
+  document.querySelectorAll('#stepper li').forEach(li => { const k = ['char','kart','track'].indexOf(li.dataset.s), c = ['char','kart','track'].indexOf(st); li.className = k < c ? 'done' : k === c ? 'cur' : ''; });
   showStandee(st === 'char');
   const r = racers[0]; if (r && r.studio) r.holder.visible = st === 'kart';
   if (st === 'track'){ trackRow = 0; trackFocus(); }
@@ -4918,7 +4964,7 @@ function updatePickUI(){
     const bar = (lab, v) => `<span>${lab}${[1,2,3,4,5].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`;
     sub.innerHTML = `<span class="bars">${bar('SPD', k.speed)}${bar('ACC', k.accel)}${bar('HDL', k.handling)}${bar('WGT', k.weight)}</span><span class="pk"></span>`;
     sub.querySelector('.pk').textContent = k.perk;
-  } else { sub.textContent = `${it.icon} ${it.name}`; }
+  } else { sub.textContent = ''; }
 }
 function buildPreview(){
   const r = makeRacer(pick.char, pick.kart); r.player = true;
