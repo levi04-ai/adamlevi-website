@@ -4726,9 +4726,12 @@ function resultImage(){
   g.fillStyle = '#1f4fd1'; g.font = '800 34px Rubik, Arial'; g.fillText((R.ts ? R.ts + '   ·   ' : '') + 'adamlevi.net/balfour', W/2, y0 + 176);
   return c;
 }
+// inside the claude.ai artifact viewer, files are offered through its downloads capability (plain links are blocked)
+let DL = null; try { if (window.claude && window.claude.use) window.claude.use('downloads').then(d => { DL = d; }).catch(() => {}); } catch(e){}
 async function saveResultImage(){
   const c = resultImage(); if (!c) return;
   const blob = await new Promise(res => c.toBlob(res, 'image/jpeg', 0.9)); if (!blob) return;
+  if (DL){ try { await DL.save({ filename:'race-to-balfour.jpg', data:blob }); } catch(e){} return; }
   const file = new File([blob], 'race-to-balfour.jpg', { type:'image/jpeg' });
   try { if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:'המרוץ לבלפור' }); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'race-to-balfour.jpg'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
