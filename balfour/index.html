@@ -812,6 +812,12 @@
   #rankToast.show{animation:rtoast 1.1s ease-out forwards;}
   @keyframes rtoast{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}15%{opacity:1;transform:translate(-50%,0) scale(1.05)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px) scale(1)}}
   @media (max-height:520px){ #rankToast{font-size:24px;top:20%;} }
+
+  #mute{z-index:58;}
+  #touchPad .zone{right:auto!important;width:22%!important;height:16%!important;}
+  body.touch #pos{line-height:1.05!important;}
+  @media (max-height:520px) and (orientation:landscape){ #intro[data-step="track"] .mapPane{width:min(32vw, calc(100dvh - 150px))!important;max-height:none!important;aspect-ratio:1;} }
+  #rotate p{padding:0 24px;}
 </style>
 
 <div id="app">
@@ -852,6 +858,7 @@
       <button class="cta" id="pmResume">Resume</button>
       <button class="pmBtn" id="pmRestart">Restart race</button>
       <button class="pmBtn" id="pmMenu">Main menu</button>
+      <button class="pmBtn" id="pmSound">Sound: on</button>
     </div>
   </div>
 
@@ -3268,13 +3275,14 @@ function hold(btn, key){
 }
 // every finger on the pad counts: left half steers left, right half right, the bottom strip reverses
 { const pad = $('touchPad'), fingers = new Map();
-  const apply = () => { let l = false, rr = false, dn = false; for (const [, p] of fingers){ if (p.y > innerHeight*0.84) dn = true; else if (p.x < innerWidth/2) l = true; else rr = true; } keys.left = l; keys.right = rr; keys.down = dn; keys.touchAny = fingers.size > 0; };
+  const apply = () => { let l = false, rr = false, dn = false; for (const [, p] of fingers){ if (p.y > innerHeight*0.84 && p.x < innerWidth*0.22) dn = true; else if (p.x < innerWidth/2) l = true; else rr = true; } keys.left = l; keys.right = rr; keys.down = dn; keys.touchAny = fingers.size > 0; };
   pad.addEventListener('pointerdown', e => { e.preventDefault(); pad.setPointerCapture(e.pointerId); fingers.set(e.pointerId, { x:e.clientX, y:e.clientY }); apply(); });
   pad.addEventListener('pointermove', e => { if (fingers.has(e.pointerId)){ fingers.set(e.pointerId, { x:e.clientX, y:e.clientY }); apply(); } });
   for (const ev of ['pointerup','pointercancel']) pad.addEventListener(ev, e => { fingers.delete(e.pointerId); apply(); });
   pad.addEventListener('contextmenu', e => e.preventDefault()); }
 $('bItem').addEventListener('pointerdown', e => { e.preventDefault(); if (state === 'race') useItem(player()); });
-$('mute').addEventListener('click', () => { muted = !muted; $('mute').textContent = muted ? '🔇' : '🔊'; if (master) master.gain.value = muted ? 0 : 1; });
+function toggleMute(){ muted = !muted; $('mute').textContent = muted ? '🔇' : '🔊'; $('pmSound').textContent = muted ? 'Sound: off' : 'Sound: on'; if (master) master.gain.value = muted ? 0 : 1; }
+$('mute').addEventListener('click', toggleMute); $('pmSound').addEventListener('click', toggleMute);
 
 // ============================================================ game state
 let state = 'loading', countT = 0, raceT = 0, finishOrder = [], bigT = 0, stateT = 0;
@@ -3533,10 +3541,10 @@ function updateRacer(r, dt){
   let steer = 0, gas = false, brake = false, drift = false;
   if (r.player && racing && !AUTO){
     const want = (keys.right?1:0) - (keys.left?1:0);
-    r.steerIn = (r.steerIn||0) + clamp(want - (r.steerIn||0), -dt*7, dt*7);
+    const sr = isTouch ? 3.6 : 7; r.steerIn = (r.steerIn||0) + clamp(want - (r.steerIn||0), -dt*sr, dt*sr);
     steer = r.steerIn;
     brake = keys.down; gas = !brake; drift = keys.drift;
-    if (isTouch){ r.holdTurn = (want !== 0 && r.v > 14) ? (r.holdTurn||0) + dt : 0; if (r.holdTurn > 0.35) drift = true; }
+    if (isTouch){ r.holdTurn = (want !== 0 && r.v > 14) ? (r.holdTurn||0) + dt : 0; if (r.holdTurn > 0.6) drift = true; }
   } else if (state === 'race' || state === 'done'){
     const look = 8 + Math.floor(r.v*0.22);
     const lane = r.finished ? 0 : r.lane + Math.sin(raceT*0.35 + r.phase)*2.2;
@@ -4883,7 +4891,8 @@ function goFullLandscape(){
   try { const p = req ? req.call(el, { navigationUI:'hide' }) : null; if (p && p.then) p.then(lock).catch(lock); else lock(); } catch(e){ lock(); }
   $('tapPlay').hidden = true;
 }
-document.addEventListener('fullscreenchange', () => { if (isTouch && !document.fullscreenElement && state !== 'loading') $('tapPlay').hidden = false; });
+document.addEventListener('fullscreenchange', () => { if (isTouch && !document.fullscreenElement && state !== 'loading'){ $('tapPlay').hidden = false; setPause(true); } });
+if (isTouch) matchMedia('(orientation: portrait)').addEventListener('change', e => { if (e.matches) setPause(true); });
 if (isTouch){ $('tapPlay').hidden = false; $('tapPlayBtn').addEventListener('click', goFullLandscape); }
 async function init(){
   document.documentElement.style.setProperty('--keyart', KEYART ? `url(${KEYART})` : 'none');
