@@ -1085,7 +1085,7 @@ const ACCEL = 13, TURN = 2.0;
 // the candidates: everyone shares one seated rig, so any driver fits any kart
 const ROSTER = [
   { id:'bibi', first:'Benjamin', last:'Netanyahu', name:'Bibi', color:'#1f4fd1', skin:'e3ae8c', item:'bomb', model:'c_bibi', kart:'limo', seatLift:0.12 },
-  { id:'eisenkot', first:'Gadi', last:'Eisenkot', name:'Gadi', color:'#2b7a4b', item:'ruler', model:'c_eisenkot', kart:'orange' },
+  { id:'eisenkot', first:'Gadi', last:'Eisenkot', name:'Gadi', color:'#2b7a4b', item:'ruler', model:'c_eisenkot', kart:'orange', lean:-0.06, headTilt:-0.12 },
   { id:'bennett', first:'Naftali', last:'Bennett', name:'Bennett', color:'#3f51b5', item:'rotation', kart:'blue' },
   { id:'lapid', first:'Yair', last:'Lapid', name:'Lapid', color:'#00a3e0', item:'glove', kart:'yellow' },
   { id:'golan', first:'Yair', last:'Golan', name:'Golan', color:'#e3262f', item:'megaphone', model:'c_golan', kart:'red' },
@@ -2808,10 +2808,10 @@ function makeDriver(c, k, body){
   const place = () => { const h = wpos(bones.Hips); holder.position.add(seat.clone().sub(h)); holder.updateMatrixWorld(true); };
   place();
   // a gentle forward lean spread over the lower and upper back, so the bend reads as a curved back, not a kink at the pelvis
-  const lean = 0.18, want = new V3(0, Math.cos(lean), Math.sin(lean));
+  const lean = c.lean != null ? c.lean : 0.18, want = new V3(0, Math.cos(lean), Math.sin(lean));
   if (bones.Spine01){ const cur = wpos(bones.neck).sub(wpos(bones.Hips)).normalize(); rotateWorld(bones.Spine01, new THREE.Quaternion().slerpQuaternions(new THREE.Quaternion(), _q.setFromUnitVectors(cur, want), 0.5)); }
   rotateWorld(bones.Spine02, _q.setFromUnitVectors(wpos(bones.neck).sub(wpos(bones.Hips)).normalize(), want));
-  rotateWorld(bones.neck, _q.setFromUnitVectors(wpos(bones.Head).sub(wpos(bones.neck)).normalize(), new V3(0, Math.cos(0.1), Math.sin(0.1))));
+  rotateWorld(bones.neck, _q.setFromUnitVectors(wpos(bones.Head).sub(wpos(bones.neck)).normalize(), new V3(0, Math.cos(c.headTilt != null ? c.headTilt : 0.1), Math.sin(c.headTilt != null ? c.headTilt : 0.1))));
   // fists on the rim, a little above 9 and 3 o'clock
   const ga = 0.45, arms = [];
   for (const [nm, sd] of [['Left', 1], ['Right', -1]]){
