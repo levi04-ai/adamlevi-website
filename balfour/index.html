@@ -796,6 +796,12 @@
 
   #finish.vic .finBtns{background:none!important;padding:6px 0 0!important;}
   @media (max-height:520px){ #intro .tgrid, #intro #tgrid{max-height:calc(100dvh - 150px);grid-auto-rows:minmax(0,1fr);} #intro .tcard{aspect-ratio:auto!important;min-height:0;} }
+
+  #finish.vic .card::before{content:'ELECTION NIGHT \00B7  27.10';display:block;align-self:stretch;margin:-16px -18px 6px;padding:7px 0;border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;
+    background:linear-gradient(#1f4fd1,#0b2a8c);color:#fff;font:800 12px/1 Rubik,sans-serif;letter-spacing:.2em;text-align:center;}
+  @media (max-height:520px){ #finish.vic .card::before{margin:-10px -12px 4px;padding:5px 0;font-size:10px;} body.touch.st-count #big{top:30%!important;} }
+  .ccard.soon{opacity:.45;}
+  #coinLap .lapLbl{font:900 12px/1 Rubik,sans-serif;color:#13286e;opacity:.9;margin-right:3px;letter-spacing:.06em;align-self:center;}
 </style>
 
 <div id="app">
@@ -807,7 +813,7 @@
     <div id="raceTip" hidden></div>
     <div id="rank"></div>
     <div id="lapTime" class="outline"><span class="time" id="hTime">0:00.0</span></div>
-    <div id="coinLap"><span class="coinIco">₪</span><b class="outline" id="hCoins">00</b><span class="flagIco">🏁</span><b class="outline" id="hLap">1/3</b></div>
+    <div id="coinLap"><span class="coinIco">₪</span><b class="outline" id="hCoins">00</b><span class="flagIco">🏁</span><span class="lapLbl">LAP</span><b class="outline" id="hLap">1/3</b></div>
     <canvas id="minimap" width="600" height="600"></canvas>
     <div id="pos" class="outline">1<sup>st</sup></div>
     <div id="bubbles"></div>
@@ -1122,7 +1128,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = LITE ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-const FOG = new THREE.Color('#e9d9bd');   // warm late-afternoon haze over the Jerusalem hills
+const FOG = new THREE.Color('#d4e5f3');   // warm late-afternoon haze over the Jerusalem hills
 scene.fog = LITE ? new THREE.Fog(FOG, 130, 520) : new THREE.Fog(FOG, 220, 950);
 const camera = new THREE.PerspectiveCamera(70, 1, 0.3, LITE ? 560 : 1100);
 // the race is drawn through a small post chain: multisampled HDR buffer -> soft bloom on the hottest
@@ -4294,7 +4300,7 @@ function vicFlagTex(){ return canvasTex(128, 92, (g,w,h) => { g.fillStyle = '#ff
   g.strokeStyle = '#1f4fd1'; g.lineWidth = 4; const tri = (d) => { g.beginPath(); g.moveTo(w/2, h/2 - 18*d); g.lineTo(w/2 + 15.6, h/2 + 9*d); g.lineTo(w/2 - 15.6, h/2 + 9*d); g.closePath(); g.stroke(); }; tri(1); tri(-1); }); }
 function buildVictory(){
   const B = vicBits = { crowd:[], flags:[], beams:[], conf:null, winner:null, v:null, screenMat:null };
-  vic.background = canvasTex(4, 256, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#050b26'); gr.addColorStop(0.55,'#0d2266'); gr.addColorStop(1,'#1a3aa0'); g.fillStyle = gr; g.fillRect(0,0,w,h); });
+  vic.background = canvasTex(4, 256, (g,w,h) => { const gr = g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'#1a0b3f'); gr.addColorStop(0.55,'#0d2266'); gr.addColorStop(1,'#1a3aa0'); g.fillStyle = gr; g.fillRect(0,0,w,h); });
   vic.fog = new THREE.Fog('#0d2266', 22, 60);
   vic.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a1030, 0.9));
   const key = new THREE.DirectionalLight(0xfff1dc, 1.7); key.position.set(3, 9, 9); vic.add(key);
@@ -4319,13 +4325,14 @@ function buildVictory(){
     const sc = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 3.1), B.screenMat); sc.position.set(x*8.6 + Math.sin(-x*0.45)*0.14, 4.6, -2.6 + Math.cos(x*0.45)*0.14); sc.rotation.y = -x*0.45; vic.add(sc); }
   // flag poles either side
   const ft = vicFlagTex();
-  for (const x of [-5.6, 5.6]){ const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 7, 8), gold); pole.position.set(x, 3.5, -2.6); vic.add(pole);
-    const fl = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.7, 12, 1), new THREE.MeshStandardMaterial({ map:ft, side:THREE.DoubleSide, roughness:0.8 })); fl.position.set(x + Math.sign(x)*-1.25, 6.0, -2.6); fl.userData.p0 = fl.geometry.attributes.position.array.slice(); fl.userData.dir = -Math.sign(x); vic.add(fl); B.flags.push(fl); }
+  for (const x of [-5.6, 5.6]){ const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 7, 8), gold); pole.position.set(x, 3.1, -2.6); vic.add(pole);
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.7, 12, 1), new THREE.MeshStandardMaterial({ map:ft, side:THREE.DoubleSide, roughness:0.8 })); fl.position.set(x + Math.sign(x)*-1.25, 5.2, -2.6); fl.userData.p0 = fl.geometry.attributes.position.array.slice(); fl.userData.dir = -Math.sign(x); vic.add(fl); B.flags.push(fl); }
   // sweeping light beams
-  const beamM = new THREE.MeshBasicMaterial({ color:'#9fd6ff', transparent:true, opacity:0.13, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false });
-  for (let i=0;i<6;i++){ const c = new THREE.Mesh(new THREE.ConeGeometry(1.6, 26, 20, 1, true), beamM); c.geometry.translate(0, -13, 0); const g = new THREE.Group(); g.position.set(-11 + i*4.4, 0, -6); g.add(c); g.userData.ph = i*1.3; vic.add(g); B.beams.push(g); }
+  const beamMs = ['#ffd23f','#ff5fa2','#9fd6ff'].map(c => new THREE.MeshBasicMaterial({ color:c, transparent:true, opacity:0.17, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide, fog:false }));
+  const spot = new THREE.SpotLight(0xfff1c0, 30, 16, 0.35, 0.5, 1.2); spot.position.set(0, 9, 6); spot.target.position.set(0, 2.6, 0.4); vic.add(spot, spot.target);
+  for (let i=0;i<6;i++){ const c = new THREE.Mesh(new THREE.ConeGeometry(1.6, 26, 20, 1, true), beamMs[i % 3]); c.geometry.translate(0, -13, 0); const g = new THREE.Group(); g.position.set(-11 + i*4.4, 0, -6); g.add(c); g.userData.ph = i*1.3; vic.add(g); B.beams.push(g); }
   // the crowd: simple bobbing supporters, some with flags (instanced)
-  const N = isTouch ? 120 : 200, cols = ['#1f4fd1','#ffffff','#2b5be0','#e9eef8','#0f2f8f','#8fb4ff','#ffd23f'], skins = ['#f1c8a5','#e3ae8c','#c98b62','#8d5a3b','#f5d6bf'], hair = ['#2a1d14','#4a3121','#1b1b1b','#8a8a8a','#b78a4e','#5b3a22','#d9d9d9'];
+  const N = isTouch ? 150 : 270, cols = ['#1f4fd1','#ffffff','#ff7a3d','#e9eef8','#e3262f','#8fb4ff','#ffd23f','#35c27a','#2b5be0'], skins = ['#f1c8a5','#e3ae8c','#c98b62','#8d5a3b','#f5d6bf'], hair = ['#2a1d14','#4a3121','#1b1b1b','#8a8a8a','#b78a4e','#5b3a22','#d9d9d9'];
   const bodyG = new THREE.CapsuleGeometry(0.32, 0.8, 4, 10); bodyG.translate(0, 0.72, 0); const headG = new THREE.SphereGeometry(0.21, 12, 10); headG.translate(0, 1.55, 0);
   const armG = new THREE.CapsuleGeometry(0.09, 0.62, 3, 6); armG.translate(0, 0.34, 0);
   const bodies = new THREE.InstancedMesh(bodyG, new THREE.MeshLambertMaterial(), N), heads = new THREE.InstancedMesh(headG, new THREE.MeshLambertMaterial(), N), arms = new THREE.InstancedMesh(armG, new THREE.MeshLambertMaterial(), N*2);
@@ -4333,15 +4340,29 @@ function buildVictory(){
   const flags = new THREE.InstancedMesh(flagG, new THREE.MeshLambertMaterial({ map:ft, side:THREE.DoubleSide }), flagsN);
   const C = new THREE.Color();
   for (let i=0;i<N;i++){
-    let x, z; do { x = (Math.random()-0.5)*16; z = -1 + Math.random()*7.4; } while (Math.hypot(x/1.08, z - 0.2) < 3.7 || z > 6.1 || (z > 4.9 && Math.abs(x) < 2.2));
-    const p = { x, z, s:0.88 + Math.random()*0.24, ph:Math.random()*6, sp:2.2 + Math.random()*1.8, up:Math.random() < (z > 4.3 ? 0.25 : 0.6), flag:-1 };
+    let x, z; do { x = (Math.random()-0.5)*16; z = -1 + Math.random()*7.4; } while (Math.hypot(x/1.08, z - 0.2) < 3.7 || z > 6.1 || (z > 4.9 && Math.abs(x) < 2.2) || (z > 3.4 && Math.abs(x) < 1.5));
+    const p = { x, z, s:0.88 + Math.random()*0.24, ph:Math.random()*6, sp:2.2 + Math.random()*1.8, up:Math.random() < (z > 3.4 && Math.abs(x) < 3.2 ? 0.1 : 0.6), flag:-1 };
     bodies.setColorAt(i, C.set(cols[i % cols.length])); heads.setColorAt(i, C.set(hair[(i*3) % hair.length]));
     arms.setColorAt(i*2, C.set(skins[i % skins.length])); arms.setColorAt(i*2+1, C.set(skins[i % skins.length]));
     B.crowd.push(p);
   }
   B.crowd.forEach((p, i) => { if (i < flagsN) p.flag = i; });
-  for (const m of [bodies, heads, arms, flags]){ m.frustumCulled = false; vic.add(m); }
-  Object.assign(B, { bodies, heads, arms, flagsI:flags });
+  // placards (4-tile atlas, the winner's name is drawn into tile 0 in startVictory) and phone lights
+  B.plCan = document.createElement('canvas'); B.plCan.width = 512; B.plCan.height = 128;
+  B.plTex = new THREE.CanvasTexture(B.plCan); B.plTex.colorSpace = THREE.SRGBColorSpace;
+  const plG = new THREE.PlaneGeometry(0.8, 0.5); plG.translate(0, 0.25, 0);
+  const uvs = plG.attributes.uv; for (let k=0;k<uvs.count;k++) uvs.setX(k, uvs.getX(k)*0.25);
+  plG.setAttribute('tile', new THREE.InstancedBufferAttribute(new Float32Array(N).map((_, i) => i % 4), 1));
+  const plM = new THREE.MeshLambertMaterial({ map:B.plTex, side:THREE.DoubleSide });
+  plM.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float tile;').replace('#include <uv_vertex>', '#include <uv_vertex>\n#ifdef USE_MAP\n vMapUv.x += tile*0.25;\n#endif'); };
+  const placards = new THREE.InstancedMesh(plG, plM, N);
+  const lightsG = new THREE.BufferGeometry(); lightsG.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N*3), 3));
+  const lights = new THREE.Points(lightsG, new THREE.PointsMaterial({ color:'#fff6c0', size:0.13, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true, fog:false }));
+  B.crowd.forEach((p, i) => { p.sign = p.flag < 0 && i % 4 === 1; p.phone = p.flag < 0 && !p.sign && i % 3 === 0; });
+  for (const m of [bodies, heads, arms, flags, placards]){ m.frustumCulled = false; vic.add(m); }
+  lights.frustumCulled = false; vic.add(lights);
+  { const z0 = new THREE.Matrix4().makeScale(0, 0, 0); for (let i=0;i<N;i++) placards.setMatrixAt(i, z0); const la = lightsG.attributes.position; for (let i=0;i<N;i++) la.setXYZ(i, 0, -50, 0); }
+  Object.assign(B, { bodies, heads, arms, flagsI:flags, placards, lights });
   // falling confetti
   const CN = isTouch ? 220 : 420, cg = new THREE.PlaneGeometry(0.12, 0.07), conf = new THREE.InstancedMesh(cg, new THREE.MeshBasicMaterial({ side:THREE.DoubleSide, fog:false }), CN);
   B.cp = []; const ccols = ['#1f4fd1','#ffffff','#ffd23f','#8fb4ff','#e3262f'];
@@ -4421,6 +4442,11 @@ function startVictory(r){
       const hh = 2000, ww = hh*a; g.drawImage(img, 512 - ww/2, 50, ww, hh);
       const ct = new THREE.CanvasTexture(c); ct.colorSpace = THREE.SRGBColorSpace; B.screenMat.map = ct; B.screenMat.needsUpdate = true; };
   img.src = CUT[r.id] || CARDS[r.id] || ICONS[r.id];
+  { const g = B.plCan.getContext('2d'), sur = (r.def.last || r.def.name || '').toUpperCase(), txt = [sur, (r.def.name || sur).toUpperCase() + '!', '✌', '27.10'], bg = ['#ffffff','#ffd23f','#1f4fd1','#e3262f'], fg = ['#13286e','#13286e','#ffffff','#ffffff'];
+    for (let k=0;k<4;k++){ g.fillStyle = bg[k]; g.fillRect(k*128, 0, 128, 128); g.fillStyle = fg[k]; g.textAlign = 'center'; g.textBaseline = 'middle';
+      let fs = 46; g.font = `900 ${fs}px Rubik, Arial`; while (g.measureText(txt[k]).width > 116 && fs > 14){ fs -= 2; g.font = `900 ${fs}px Rubik, Arial`; }
+      g.fillText(txt[k], k*128 + 64, 66); }
+    B.plTex.needsUpdate = true; }
   vicT = 0; vicOn = true;
   cheer();
 }
@@ -4474,17 +4500,21 @@ function updateVictory(dt){
     B.bodies.setMatrixAt(i, _vm.compose(_vp.set(p.x, y, p.z), _vq, _vs));
     B.heads.setMatrixAt(i, _vm);
     for (const sd of [-1, 1]){
-      const up = p.up || p.flag >= 0 && sd > 0, ang = up ? Math.PI*(0.85 + 0.12*Math.sin(t*p.sp*1.3 + p.ph + sd)) : 0.15;
+      const up = p.up || (p.flag >= 0 || p.sign) && sd > 0 || p.phone && sd < 0, ang = up ? Math.PI*(0.85 + 0.12*Math.sin(t*p.sp*1.3 + p.ph + sd)) : 0.15;
       _ve.set(0, face, sd*ang, 'YXZ'); _vq.setFromEuler(_ve);
       const sx = Math.cos(face)*sd*0.36*p.s, sz = -Math.sin(face)*sd*0.36*p.s;
       B.arms.setMatrixAt(i*2 + (sd > 0 ? 1 : 0), _vm.compose(_vp.set(p.x + sx, y + 1.22*p.s, p.z + sz), _vq, _vs));
+      if (sd < 0 && p.phone){ const tip = new V3(0, 0.66*p.s, 0).applyQuaternion(_vq), la = B.lights.geometry.attributes.position; la.setXYZ(i, p.x + sx + tip.x, y + 1.22*p.s + tip.y + 0.05, p.z + sz + tip.z); }
+      if (sd > 0 && p.sign){ const tip = new V3(0, 0.62*p.s, 0).applyQuaternion(_vq); _ve.set(0, face, Math.sin(t*3 + p.ph)*0.15, 'YXZ');
+        B.placards.setMatrixAt(i, _vm.compose(_vp.set(p.x + sx + tip.x, y + 1.22*p.s + tip.y, p.z + sz + tip.z), _vq.setFromEuler(_ve), _vs)); }
       if (sd > 0 && p.flag >= 0){
         const tip = new V3(0, 0.68*p.s, 0).applyQuaternion(_vq); _ve.set(0, face + Math.sin(t*5 + p.ph)*0.5, 0, 'YXZ');
         B.flagsI.setMatrixAt(p.flag, _vm.compose(_vp.set(p.x + sx + tip.x, y + 1.22*p.s + tip.y + 0.1, p.z + sz + tip.z), _vq.setFromEuler(_ve), _vs));
       }
     }
   }
-  for (const m of [B.bodies, B.heads, B.arms, B.flagsI]) m.instanceMatrix.needsUpdate = true;
+  for (const m of [B.bodies, B.heads, B.arms, B.flagsI, B.placards]) m.instanceMatrix.needsUpdate = true;
+  B.lights.geometry.attributes.position.needsUpdate = true; B.lights.material.opacity = 0.75 + Math.sin(t*9)*0.2;
   // big flags ripple
   for (const f of B.flags){ const a = f.geometry.attributes.position, p0 = f.userData.p0; for (let k=0;k<a.count;k++){ const x = p0[k*3], u = (x + 1.2)/2.4, side = f.userData.dir > 0 ? u : 1 - u; a.array[k*3+2] = Math.sin(t*3.2 - x*2.4)*0.22*side; } a.needsUpdate = true; f.geometry.computeVertexNormals(); }
   for (const g of B.beams){ g.rotation.z = Math.sin(t*0.6 + g.userData.ph)*0.45; g.rotation.x = 0.25 + Math.sin(t*0.45 + g.userData.ph*2)*0.15; }
@@ -4556,7 +4586,7 @@ const KSIL = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 const TRACKS = [{ id:'balfour', name:'Balfour', open:true }, { id:'knesset', name:'Knesset Loop' }, { id:'promenade', name:'Tel Aviv Promenade' }, { id:'haifa', name:'Haifa Port' }];
 function buildIntro(){
   const box = $('cards');
-  ROSTER.forEach(c => {
+  [...ROSTER].sort((a, b) => !!b.model - !!a.model).forEach(c => {
     const b = document.createElement('button'); b.className = 'ccard' + (c.model ? '' : ' soon'); b.dataset.id = c.id;
     b.innerHTML = c.model ? `<img alt="" src="${CUT[c.id] || CARDS[c.id]}">` : `<span class="sil"></span><span class="q">?</span>`;
     if (!c.model) b.querySelector('.sil').style.setProperty('--sil', SIL);
