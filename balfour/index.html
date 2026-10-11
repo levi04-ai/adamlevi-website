@@ -3401,6 +3401,7 @@ function happyBirthday(){
 const keys = { left:false, right:false, up:false, down:false, drift:false, back:false };
 const keyMap = { ArrowLeft:'left', KeyA:'left', ArrowRight:'right', KeyD:'right', ArrowUp:'up', KeyW:'up', ArrowDown:'down', KeyS:'down', ShiftLeft:'drift', ShiftRight:'drift', KeyX:'drift', KeyC:'back' };
 addEventListener('keydown', e => {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;   // typing a name, not driving
   if ((e.code === 'Escape' || e.code === 'KeyP') && (paused || ['race','count','fly'].includes(state))){ e.preventDefault(); setPause(!paused); return; }
   if (paused) return;
   if (state === 'fly'){ skipFly(); e.preventDefault(); return; }
@@ -4920,7 +4921,7 @@ function lbStart(){ raceToken = null; if (!LB_ON || mode === 'tt') return; fetch
 const CHAR_ICON = id => CUT[id] || ICONS[id] || '';
 async function lbLoad(){
   const ol = $('lbList'), il = $('lbInline'); ol.innerHTML = '<li class="lbEmpty">Loading…</li>';
-  try { const j = await (await fetch('/api/balfour/top')).json(); const top = j.top || [];
+  try { const j = await (await fetch('/api/balfour/top?t=' + Date.now(), { cache:'no-store' })).json(); const top = j.top || [];
     ol.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>';
     if (il){ il.innerHTML = top.length ? '' : '<li class="lbEmpty">No times yet. Be the first!</li>'; top.slice(0, 8).forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; il.appendChild(li); }); }
     top.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<b class="lbR">${i+1}</b><img alt="" src="${CHAR_ICON(e.char)}"><span class="lbN"></span><span class="lbD">${['Easy','Medium','Hard'][e.diff] || ''}</span><b class="lbT">${fmtTime(e.time)}</b>`; li.querySelector('.lbN').textContent = e.name; ol.appendChild(li); });
