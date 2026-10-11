@@ -4583,6 +4583,8 @@ function startRace(){
   tone(523,523,0.25,'triangle',0.1); tone(659,659,0.25,'triangle',0.1,0.25); tone(784,784,0.5,'triangle',0.1,0.5);
 }
 function beginCountdown(){
+  if (composer && perfT > 2 && perfF/perfT < 48){ composer = null; renderer.setPixelRatio(Math.min(renderer.getPixelRatio(), 1.25)); resize(); }
+  perfT = 0; perfF = 0;
   $('flyTitle').hidden = true; $('hud').hidden = false; $('controls').hidden = false;
   state = 'count'; countT = 3.99; stateT = 0; setLights(1,0,0);
   camPos.copy(flyCurve.getPoint(1));
@@ -5167,7 +5169,7 @@ function resize(){
   camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
   fxc.width = innerWidth*devicePixelRatio; fxc.height = innerHeight*devicePixelRatio;
 }
-let last = performance.now(), acc = 0; const STEP = 1/60;
+let last = performance.now(), acc = 0, perfT = 0, perfF = 0; const STEP = 1/60;
 function frame(now){
   syncBodyState();
   const real = Math.min(0.1, (now-last)/1000); acc += real; last = now;
@@ -5175,8 +5177,12 @@ function frame(now){
   if (paused) acc = 0;
   if (hitStop > 0){ hitStop -= real; acc = 0; }
   /* (mid-race quality downgrade removed: it relinked every shader in one frame) */
-  while (acc >= STEP && steps < 6){ update(STEP); acc -= STEP; steps++; }
-  if (steps === 6) acc = 0;
+  // advance by the real time of this frame, in equal sub-steps of at most 1/60 s: a fixed 1/60 step with
+  // no interpolation moved karts 0 or 2 steps on some frames (120/144 Hz screens, uneven frame times) = judder
+  if (!paused && !(hitStop > 0) && real > 0){ const n = Math.min(6, Math.max(1, Math.ceil(real/STEP - 0.05))), d = real/n; for (let i=0;i<n;i++) update(d); }
+  acc = 0;
+  // weaker computers: measure the fly-in, and if it runs under ~48 fps drop the post effects before the race
+  if (state === 'fly' && composer){ perfT += real; perfF++; }
   lapWatcher(); syncRacers(real); syncGhost(real); updateCamera(real); updateBubbles(); updateMarkers(real);
   clouds.rotation.y += real*0.004;
   if (state !== 'loading' && state !== 'intro' && state !== 'fly'){ drawMinimap(); updateHud(); drawSpeedLines(); }
