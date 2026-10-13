@@ -55,7 +55,7 @@ const SITE = {
   followLinks: {
     linkedin:  "https://www.linkedin.com/in/adamlevi/",
     instagram: "https://www.instagram.com/adamlevi_storyteller/",
-    tiktok:    "https://www.tiktok.com/@duckademy",
+    tiktok:    "https://www.tiktok.com/@.adam.levi",
     youtube:   "https://www.youtube.com/channel/UCivgRspyvbtxQ5-L_kp6qGw",
     facebook:  "https://www.facebook.com/QuackUs"
   },
