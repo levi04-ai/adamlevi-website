@@ -57,7 +57,7 @@ const SITE = {
     instagram: "https://www.instagram.com/adamlevi_storyteller/",
     tiktok:    "https://www.tiktok.com/@.adam.levi",
     youtube:   "https://www.youtube.com/channel/UCivgRspyvbtxQ5-L_kp6qGw",
-    facebook:  "https://www.facebook.com/QuackUs"
+    facebook:  "https://www.facebook.com/adamlevi.storyteller"
   },
 
   // --- טקסטים של שיתוף ---
