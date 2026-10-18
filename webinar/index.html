@@ -150,6 +150,13 @@
   @media (min-width:861px){.hero h1 .hl{white-space:nowrap}}
   .hero-grid{grid-template-columns:1fr 1fr}
   @media (max-width:860px){.hero-grid{grid-template-columns:1fr}}
+  .cd{display:flex;gap:.7rem;margin:0 0 1.4rem;direction:rtl}
+  .cd-box{background:var(--white);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);min-width:4.6rem;padding:.5rem .4rem;text-align:center}
+  .cd-box b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.9rem;line-height:1.1;direction:ltr}
+  .cd-box span{font-size:.85rem;font-weight:700;color:var(--ink-soft)}
+  .cd-live{font-weight:900;font-size:1.3rem;margin-bottom:1.4rem}
+  .seats{display:inline-block;background:var(--ink);color:var(--yellow);border-radius:999px;padding:.35rem 1.1rem;font-weight:800;margin:.2rem 0 .4rem}
+  @media (max-width:480px){.cd{gap:.45rem}.cd-box{min-width:0;flex:1}.cd-box b{font-size:1.5rem}}
 </style>
 </head>
 <body>
@@ -170,6 +177,13 @@
       <div>
         <span class="bug">&lt;אופן<span class="sl">/</span>ספייס&gt;</span><br>
         <span class="tag">וובינר לייב · יום שני 2.11 · 20:30</span>
+        <div class="cd" data-start="2026-11-02T20:30:00+02:00" data-end="2026-11-02T22:00:00+02:00" aria-label="זמן עד תחילת הוובינר">
+          <div class="cd-box"><b data-u="d">--</b><span>ימים</span></div>
+          <div class="cd-box"><b data-u="h">--</b><span>שעות</span></div>
+          <div class="cd-box"><b data-u="m">--</b><span>דקות</span></div>
+          <div class="cd-box"><b data-u="s">--</b><span>שניות</span></div>
+        </div>
+        <p class="cd-live" hidden>הוובינר מתחיל עכשיו!</p>
         <h1>אופן ספייס:<br><span class="hl">להמציא את עצמך מחדש</span></h1>
         <p>סיימתי להכין את ההרצאה על אופן ספייס, ותוך כדי הבנתי שיש פה סיפור גדול יותר מהסדרה עצמה. הסיפור הוא על <b>העולם החדש</b>, ועל ההתאמות שאנחנו צריכים לעשות כדי להשתנות איתו.</p>
         <p>אראה לכם איך נולד פרק, איפה ה-AI נכנס ואיפה לא, ונדבר על <b>מה באמת עובד היום, ומה פחות.</b></p>
@@ -222,7 +236,7 @@
         </div>
         <div class="card step">
           <div class="num">03</div>
-          <h3>העולם החדש</h3>
+          <h3>עידן ה-AI</h3>
           <p>איך נולד פרק היום, ואיפה ה-AI נכנס לתהליך.</p>
         </div>
         <div class="card step">
@@ -256,6 +270,7 @@
       <div class="register">
         <h2>להרשמה לוובינר</h2>
         <div class="price">79₪</div>
+        <p class="seats">מספר המקומות מוגבל: עד 100 משתתפים</p>
         <ul class="details">
           <li><b>יום שני</b> · 2.11.26</li>
           <li><b dir="ltr">20:30–22:00</b> · שעה וחצי</li>
@@ -298,5 +313,24 @@
   <div class="sbt"><span>Stories</span> Before Tools.</div>
   <a href="https://www.adamlevi.net/">adamlevi.net</a>
 </footer>
+<script>
+(function(){
+  var els=document.querySelectorAll('.cd');
+  function pad(n){return n<10?'0'+n:''+n}
+  function tick(){
+    var now=Date.now();
+    els.forEach(function(el){
+      var start=new Date(el.dataset.start).getTime(), end=new Date(el.dataset.end).getTime();
+      var live=el.parentNode.querySelector('.cd-live');
+      if(now>=end){el.hidden=true; if(live) live.hidden=true; return;}
+      if(now>=start){el.hidden=true; if(live) live.hidden=false; return;}
+      var t=Math.floor((start-now)/1000);
+      var v={d:Math.floor(t/86400),h:Math.floor(t%86400/3600),m:Math.floor(t%3600/60),s:t%60};
+      el.querySelectorAll('[data-u]').forEach(function(b){var k=b.dataset.u;b.textContent=k==='d'?v[k]:pad(v[k]);});
+    });
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
 </body>
 </html>

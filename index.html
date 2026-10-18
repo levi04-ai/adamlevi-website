@@ -1072,6 +1072,12 @@
             .hero-actions { flex-wrap: wrap; }
             .hero-actions a { white-space: nowrap; padding: .7rem 1.1rem; }
         }
+        .os-card .cd { display:flex; justify-content:center; gap:.6rem; direction:rtl; }
+        .os-card .cd-box { background:#fff; border:3px solid #111; border-radius:14px; box-shadow:4px 4px 0 #111; min-width:4.4rem; padding:.45rem .4rem; text-align:center; }
+        .os-card .cd-box b { display:block; font-size:1.7rem; font-weight:900; line-height:1.1; direction:ltr; color:#111; }
+        .os-card .cd-box span { font-size:.8rem; font-weight:700; color:#444; }
+        .os-card .cd-live { font-weight:900; font-size:1.2rem; color:#111; }
+        @media (max-width:480px) { .os-card .cd { gap:.4rem; } .os-card .cd-box { min-width:0; flex:1; } .os-card .cd-box b { font-size:1.35rem; } }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -1128,11 +1134,18 @@
             <ol class="os-parts">
                 <li><b>01</b> נחזור להתחלה</li>
                 <li><b>02</b> אופן ספייס</li>
-                <li><b>03</b> העולם החדש</li>
+                <li><b>03</b> עידן ה-AI</li>
                 <li><b>04</b> סטוריטלינג שפותח דלתות</li>
             </ol>
             <div class="os-next">
                 <span class="os-date">הוובינר הקרוב · יום שני 2.11 · <bdi dir="ltr">20:30</bdi></span>
+                <div class="cd" data-start="2026-11-02T20:30:00+02:00" data-end="2026-11-02T22:00:00+02:00" aria-label="זמן עד תחילת הוובינר">
+                    <div class="cd-box"><b data-u="d">--</b><span>ימים</span></div>
+                    <div class="cd-box"><b data-u="h">--</b><span>שעות</span></div>
+                    <div class="cd-box"><b data-u="m">--</b><span>דקות</span></div>
+                    <div class="cd-box"><b data-u="s">--</b><span>שניות</span></div>
+        </div>
+                <p class="cd-live" hidden>הוובינר מתחיל עכשיו!</p>
                 <a href="/webinar/" class="os-btn">לפרטים והרשמה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
             </div>
             <a href="#contact" class="os-org">רוצים את ההרצאה בארגון? צרו קשר</a>
@@ -1407,5 +1420,24 @@
             }
         });
     </script>
+<script>
+(function(){
+  var els=document.querySelectorAll('.cd');
+  function pad(n){return n<10?'0'+n:''+n}
+  function tick(){
+    var now=Date.now();
+    els.forEach(function(el){
+      var start=new Date(el.dataset.start).getTime(), end=new Date(el.dataset.end).getTime();
+      var live=el.parentNode.querySelector('.cd-live');
+      if(now>=end){el.hidden=true; if(live) live.hidden=true; return;}
+      if(now>=start){el.hidden=true; if(live) live.hidden=false; return;}
+      var t=Math.floor((start-now)/1000);
+      var v={d:Math.floor(t/86400),h:Math.floor(t%86400/3600),m:Math.floor(t%3600/60),s:t%60};
+      el.querySelectorAll('[data-u]').forEach(function(b){var k=b.dataset.u;b.textContent=k==='d'?v[k]:pad(v[k]);});
+    });
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
 </body>
 </html>
