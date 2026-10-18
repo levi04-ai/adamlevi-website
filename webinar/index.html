@@ -95,6 +95,7 @@
   /* REGISTER */
   .register{background:var(--yellow);border:4px solid var(--ink);border-radius:26px;box-shadow:10px 10px 0 var(--ink);padding:2.8rem 2rem;text-align:center;max-width:36rem;margin:0 auto}
   .register h2{font-size:2.2rem}
+  .register .price{color:var(--white);-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink)}
   .price{font-size:2.3rem;font-weight:900;line-height:1;margin:.6rem 0}
   .details{list-style:none;margin:1.2rem auto 1.8rem;display:grid;gap:.5rem;font-size:1.15rem}
   .details li{background:var(--cream);border:2px solid var(--ink);border-radius:12px;padding:.55rem 1rem}
@@ -150,13 +151,13 @@
   @media (min-width:861px){.hero h1 .hl{white-space:nowrap}}
   .hero-grid{grid-template-columns:1fr 1fr}
   @media (max-width:860px){.hero-grid{grid-template-columns:1fr}}
-  .cd{display:flex;gap:.7rem;margin:0 0 1.4rem;direction:rtl}
-  .cd-box{background:var(--white);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);min-width:4.6rem;padding:.5rem .4rem;text-align:center}
-  .cd-box b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.9rem;line-height:1.1;direction:ltr}
-  .cd-box span{font-size:.85rem;font-weight:700;color:var(--ink-soft)}
-  .cd-live{font-weight:900;font-size:1.3rem;margin-bottom:1.4rem}
+  .cd{display:flex;width:fit-content;align-items:flex-start;direction:ltr;background:var(--white);border:3px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);padding:.35rem .8rem;margin:0 0 1.3rem}
+  .cd-box{text-align:center;padding:0 .3rem;position:relative}
+  .cd-box:not(:last-child)::after{content:':';position:absolute;right:-.2rem;top:0;font-weight:900;font-size:1.25rem;line-height:1.2}
+  .cd-box b{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.25rem;line-height:1.2;min-width:1.7rem}
+  .cd-box span{display:block;font-size:.65rem;font-weight:700;color:var(--ink-soft)}
+  .cd-live{font-weight:900;font-size:1.2rem;margin-bottom:1.3rem}
   .seats{display:inline-block;background:var(--ink);color:var(--yellow);border-radius:999px;padding:.35rem 1.1rem;font-weight:800;margin:.2rem 0 .4rem}
-  @media (max-width:480px){.cd{gap:.45rem}.cd-box{min-width:0;flex:1}.cd-box b{font-size:1.5rem}}
 </style>
 </head>
 <body>
@@ -270,7 +271,7 @@
       <div class="register">
         <h2>להרשמה לוובינר</h2>
         <div class="price">79₪</div>
-        <p class="seats">מספר המקומות מוגבל: עד 100 משתתפים</p>
+        <p class="seats">מספר המקומות מוגבל</p>
         <ul class="details">
           <li><b>יום שני</b> · 2.11.26</li>
           <li><b dir="ltr">20:30–22:00</b> · שעה וחצי</li>
