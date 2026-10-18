@@ -880,7 +880,7 @@
         </a>
         <span class="flex h-14 items-center rounded-xl border-[3px] border-ink px-5
                      font-mono text-xl font-bold text-card shadow-hard sm:text-2xl"
-              style="background:#4A4551;">
+              style="background:#111;color:#FFF3D6;">
           ${esc(SITE.brandTag)}
         </span>
         <span aria-hidden="true"></span>

@@ -36,10 +36,10 @@ tailwind.config = {
     extend: {
       fontFamily: { sans: ['Heebo', 'Assistant', 'system-ui', 'sans-serif'] },
       colors: {
-        wall:  '#E7CAA6',
-        ink:   '#2C292E',
-        card:  '#FFF8EE',
-        brand: '#E18B13',
+        wall:  '#FFF3D6',
+        ink:   '#111111',
+        card:  '#FFFFFF',
+        brand: '#F5A400',
         muted: '#61606A'
       }
     }
@@ -50,14 +50,17 @@ tailwind.config = {
 <style>
   html, body { height: 100%; overflow-x: hidden; }
   body {
-    background: #E7CAA6;
-    color: #2C292E;
+    background: #FFF3D6;
+    background-image: radial-gradient(rgba(0,0,0,.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-attachment: fixed;
+    color: #111;
     -webkit-tap-highlight-color: transparent;
   }
 
   /* צל קשיח — חלק מהשפה הוויזואלית של הסדרה */
-  .shadow-hard    { box-shadow: 6px 6px 0 #2C292E; }
-  .shadow-hard-sm { box-shadow: 3px 3px 0 #2C292E; }
+  .shadow-hard    { box-shadow: 6px 6px 0 #111; }
+  .shadow-hard-sm { box-shadow: 3px 3px 0 #111; }
 
   /* מעברים בין מסכים */
   .screen-enter { animation: screenIn .32s cubic-bezier(.2,.7,.3,1) both; }
@@ -78,13 +81,13 @@ tailwind.config = {
   @keyframes itemIn { from { opacity:0; transform: translateX(10px); } to { opacity:1; transform:none; } }
 
   .answer-btn { transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease; }
-  .answer-btn:hover  { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 #2C292E; background:#fff; }
-  .answer-btn:active { transform: translate(1px,1px);  box-shadow: 1px 1px 0 #2C292E; }
-  .answer-btn.picked { background:#2C292E; color:#FFF8EE; transform: translate(1px,1px); box-shadow: 1px 1px 0 #2C292E; }
+  .answer-btn:hover  { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 #111; background:#fff; }
+  .answer-btn:active { transform: translate(1px,1px);  box-shadow: 1px 1px 0 #111; }
+  .answer-btn.picked { background:#111; color:#FFF3D6; transform: translate(1px,1px); box-shadow: 1px 1px 0 #111; }
 
   .cta-btn { transition: transform .12s ease, box-shadow .12s ease, filter .12s ease; }
-  .cta-btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #2C292E; }
-  .cta-btn:active { transform: translate(1px,1px);   box-shadow: 2px 2px 0 #2C292E; }
+  .cta-btn:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #111; }
+  .cta-btn:active { transform: translate(1px,1px);   box-shadow: 2px 2px 0 #111; }
 
   /* פס התקדמות */
   .pip { transition: background-color .3s ease, transform .3s ease; }
@@ -92,6 +95,11 @@ tailwind.config = {
   /* מעטפת התצוגה המוקטנת של כרטיס הסטורי */
   #story-frame { overflow: hidden; }
   #story-card  { transform-origin: top right; }
+
+  /* מסכים צרים: ארבעת הפרצופים נכנסים בתוך הכרטיס */
+  @media (max-width: 420px) {
+    #app img.rounded-full.h-20 { width: 62px; height: 62px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .screen-enter, .screen-leave, .stagger > * { animation: none !important; }

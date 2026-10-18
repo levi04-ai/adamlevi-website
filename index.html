@@ -906,6 +906,172 @@
         .os-btn:hover { transform: translate(3px,3px); box-shadow: 2px 2px 0 #111; }
         .os-org { display: inline-block; margin-top: 1.4rem; color: #111; font-weight: 600; text-decoration: underline; }
         @media (max-width: 600px) { .os-card { padding: 2rem 1.2rem; } .os-parts { grid-template-columns: 1fr; } }
+
+        /* =========================================================
+           OPEN SPACE THEME (2026-10) - שפה אחידה לכל האתר
+           קרם + רשת נקודות, צהוב/כתום, מסגרות 3px, צללים קשים
+           ========================================================= */
+        :root {
+            --cream: #FFF3D6; --cream-2: #FBE8BC; --yellow: #F5A400; --orange: #E18B13;
+            --ink: #111; --ink-soft: #3a3a3a; --white: #fff;
+            --border: 3px solid var(--ink); --shadow: 6px 6px 0 var(--ink); --radius: 18px;
+        }
+        body { background: var(--cream); color: var(--ink); }
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: radial-gradient(rgba(0,0,0,.07) 1px, transparent 1px);
+            background-size: 22px 22px;
+        }
+        .section, .dark-section { background: transparent; border: 0; }
+        .hero, .section, .foot { position: relative; z-index: 1; }
+
+        /* NAV - נשאר שחור, רק קו תחתון בשפה */
+        .nav { border-bottom: 3px solid var(--ink); }
+
+        /* כפתורים */
+        .btn-main, .btn-sec, .btn-glow, .card-cta, .btn-whatsapp, .btn-more {
+            border: var(--border); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink);
+            font-weight: 800; color: var(--ink); transition: transform .15s, box-shadow .15s;
+        }
+        .btn-main { background: var(--yellow); }
+        .btn-sec, .btn-glow, .btn-more { background: var(--white); }
+        .btn-main:hover, .btn-sec:hover, .btn-glow:hover, .btn-whatsapp:hover, .btn-more:hover {
+            background-color: inherit; transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); color: var(--ink);
+        }
+        .btn-main:hover { background: var(--yellow); }
+        .btn-sec:hover, .btn-glow:hover, .btn-more:hover { background: var(--white); }
+        .btn-whatsapp:hover { background: #25D366; }
+
+        /* כותרות */
+        .hero h1 { font-weight: 900; letter-spacing: -0.02em; }
+        .hero h1 .teal {
+            background: var(--yellow); border: var(--border); border-radius: 12px;
+            padding: 0 .3em; box-shadow: 4px 4px 0 var(--ink); display: inline-block; margin-left: .15em;
+        }
+        .hero-desc { color: var(--ink-soft); }
+        .sec-head { max-width: 760px; }
+        .sec-label {
+            display: inline-block; background: var(--yellow); border: var(--border); border-radius: 999px;
+            padding: .3rem 1rem; font-weight: 800; font-size: .92rem; color: var(--ink);
+            letter-spacing: 0; box-shadow: 3px 3px 0 var(--ink); margin-bottom: 1rem;
+        }
+        .sec-title { font-weight: 900; color: var(--ink); white-space: normal; text-wrap: balance; letter-spacing: -0.01em; }
+        .sec-desc { color: var(--ink-soft); }
+
+        /* HERO - וידאו במסגרת */
+        .hero { min-height: auto; padding-top: 8rem; padding-bottom: 3rem; }
+        .hero-bg { display: none; }
+        .video-frame {
+            border: 4px solid var(--ink); border-radius: var(--radius); background: var(--white);
+            box-shadow: 10px 10px 0 var(--ink); transform: rotate(-2deg);
+        }
+
+        /* כרטיס ההרצאה - על רקע קרם, הכרטיס לבן כדי שיבלוט */
+        .os-card { background-color: var(--white); box-shadow: var(--shadow); }
+        .os-tag {
+            display: table; margin: 1.2rem auto 1rem; background: var(--yellow); border: var(--border);
+            border-radius: 999px; padding: .3rem 1rem; font-weight: 800; color: var(--ink); box-shadow: 3px 3px 0 var(--ink);
+        }
+        .os-parts li { background: var(--cream); }
+        .os-parts { margin-bottom: 2rem; max-width: 600px; }
+        .section { padding-top: 4.5rem; padding-bottom: 4.5rem; }
+        .cta-stay { margin-top: 0; }
+
+        /* מעבדת היצירה - טאבים וגלריה */
+        .filter-tabs { flex-wrap: wrap; }
+        .tab {
+            background: var(--white); border: var(--border); border-radius: 999px; color: var(--ink);
+            font-weight: 800; box-shadow: 3px 3px 0 var(--ink);
+        }
+        .tab:hover { color: var(--ink); border-color: var(--ink); background: var(--cream-2); }
+        .tab.active { background: var(--yellow); color: var(--ink); border-color: var(--ink); }
+        .bento { gap: 16px; }
+        .bento-item { border: var(--border); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); background: var(--white); }
+        .bento-item:hover { border-color: var(--ink); }
+        .bento-overlay i { background: var(--yellow); color: var(--ink); border: var(--border); backdrop-filter: none; }
+        .vibe-grid { gap: 1.6rem; }
+        .vibe-card {
+            background: var(--white); border: var(--border); border-radius: var(--radius);
+            box-shadow: var(--shadow); overflow: hidden;
+        }
+        .vibe-thumb { border: 0; border-bottom: var(--border); border-radius: 0; }
+        .vibe-card:hover .vibe-thumb { border-color: var(--ink); }
+        .vibe-info { padding: 1rem 1.1rem 1.2rem; }
+        .vibe-info h4 { color: var(--ink); font-weight: 800; }
+        .vibe-info p { color: var(--ink-soft); }
+
+        /* הרצאות וסדנאות - תמונות במסגרת */
+        .lec-track-wrap { padding: 4px 0 12px; }
+        .lec { gap: 1rem; }
+        .lec-card { border: var(--border); box-shadow: 5px 5px 0 var(--ink); background: var(--white); }
+        .lec-card:hover { border-color: var(--ink); box-shadow: 5px 5px 0 var(--ink); }
+
+        /* תישארו בלופ */
+        .cta-stay { background: var(--cream-2); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .cta-avatar { border: var(--border); }
+        .cta-stay h3 { font-weight: 900; color: var(--ink); font-size: 1.8rem; }
+        .cta-stay p { color: var(--ink-soft); }
+
+        /* mako */
+        .press-card { border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .press-card:hover { border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); transform: translate(3px,3px); }
+        .press-thumb { border-left: var(--border); }
+        .press-badge {
+            background: var(--yellow); border: var(--border); color: var(--ink); font-size: .85rem;
+            padding: .25rem .9rem; box-shadow: 3px 3px 0 var(--ink);
+        }
+        .press-content h3 { color: var(--ink); font-weight: 900; }
+        .press-content p { color: var(--ink-soft); }
+        .press-cta, .press-card:hover .press-cta { color: var(--ink); font-weight: 800; text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+
+        /* אודות */
+        .about-vid { border: 4px solid var(--ink); border-radius: var(--radius); box-shadow: 8px 8px 0 var(--ink); transform: rotate(2deg); }
+        .about-body h2 { color: var(--ink); font-weight: 900; font-size: 2.3rem; }
+        .about-body h3 { color: var(--ink) !important; font-weight: 900 !important; }
+        .about-body p { color: var(--ink-soft); }
+        .about-body strong { color: var(--ink); }
+
+        /* צור קשר */
+        .contact-form {
+            background: var(--white); border: var(--border); border-radius: var(--radius);
+            box-shadow: var(--shadow); padding: 2rem;
+        }
+        .contact-form input, .contact-form textarea {
+            background: var(--cream); border: 2px solid var(--ink); border-radius: 12px; color: var(--ink);
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            background: var(--white); border-color: var(--ink); box-shadow: 3px 3px 0 var(--yellow);
+        }
+        .contact-form input::placeholder, .contact-form textarea::placeholder { color: #6b6457; }
+
+        /* פוטר */
+        .foot { background: var(--cream-2); color: var(--ink); border-top: var(--border); }
+        .foot-info h3 { color: var(--ink) !important; font-weight: 900; }
+        .foot-info a { color: var(--ink-soft) !important; }
+        .foot-info a:hover, .foot-info a.foot-wa:hover { color: var(--ink) !important; }
+        .foot-info a.foot-wa { color: var(--ink) !important; font-weight: 700; box-shadow: none; }
+        .soc a {
+            background: var(--white); color: var(--ink); border: var(--border); border-radius: 12px;
+            box-shadow: 3px 3px 0 var(--ink);
+        }
+        .soc a:hover { background: var(--yellow); color: var(--ink); border-color: var(--ink); }
+        .foot-bar { color: var(--ink-soft); border-top: 2px solid rgba(0,0,0,.15); }
+
+        @media (max-width:1024px) {
+            .hero-visual { margin: 0 auto 1rem; }
+        }
+        @media (max-width:768px) {
+            .hero { padding-top: 6.5rem; }
+            .video-frame { box-shadow: 6px 6px 0 var(--ink); }
+            .press-thumb { border-left: 0; border-bottom: var(--border); }
+            .contact-form { padding: 1.4rem 1.1rem; }
+            .about-vid { transform: none; box-shadow: 6px 6px 0 var(--ink); }
+            .about-body h2 { font-size: 1.9rem; }
+            .lec-card { flex-basis: 300px; height: 214px; }
+            .section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+            .hero-actions { flex-wrap: wrap; }
+            .hero-actions a { white-space: nowrap; padding: .7rem 1.1rem; }
+        }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -960,12 +1126,11 @@
             <span class="os-tag">ההרצאה</span>
             <h2>אופן ספייס: להמציא את עצמך מחדש</h2>
             <ol class="os-parts">
-                <li><b>01</b> הסיפור והמשחק</li>
+                <li><b>01</b> נחזור להתחלה</li>
                 <li><b>02</b> אופן ספייס</li>
-                <li><b>03</b> מה הם כתבו</li>
-                <li><b>04</b> הדלתות</li>
+                <li><b>03</b> העולם החדש</li>
+                <li><b>04</b> סטוריטלינג שפותח דלתות</li>
             </ol>
-            <p class="os-ex">ובסוף: משפט אחד. תרגיל על דף, בלי שם של תפקיד ובלי שם של כלי.</p>
             <div class="os-next">
                 <span class="os-date">הוובינר הקרוב · יום שני 2.11 · <bdi dir="ltr">20:30</bdi></span>
                 <a href="/webinar/" class="os-btn">לפרטים והרשמה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
