@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>וובינר: אופן ספייס, להמציא את עצמך מחדש | אדם לוי</title>
+<meta name="description" content="וובינר לייב עם אדם לוי, יוצר אופן ספייס: למה הסדרה עבדה, סטוריטלינג שעובד בעידן ה-AI, ואיך פרויקט אחד פותח דלתות. יום שני 2.11 ב-20:30, Google Meet.">
+<meta property="og:title" content="וובינר: אופן ספייס, להמציא את עצמך מחדש">
+<meta property="og:description" content="יום שני 2.11 · 20:30 · Google Meet · 79₪">
+<meta property="og:image" content="https://www.adamlevi.net/img/series/hero.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF3D6; --cream-2:#FBE8BC; --yellow:#F5A400; --orange:#E18B13;
+    --ink:#111; --ink-soft:#3a3a3a; --white:#fff;
+    --border:3px solid var(--ink); --shadow:6px 6px 0 var(--ink); --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--ink);direction:rtl;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(rgba(0,0,0,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0}
+  main,nav,footer{position:relative;z-index:1}
+  a{color:inherit}
+
+  /* NAV (כמו באתר) */
+  .nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:#0d0d0d}
+  .nav-logo{color:#f3eee5;font-weight:700;font-size:1.15rem;text-decoration:none}
+  .nav-links{display:flex;gap:1.6rem;list-style:none}
+  .nav-links a{color:#b8b3a3;text-decoration:none;font-size:.92rem;font-weight:500}
+  .nav-links a:hover{color:#f3eee5}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+  .bug{display:inline-flex;gap:.2rem;font-family:ui-monospace,'Courier New',monospace;font-weight:700;font-size:1rem;background:var(--ink);color:var(--cream);padding:.45rem .9rem;border-radius:10px;direction:rtl}
+  .bug .sl{color:var(--yellow)}
+  .tag{display:inline-block;background:var(--yellow);border:var(--border);border-radius:999px;padding:.35rem 1rem;font-weight:800;font-size:.95rem;box-shadow:3px 3px 0 var(--ink)}
+  .card{background:var(--white);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .btn{display:inline-block;background:var(--yellow);color:var(--ink);border:var(--border);border-radius:14px;padding:.95rem 2.2rem;font-weight:900;font-size:1.2rem;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translate(3px,3px);box-shadow:3px 3px 0 var(--ink)}
+  h1,h2,h3{font-weight:900;letter-spacing:-.01em;line-height:1.15}
+  .hl{background:var(--yellow);border:var(--border);border-radius:12px;padding:0 .35em;display:inline-block;box-shadow:4px 4px 0 var(--ink)}
+
+  /* HERO */
+  .hero{padding:4.5rem 0 4rem}
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center}
+  .hero .tag{margin:1.2rem 0 1.4rem}
+  .hero h1{font-size:clamp(2.4rem,6vw,4rem);margin-bottom:1.4rem}
+  .hero h1 .hl{margin-top:.4rem}
+  .hero p{font-size:1.2rem;color:var(--ink-soft);max-width:34rem;margin-bottom:2rem}
+  .hero p b{color:var(--ink)}
+  .hero-cta{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+  .hero-cta small{font-weight:700;color:var(--ink-soft)}
+  .hero-art{position:relative}
+  .hero-art .frame{border:4px solid var(--ink);border-radius:var(--radius);overflow:hidden;box-shadow:10px 10px 0 var(--ink);transform:rotate(-2deg);background:var(--white)}
+  .hero-art img{display:block;width:100%;height:auto}
+  .sticker{position:absolute;background:var(--white);border:var(--border);border-radius:999px;padding:.45rem 1rem;font-weight:900;box-shadow:4px 4px 0 var(--ink);transform:rotate(4deg);white-space:nowrap}
+  .sticker.s1{top:-18px;left:-10px;background:var(--yellow)}
+  .sticker.s2{bottom:-16px;right:12px;transform:rotate(-5deg)}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin:1rem 0 0}
+  .stat{padding:1.4rem 1.2rem;text-align:center}
+  .stat strong{display:block;font-size:2.3rem;font-weight:900;line-height:1}
+  .stat span{display:block;margin-top:.5rem;color:var(--ink-soft);font-weight:500}
+
+  section.block{padding:4.5rem 0}
+  .sec-head{text-align:center;max-width:44rem;margin:0 auto 2.6rem}
+  .sec-head h2{font-size:clamp(1.9rem,4vw,2.7rem);margin:.9rem 0 .8rem}
+  .sec-head p{font-size:1.12rem;color:var(--ink-soft)}
+
+  /* STORY */
+  .story{padding:2.4rem 2.2rem;max-width:46rem;margin:0 auto}
+  .story p{font-size:1.15rem;margin-bottom:1.1rem}
+  .story .quote{font-size:1.3rem;font-weight:800;border-right:6px solid var(--yellow);padding-right:1rem;margin-top:1.6rem}
+
+  /* SYLLABUS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+  .step{padding:1.8rem 1.5rem}
+  .step .num{width:54px;height:54px;border-radius:50%;background:var(--yellow);border:var(--border);display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;margin-bottom:1rem;box-shadow:3px 3px 0 var(--ink)}
+  .step h3{font-size:1.35rem;margin-bottom:.6rem}
+  .step p{color:var(--ink-soft)}
+  .steps.four{grid-template-columns:repeat(4,1fr)}
+  .exercise{margin-top:1.6rem;padding:1.6rem 1.8rem;display:flex;gap:1.2rem;align-items:center;background:var(--cream-2)}
+  .exercise p{font-size:1.12rem;font-weight:500}
+  @media (max-width:1000px){.steps.four{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:600px){.steps.four{grid-template-columns:1fr}.exercise{flex-direction:column;align-items:flex-start}}
+
+  /* CHARACTERS */
+  .cast{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+  .cast figure{overflow:hidden;padding:0}
+  .cast img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-bottom:var(--border)}
+  .cast figcaption{padding:.7rem;text-align:center;font-weight:800}
+
+  /* REGISTER */
+  .register{background:var(--yellow);border:4px solid var(--ink);border-radius:26px;box-shadow:10px 10px 0 var(--ink);padding:2.8rem 2rem;text-align:center;max-width:36rem;margin:0 auto}
+  .register h2{font-size:2.2rem}
+  .price{font-size:4.5rem;font-weight:900;line-height:1;margin:.8rem 0}
+  .details{list-style:none;margin:1.2rem auto 1.8rem;display:grid;gap:.5rem;font-size:1.15rem}
+  .details li{background:var(--cream);border:2px solid var(--ink);border-radius:12px;padding:.55rem 1rem}
+  .register .btn{background:var(--ink);color:var(--yellow);font-size:1.3rem}
+  .refund{display:block;margin-top:1.1rem;font-weight:700}
+
+  /* AUDIENCE */
+  .aud{display:grid;gap:1rem;max-width:44rem;margin:0 auto}
+  .aud .card{padding:1.2rem 1.4rem;font-size:1.12rem;display:flex;gap:.9rem;align-items:flex-start}
+  .aud .dot{flex:none;width:14px;height:14px;margin-top:.55rem;border-radius:50%;background:var(--yellow);border:2px solid var(--ink)}
+
+  /* LOOP */
+  .loop{padding:2.2rem;text-align:center;max-width:40rem;margin:0 auto;background:var(--cream-2)}
+  .loop h2{font-size:1.8rem;margin-bottom:.6rem}
+  .loop p{color:var(--ink-soft);margin-bottom:1.3rem}
+  .wa{background:#25D366;color:var(--ink)}
+
+  footer{text-align:center;padding:3rem 1rem 3.5rem}
+  footer .sbt{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;direction:ltr}
+  footer .sbt span{background:var(--yellow);padding:0 .25em;border-radius:6px}
+  footer a{display:inline-block;margin-top:.6rem;font-weight:700}
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-art{order:-1;max-width:30rem;margin:0 auto}
+    .steps,.stats{grid-template-columns:1fr}
+    .cast{grid-template-columns:repeat(2,1fr)}
+    .nav-links{display:none}
+  }
+  @media (max-width:480px){
+    .wrap{padding:0 1rem}
+    .story{padding:1.6rem 1.2rem}
+    .price{font-size:3.6rem}
+    .btn{padding:.85rem 1.6rem}
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="https://www.adamlevi.net/" class="nav-logo">Adam Levi</a>
+  <ul class="nav-links">
+    <li><a href="https://www.adamlevi.net/#hero">בית</a></li>
+    <li><a href="https://www.adamlevi.net/#services">הרצאות וסדנאות</a></li>
+    <li><a href="https://www.adamlevi.net/series/">אופן ספייס</a></li>
+    <li><a href="https://www.adamlevi.net/#contact">צור קשר</a></li>
+  </ul>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="bug">&lt;אופן<span class="sl">/</span>ספייס&gt;</span><br>
+        <span class="tag">וובינר לייב · יום שני 2.11 · 20:30</span>
+        <h1>הרצאה על אופן ספייס.<br><span class="hl">אבל בעיקר עלינו.</span></h1>
+        <p>סיימתי להכין את ההרצאה על אופן ספייס, ותוך כדי הבנתי שיש פה סיפור גדול יותר מהסדרה עצמה. הסיפור הוא על <b>העולם החדש</b>, ועל ההתאמות שאנחנו צריכים לעשות כדי להשתנות איתו. לא כקלישאה, אלא באמת: <b>מה עובד, ומה פחות עובד.</b></p>
+        <div class="hero-cta">
+          <a href="#signup" class="btn">להרשמה · 79₪</a>
+          <small>שעה וחצי ב-Google Meet · כולל הקלטה</small>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="frame"><img src="https://www.adamlevi.net/img/series/hero.jpg" alt="אופן ספייס: אריק, קובי, דנה ודימה במשרד"></div>
+        <span class="sticker s1">3 מיליון צפיות</span>
+        <span class="sticker s2">17 פרקים</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section>
+    <div class="wrap stats">
+      <div class="card stat"><strong>3M+</strong><span>צפיות וחשיפות ב-17 פרקים</span></div>
+      <div class="card stat"><strong>5</strong><span>פלטפורמות, בלי תקציב ובלי צוות</span></div>
+      <div class="card stat"><strong>0</strong><span>קורות חיים שפתחו את הדלתות האלה</span></div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">על מה הוובינר?</span>
+        <h2>סדרת אנימציה אחת. הרבה דלתות.</h2>
+      </div>
+      <div class="card story">
+        <p>לפני שנה פיטרו אותי מההייטק. שלחתי קורות חיים, וחיכיתי. ובמקום רק לחכות, יצרתי. ככה נולדה אופן ספייס.</p>
+        <p>הדלתות שנפתחו לי בסוף, ההצעות וההזדמנויות העסקיות, לא נפתחו מקורות החיים. הן נפתחו ממשהו שאנשים <b>ראו</b>.</p>
+        <p class="quote">ברגע שה-AI נכנס, הוא דווקא אמור לזקק לנו את ההגדרה שלנו עוד יותר. וברגע שמבינים את זה, הכל נהיה הרבה יותר קל.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYLLABUS -->
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag">מה נעשה בוובינר?</span>
+        <h2>שעה וחצי. ארבעה פרקים ותרגיל אחד.</h2>
+      </div>
+      <div class="steps four">
+        <div class="card step">
+          <div class="num">01</div>
+          <h3>הסיפור והמשחק</h3>
+          <p>מהפיטורים ועד הפרק הראשון. איך יצירה הפכה למשחק, ולמה בשלב מסוים הבנתי שטעיתי.</p>
+        </div>
+        <div class="card step">
+          <div class="num">02</div>
+          <h3>אופן ספייס</h3>
+          <p>נצפה בקטע ונפרק אותו ביחד: שני רבדים, הזדהות, ואיך בונים דמות שכל אחד מכיר מהמשרד שלו.</p>
+        </div>
+        <div class="card step">
+          <div class="num">03</div>
+          <h3>מה הם כתבו</h3>
+          <p>התגובות שגילו לי על מה הסדרה באמת. "זה המשרד שלי", ולמה אנשים כתבו בעצם על עצמם.</p>
+        </div>
+        <div class="card step">
+          <div class="num">04</div>
+          <h3>הדלתות</h3>
+          <p>מה נפתח בזכות הסדרה, ולמה כשהתור נסגר, בונים לעצמנו במה.</p>
+        </div>
+      </div>
+      <div class="card exercise">
+        <span class="tag">ובסוף: משפט אחד</span>
+        <p>תרגיל על דף: המשפט שמגדיר אתכם, בלי שם של תפקיד ובלי שם של כלי. ופרויקט קטן אחד, עם תאריך.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAST -->
+  <section class="block" style="padding-top:1rem">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>הם יהיו שם גם.</h2>
+        <p>ונגלה למה כל כך הרבה אנשים כתבו "זה המשרד שלי".</p>
+      </div>
+      <div class="cast">
+        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-erik.jpg" alt="אריק" loading="lazy"><figcaption>אריק</figcaption></figure>
+        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-kobi.jpg" alt="קובי" loading="lazy"><figcaption>קובי</figcaption></figure>
+        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-dana.jpg" alt="דנה" loading="lazy"><figcaption>דנה</figcaption></figure>
+        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-dima.jpg" alt="דימה" loading="lazy"><figcaption>דימה</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="block" id="signup">
+    <div class="wrap">
+      <div class="register">
+        <h2>להרשמה לוובינר</h2>
+        <div class="price">79₪</div>
+        <ul class="details">
+          <li><b>יום שני</b> · 2.11.26</li>
+          <li><b>20:30–22:00</b> · שעה וחצי</li>
+          <li>לייב ב-Google Meet</li>
+          <li><b>כולל הקלטה</b> · לכל הנרשמים, לצפייה במשך שבוע</li>
+        </ul>
+        <a href="https://pay.grow.link/NDQ2NDI~8989a6d5dc5b74b4ce0aace1f65f7c17-NDE1MjMxMg" class="btn">להרשמה ותשלום</a>
+        <span class="refund">אם הוובינר יידחה מסיבה כלשהי, תוכלו לבחור: להצטרף במועד החדש, או לקבל החזר מלא.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIENCE -->
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head"><span class="tag">למי זה מתאים?</span></div>
+      <div class="aud">
+        <div class="card"><span class="dot"></span><p>לכל מי שמרגיש ש<b>משהו השתנה</b>, ורוצה ללמוד דרכים וכלים לעידן הבינה המלאכותית. לא כקלישאה, אלא מדוגמאות שעובדות.</p></div>
+        <div class="card"><span class="dot"></span><p>ליוצרים ואנשי תוכן שמחפשים את <b>הסיפור שלהם</b>, ולא עוד כלי.</p></div>
+        <div class="card"><span class="dot"></span><p>למי שרוצה ש<b>פרויקט אחד</b> יפתח לו דלתות, מעולם ההייטק או מחוץ לו.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOOP -->
+  <section class="block" style="padding-top:1rem">
+    <div class="wrap">
+      <div class="card loop">
+        <h2>תישארו בלופ</h2>
+        <p>קבוצת WhatsApp שקטה (רק אני שולח). עדכונים על סדנאות, תובנות מהתהליך והצצות מאחורי הקלעים. בלי ספאם.</p>
+        <a href="https://chat.whatsapp.com/Cq3Kqg5mXo37vIwiAMuH91" target="_blank" rel="noopener" class="btn wa">הצטרפות לקבוצה</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="sbt"><span>Stories</span> Before Tools.</div>
+  <a href="https://www.adamlevi.net/">adamlevi.net</a>
+</footer>
+</body>
+</html>
