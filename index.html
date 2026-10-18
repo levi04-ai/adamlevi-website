@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>אדם לוי · אופן ספייס</title>
-    <meta name="description" content="אדם לוי, אנימטור ויוצר סדרת האנימציה אופן ספייס. 17 פרקים על מה שבאמת קורה במשרד, והרצאה על מה שקרה בדרך.">
-    <link rel="canonical" href="https://www.adamlevi.net/">
+    <title>Adam Levi | Stories Before Tools</title>
+    <meta name="description" content="אדם לוי, יוצר סדרת האנימציה אופן ספייס. הרצאות, סיפורים ויצירה.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.adamlevi.net/">
-    <meta property="og:title" content="אדם לוי · אופן ספייס">
-    <meta property="og:description" content="סדרת אנימציה על המשרד, והרצאה על להמציא את עצמך מחדש.">
+    <meta property="og:title" content="Adam Levi | Stories Before Tools">
+    <meta property="og:description" content="אדם לוי, יוצר סדרת האנימציה אופן ספייס.">
     <meta property="og:image" content="https://www.adamlevi.net/img/og-adam.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="he_IL">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
@@ -892,62 +888,24 @@
             .foot-inner { flex-direction: column; text-align: center; }
             .soc { justify-content: center; }
         }
-        /* HERO SUB */
-        .hero h1 { white-space: normal; }
-        .hero-sub { font-size: 1.2rem; font-weight: 500; color: #1a1a1a; line-height: 1.7; margin-bottom: 1rem; max-width: 600px; }
-
-        /* EVENTS */
-        .events-section { padding: 0 3.5rem 4rem; }
-        .events-wrap { max-width: 1020px; margin: 0 auto; }
-        .events-label { margin-bottom: 1rem; }
-        .event-card {
-            display: flex; align-items: center; gap: 2rem;
-            background: #fff;
-            border: 1px solid rgba(0,0,0,0.18);
-            border-radius: 14px;
-            padding: 1.6rem 2rem;
-        }
-        .event-date {
-            flex: 0 0 auto; display: flex; flex-direction: column; align-items: center;
-            min-width: 92px; padding-left: 2rem;
-            border-left: 1px solid rgba(0,0,0,0.12);
-        }
-        .event-day { font-size: 2.2rem; font-weight: 700; line-height: 1; color: #0d0d0d; letter-spacing: -0.02em; }
-        .event-weekday { font-size: 0.9rem; color: #444; margin-top: 0.4rem; }
-        .event-body { flex: 1; min-width: 0; }
-        .event-body h3 { font-size: 1.25rem; font-weight: 700; color: #0d0d0d; margin-bottom: 0.35rem; }
-        .event-details { color: #2a2a2a; font-size: 0.98rem; }
-        .event-details .nw { white-space: nowrap; }
-        .event-note { color: #666; font-size: 0.85rem; margin-top: 0.2rem; }
-        .event-cta { flex: 0 0 auto; }
-        .events-empty { color: #2a2a2a; font-size: 1rem; line-height: 1.8; }
-        .events-empty a { color: #0d0d0d; font-weight: 600; white-space: nowrap; }
-        .events-empty a i { color: #25D366; }
-
-        /* LECTURE */
-        .lecture-exercise { margin-top: 1rem; font-size: 1rem; color: #444; }
-        .cards-2 { grid-template-columns: repeat(2,1fr); max-width: 760px; }
-        .card-meta { font-size: 0.82rem; color: #666; margin-bottom: 0.5rem; }
-        .lec-gallery { margin-top: 4rem; }
-        .lec-caption { text-align: center; color: #444; font-size: 0.95rem; margin-bottom: 1.2rem; }
-        .about-body h2 { color: #0d0d0d; }
-        .about-body a { color: #0d0d0d; font-weight: 600; }
-        .about-note { font-style: italic; color: #666 !important; font-size: 1rem !important; }
-
-        @media (max-width:1024px) {
-            .hero-sub { margin: 0 auto; order: 3; }
-            .hero-desc { order: 4; }
-            .hero-actions { order: 5; }
-            .cards-2 { grid-template-columns: 1fr; max-width: 380px; }
-        }
-        @media (max-width:768px) {
-            .events-section { padding: 0 1.5rem 3rem; }
-            .event-card { flex-direction: column; align-items: stretch; gap: 1rem; padding: 1.4rem; text-align: right; }
-            .event-date { flex-direction: row; align-items: baseline; gap: 0.7rem; padding: 0 0 0.9rem; min-width: 0; border-left: none; border-bottom: 1px solid rgba(0,0,0,0.12); }
-            .event-weekday { margin-top: 0; }
-            .event-cta { justify-content: center; }
-            .lec-card { flex-basis: 280px; height: 200px; }
-        }
+        /* OPEN SPACE LECTURE */
+        .os-lecture { padding: 5rem 1.5rem; }
+        .os-card { max-width: 760px; margin: 0 auto; background: #FFF3D6; border: 3px solid #111; border-radius: 22px; box-shadow: 8px 8px 0 #111; padding: 2.6rem 2.4rem; text-align: center; color: #111;
+            background-image: radial-gradient(rgba(0,0,0,.07) 1px, transparent 1px); background-size: 22px 22px; }
+        .os-bug { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-weight: 700; background: #111; color: #FFF3D6; padding: .4rem .9rem; border-radius: 10px; direction: rtl; }
+        .os-bug span { color: #F5A400; }
+        .os-tag { display: block; margin: 1.2rem 0 .4rem; font-weight: 700; color: #555; }
+        .os-card h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 900; line-height: 1.2; margin-bottom: 1.6rem; color: #111; }
+        .os-parts { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; max-width: 520px; margin: 0 auto 1.4rem; padding: 0; }
+        .os-parts li { background: #fff; border: 2px solid #111; border-radius: 12px; padding: .7rem 1rem; font-weight: 700; text-align: right; box-shadow: 3px 3px 0 #111; }
+        .os-parts b { display: inline-block; background: #F5A400; border: 2px solid #111; border-radius: 50%; width: 2rem; height: 2rem; line-height: 1.7rem; text-align: center; margin-left: .6rem; font-size: .85rem; }
+        .os-ex { font-size: 1.05rem; color: #333; margin-bottom: 1.8rem; }
+        .os-next { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .os-date { font-weight: 800; font-size: 1.1rem; }
+        .os-btn { display: inline-block; background: #F5A400; color: #111; border: 3px solid #111; border-radius: 14px; padding: .85rem 2rem; font-weight: 900; font-size: 1.1rem; text-decoration: none; box-shadow: 5px 5px 0 #111; transition: transform .15s, box-shadow .15s; }
+        .os-btn:hover { transform: translate(3px,3px); box-shadow: 2px 2px 0 #111; }
+        .os-org { display: inline-block; margin-top: 1.4rem; color: #111; font-weight: 600; text-decoration: underline; }
+        @media (max-width: 600px) { .os-card { padding: 2rem 1.2rem; } .os-parts { grid-template-columns: 1fr; } }
     </style>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -977,16 +935,15 @@
         <div class="hero-inner">
             <div class="hero-content">
                 <h1>
-                    <span class="line1">אני אדם.</span>
-                    <span class="line1">אני עושה את אופן ספייס.</span>
+                    <span class="line1"><span dir="ltr" style="display:inline-block"><span class="teal">Stories</span> Before Tools.</span></span>
                 </h1>
-                <p class="hero-sub">סדרת אנימציה קצרה על מה שבאמת קורה במשרד. 17 פרקים, 3 מיליון צפיות וחשיפות, ואף ישיבת אישור אחת.</p>
                 <p class="hero-desc">
-                    לפני שנה פיטרו אותי מההייטק. במקום לחכות לטלפון, התחלתי לבנות משרד משלי, עם דמויות שלא עונות לי במייל. היום אני כותב, מביים ומספר. ומדבר על מה שקרה בדרך.
+                    אני מאמין שבעולם שבו הכלים משתנים ומתחלפים בכל שבוע, הסיפור הוא העוגן הקבוע שלנו. הבינה המלאכותית לא כאן כדי להחליף את מי שאנחנו, היא כאן כדי להעצים אותנו. היא הכוח שמאפשר לנו לקחת את הרעיונות הכי רחוקים שלנו ולהוציא אותם לאור במהירות ובדיוק שפעם רק חלמנו עליהם.
+                    <br><br>דווקא עכשיו, בעידן ה&#8209;AI, יש לנו הזדמנות נדירה לחשוב שונה. זו השעה לחדד ולזקק את הזהות הייחודית שלנו, כי לכל אחד מאיתנו יש את הניצוץ שלו, וזה בדיוק מה שנותן לסיפור שלנו את הקול החד&#8209;פעמי שלו.
                 </p>
                 <div class="hero-actions">
-                    <a href="/series/" class="btn-main">לצפייה בסדרה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
-                    <a href="#services" class="btn-sec">ההרצאה</a>
+                    <a href="#contact" class="btn-main">בואו נעבוד יחד <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
+                    <a href="#content" class="btn-sec btn-glow">מעבדת היצירה ✦</a>
                 </div>
             </div>
             <div class="hero-visual">
@@ -997,64 +954,23 @@
         </div>
     </section>
 
-    <section class="section events-section" id="events" aria-label="מפגשים קרובים">
-        <div class="events-wrap rv">
-            <span class="sec-label events-label">מפגשים קרובים</span>
-            <div class="event-card" data-end="2026-11-02T22:00:00+02:00">
-                <div class="event-date">
-                    <span class="event-day">2.11</span>
-                    <span class="event-weekday">יום שני</span>
-                </div>
-                <div class="event-body">
-                    <h3>אופן ספייס: להמציא את עצמך מחדש</h3>
-                    <p class="event-details"><span class="nw">וובינר לייב</span> · <bdi class="nw" dir="ltr">20:30–22:00</bdi> · <bdi class="nw">Google Meet</bdi> · <span class="nw">79 ₪</span></p>
-                    <p class="event-note">כולל הקלטה לנרשמים, לשבוע.</p>
-                </div>
-                <a href="/webinar/" class="btn-main event-cta">לפרטים ולהרשמה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
+    <section class="section os-lecture" id="services">
+        <div class="os-card rv">
+            <span class="os-bug">&lt;אופן<span>/</span>ספייס&gt;</span>
+            <span class="os-tag">ההרצאה</span>
+            <h2>אופן ספייס: להמציא את עצמך מחדש</h2>
+            <ol class="os-parts">
+                <li><b>01</b> הסיפור והמשחק</li>
+                <li><b>02</b> אופן ספייס</li>
+                <li><b>03</b> מה הם כתבו</li>
+                <li><b>04</b> הדלתות</li>
+            </ol>
+            <p class="os-ex">ובסוף: משפט אחד. תרגיל על דף, בלי שם של תפקיד ובלי שם של כלי.</p>
+            <div class="os-next">
+                <span class="os-date">הוובינר הקרוב · יום שני 2.11 · <bdi dir="ltr">20:30</bdi></span>
+                <a href="/webinar/" class="os-btn">לפרטים והרשמה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
             </div>
-            <p class="events-empty" hidden>
-                כרגע אין מפגש פתוח. כשייקבע הבא, הקבוצה השקטה תשמע ראשונה.
-                <a href="https://chat.whatsapp.com/Cq3Kqg5mXo37vIwiAMuH91" target="_blank" rel="noopener">לקבוצה בוואטסאפ <i class="fab fa-whatsapp"></i></a>
-            </p>
-        </div>
-    </section>
-
-    <section class="section dark-section" id="services">
-        <div class="sec-head rv">
-            <span class="sec-label">ההרצאה</span>
-            <h2 class="sec-title">אופן ספייס: להמציא את עצמך מחדש</h2>
-            <p class="sec-desc">פיטרו אותי מההייטק. התעצבנתי, כמו שמקובל, ואז התחלתי להנפיש את המשרד שעזבתי. ההרצאה היא הסיפור של מה שקרה אחר כך: איך פרויקט שעשיתי לעצמי בערבים הפך לסדרה, ואיך הסדרה פתחה דלתות שקורות החיים לא פתחו.</p>
-            <p class="sec-desc lecture-exercise">באמצע יש תרגיל אחד, על דף: משפט אחד שמגדיר אתכם, בלי שם של תפקיד ובלי שם של כלי.</p>
-        </div>
-        <div class="cards cards-2">
-            <div class="card rv d1">
-                <span class="card-meta">שעה וחצי, לייב</span>
-                <h3>וובינר פתוח</h3>
-                <p>לכל מי שרוצה לשמוע את הסיפור מהבית. המועדים הקרובים למעלה.</p>
-                <a href="/webinar/" class="card-cta">לפרטים <i class="fas fa-arrow-left"></i></a>
-            </div>
-            <div class="card rv d2">
-                <span class="card-meta">45 או 75 דקות</span>
-                <h3>הרצאה לארגון</h3>
-                <p>לימי צוות, ערבי חברה ומפגשי למידה. בגרסה לארגון השאלה היא מה הרובד השני שלכם במשרד.</p>
-                <a href="#contact" class="card-cta">לבדוק תאריך <i class="fas fa-arrow-left"></i></a>
-            </div>
-        </div>
-        <div class="lec-gallery" id="lectures">
-            <p class="lec-caption rv">כמה מהחדרים שהייתי בהם.</p>
-            <div class="lec-track-wrap rv">
-                <div class="lec">
-                    <div class="lec-card"><img src="img/lecture2.webp" alt="אדם לוי מרצה על במה מול קהל" loading="lazy" decoding="async"></div>
-                    <div class="lec-card"><img src="img/lecture4.webp" alt="אדם לוי מעביר סדנה בחדר ישיבות, ליד לוח מחיק" loading="lazy" decoding="async"></div>
-                    <div class="lec-card"><img src="img/lecture5.webp" alt="אדם לוי מרצה ב-ABB" loading="lazy" decoding="async"></div>
-                    <div class="lec-card"><img src="img/lecture6.jpg" alt="אדם לוי מעביר סדנה ב-Colmex" loading="lazy" decoding="async"></div>
-                    <!-- duplicate for seamless loop -->
-                    <div class="lec-card" aria-hidden="true"><img src="img/lecture2.webp" alt="" loading="lazy" decoding="async"></div>
-                    <div class="lec-card" aria-hidden="true"><img src="img/lecture4.webp" alt="" loading="lazy" decoding="async"></div>
-                    <div class="lec-card" aria-hidden="true"><img src="img/lecture5.webp" alt="" loading="lazy" decoding="async"></div>
-                    <div class="lec-card" aria-hidden="true"><img src="img/lecture6.jpg" alt="" loading="lazy" decoding="async"></div>
-                </div>
-            </div>
+            <a href="#contact" class="os-org">רוצים את ההרצאה בארגון? צרו קשר</a>
         </div>
     </section>
 
@@ -1174,6 +1090,27 @@
         </div>
     </section>
 
+    <section class="section dark-section" id="lectures">
+        <div class="sec-head rv">
+            <span class="sec-label">לא עוד סדנת כלים</span>
+            <h2 class="sec-title">הרצאות וסדנאות</h2>
+            <p class="sec-desc">כמה מהחדרים שהייתי בהם.</p>
+        </div>
+        <div class="lec-track-wrap rv">
+            <div class="lec">
+                <div class="lec-card"><img src="img/lecture2.webp" alt="הרצאה" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture4.webp" alt="סדנה" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture5.webp" alt="הרצאה ABB" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture6.jpg" alt="הרצאה" loading="lazy" decoding="async"></div>
+                <!-- duplicate for seamless loop -->
+                <div class="lec-card"><img src="img/lecture2.webp" alt="הרצאה" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture4.webp" alt="סדנה" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture5.webp" alt="הרצאה ABB" loading="lazy" decoding="async"></div>
+                <div class="lec-card"><img src="img/lecture6.jpg" alt="הרצאה" loading="lazy" decoding="async"></div>
+            </div>
+        </div>
+    </section>
+
     <section class="section">
         <div class="cta-stay rv">
             <img src="img/portrait.webp" alt="Adam Levi" class="cta-avatar">
@@ -1204,12 +1141,10 @@
                 <div class="about-vid"><video src="img/airplane.mp4" autoplay loop muted playsinline></video></div>
             </div>
             <div class="about-body">
-                <h2 class="rv">עליי</h2>
-                <p class="rv d1">עבדתי שנים בהייטק, כאנימטור ויוצר. ישבתי באופן ספייס, הלכתי לערבי חברה, ושמעתי מנכ"לים אומרים "אנחנו משפחה".</p>
-                <p class="rv d1">לפני שנה פיטרו אותי. שלחתי קורות חיים וחיכיתי. ובזמן שחיכיתי, התחלתי לכתוב את מה שראיתי במשרד. ככה נולדו אריק, קובי, דנה ודימה.</p>
-                <p class="rv d2">אני כותב את הפרקים, מקליט את הקולות ועורך. את התמונות והתנועה אני עושה עם כלי AI, כי אין לי אולפן אנימציה. מה שיש לי זה את הסיפור.</p>
-                <p class="rv d2">הדלתות שנפתחו לי בשנה הזו לא נפתחו מקורות החיים. הן נפתחו ממשהו שאנשים ראו. על זה אני מדבר <a href="#services">בהרצאה</a>.</p>
-                <p class="rv d3 about-note">כמעט הכול בסדרה באמת קרה. את השמות שיניתי.</p>
+                <h2 class="rv">הדרך שלי</h2>
+                <p class="rv d1">אני מאמין ב&#8209;Stories Before Tools. מבחינתי, ה&#8209;AI הוא לא המטרה, הוא המנוע שמאפשר לנו להגיע רחוק יותר ומהר יותר. אני משתמש בו כדי להעצים את הניצוץ האנושי, לפתוח כיוונים חדשים ולהפוך את הבלתי אפשרי לנגיש, בלי לאבד את טביעת האצבע הייחודית של הפרויקט.</p>
+                <h3 class="rv d2" style="color:#fff;font-size:1.4rem;margin:1.5rem 0 0.8rem;font-weight:700;">מהשראה לעשייה</h3>
+                <p class="rv d3">מעבר לעשייה בסטודיו, אני מעביר הרצאות וסדנאות בארגונים ובצוותי קריאייטיב. שם, אנחנו לומדים יחד איך לחשוב אחרת, איך להפוך סקרנות לתוצאה, ואיך לרתום את הבינה המלאכותית כדי לזקק את הזהות שלנו כיוצרים בעולם שמשתנה ללא הפסקה.</p>
             </div>
         </div>
     </section>
@@ -1250,22 +1185,11 @@
                 <a href="https://www.tiktok.com/@.adam.levi" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
-        <div class="foot-bar" dir="ltr">&copy; 2026 Adam Levi · Stories Before Tools.</div>
+        <div class="foot-bar">&copy; 2026 Adam Levi | Created with ♥ and AI</div>
     </footer>
 
 
     <script>
-        // מפגשים קרובים: כרטיס שזמן הסיום שלו עבר נעלם, ואם לא נשאר אף אחד מוצגת שורת הקבוצה השקטה
-        (function () {
-            const now = Date.now();
-            const cards = document.querySelectorAll('.event-card[data-end]');
-            let left = 0;
-            cards.forEach(c => {
-                if (new Date(c.dataset.end).getTime() <= now) c.remove(); else left++;
-            });
-            if (!left) document.querySelector('.events-empty').hidden = false;
-        })();
-
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
 
