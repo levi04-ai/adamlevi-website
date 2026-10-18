@@ -130,6 +130,19 @@
     .price{font-size:3.6rem}
     .btn{padding:.85rem 1.6rem}
   }
+  .series-link{font-weight:800;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+  .art-note{text-align:center;margin-top:1.6rem;font-weight:700;color:var(--ink-soft);font-size:.98rem}
+  .hero-art .frame{transform:rotate(-1.5deg)}
+  .cast{display:flex;justify-content:center;align-items:flex-start;gap:2.4rem;max-width:720px;margin:0 auto;position:relative;--stage:230px}
+  .cast::before{content:'';position:absolute;left:0;right:0;top:var(--stage);border-top:4px solid var(--ink)}
+  .cast figure{display:flex;flex-direction:column;align-items:center;background:none;border:0;box-shadow:none;padding:0}
+  .cast .stage{height:var(--stage);display:flex;align-items:flex-end}
+  .cast img{height:100%;width:auto;border:0;display:block;object-fit:contain}
+  .cast img.short{height:88%}
+  .cast figcaption{margin-top:.9rem;font-weight:800;padding:0}
+  @media (max-width:600px){.cast{gap:.6rem;--stage:150px}}
+  .hero h1{font-size:clamp(2.1rem,4.6vw,3.3rem)}
+  .hero h1 .hl{font-size:.92em;padding:.05em .3em}
 </style>
 </head>
 <body>
@@ -150,27 +163,19 @@
       <div>
         <span class="bug">&lt;אופן<span class="sl">/</span>ספייס&gt;</span><br>
         <span class="tag">וובינר לייב · יום שני 2.11 · 20:30</span>
-        <h1>הרצאה על אופן ספייס.<br><span class="hl">אבל בעיקר עלינו.</span></h1>
-        <p>סיימתי להכין את ההרצאה על אופן ספייס, ותוך כדי הבנתי שיש פה סיפור גדול יותר מהסדרה עצמה. הסיפור הוא על <b>העולם החדש</b>, ועל ההתאמות שאנחנו צריכים לעשות כדי להשתנות איתו. לא כקלישאה, אלא באמת: <b>מה עובד, ומה פחות עובד.</b></p>
+        <h1>אופן ספייס:<br><span class="hl">להמציא את עצמך מחדש</span></h1>
+        <p>סיימתי להכין את ההרצאה על אופן ספייס, ותוך כדי הבנתי שיש פה סיפור גדול יותר מהסדרה עצמה. הסיפור הוא על <b>העולם החדש</b>, ועל ההתאמות שאנחנו צריכים לעשות כדי להשתנות איתו.</p>
+        <p>אראה לכם איך נולד פרק, איפה ה-AI נכנס ואיפה לא: את התסריט, הקולות והעריכה אני עושה בעצמי, וה-AI עובד רק בדמויות, בהנפשה ובליפסינק. ונדבר על <b>מה באמת עובד היום, ומה פחות.</b></p>
         <div class="hero-cta">
           <a href="#signup" class="btn">להרשמה · 79₪</a>
           <small>שעה וחצי ב-Google Meet · כולל הקלטה</small>
+          <a href="https://www.adamlevi.net/series/" class="series-link">לצפייה בסדרה ←</a>
         </div>
       </div>
       <div class="hero-art">
-        <div class="frame"><img src="https://www.adamlevi.net/img/series/hero.jpg" alt="אופן ספייס: אריק, קובי, דנה ודימה במשרד"></div>
-        <span class="sticker s1">3 מיליון צפיות</span>
-        <span class="sticker s2">17 פרקים</span>
+        <div class="frame"><img src="https://www.adamlevi.net/img/lecture-cover.jpg" alt="אופן ספייס: דנה, אריק, קובי ודימה במשרד. 3 מיליון צפיות, 55 אלף אינטראקציות, 12 אלף שיתופים, 4 חודשים באוויר"></div>
+        <p class="art-note">17 פרקים · בלי תקציב, בלי צוות, בלי שיווק</p>
       </div>
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <section>
-    <div class="wrap stats">
-      <div class="card stat"><strong>3M+</strong><span>צפיות וחשיפות ב-17 פרקים</span></div>
-      <div class="card stat"><strong>5</strong><span>פלטפורמות, בלי תקציב ובלי צוות</span></div>
-      <div class="card stat"><strong>0</strong><span>קורות חיים שפתחו את הדלתות האלה</span></div>
     </div>
   </section>
 
@@ -179,12 +184,12 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="tag">על מה הוובינר?</span>
-        <h2>סדרת אנימציה אחת. הרבה דלתות.</h2>
+        <h2>סדרת אנימציה אחת. הרבה דלתות נפתחות.</h2>
       </div>
       <div class="card story">
-        <p>לפני שנה פיטרו אותי מההייטק. שלחתי קורות חיים, וחיכיתי. ובמקום רק לחכות, יצרתי. ככה נולדה אופן ספייס.</p>
-        <p>הדלתות שנפתחו לי בסוף, ההצעות וההזדמנויות העסקיות, לא נפתחו מקורות החיים. הן נפתחו ממשהו שאנשים <b>ראו</b>.</p>
-        <p class="quote">ברגע שה-AI נכנס, הוא דווקא אמור לזקק לנו את ההגדרה שלנו עוד יותר. וברגע שמבינים את זה, הכל נהיה הרבה יותר קל.</p>
+        <p>לפני שנה פיטרו אותי מההייטק. שלחתי קורות חיים וחיכיתי. קיבלתי הרבה מחמאות, אבל לא עבודה. אז במקום רק לחכות, התחלתי ליצור. ככה נולדה אופן ספייס.</p>
+        <p>רציתי רק לשתף חוויה, וקיבלתי עולם שלם: כתבה במאקו, פניות להפקות לחברות, הזדמנויות עסקיות, ואנשים שכותבים לי "זה בדיוק המשרד שלי". סרטון אחד שהעליתי, על איך אני מייצר פרק, הביא לבד עשרים פניות על ההרצאה הזאת.</p>
+        <p class="quote">ברגע שה-AI נכנס, האתגר החדש הוא להבין מה ההגדרה המקצועית שלנו. וברגע שמבינים את זה, הכל נהיה הרבה יותר קל.</p>
       </div>
     </div>
   </section>
@@ -194,33 +199,29 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="tag">מה נעשה בוובינר?</span>
-        <h2>שעה וחצי. ארבעה פרקים ותרגיל אחד.</h2>
+        <h2>שעה וחצי. ארבעה פרקים.</h2>
       </div>
       <div class="steps four">
         <div class="card step">
           <div class="num">01</div>
-          <h3>הסיפור והמשחק</h3>
-          <p>מהפיטורים ועד הפרק הראשון. איך יצירה הפכה למשחק, ולמה בשלב מסוים הבנתי שטעיתי.</p>
+          <h3>נחזור להתחלה</h3>
+          <p>מסדרון המכללה ב-2011, הפיטורים, ומשחק שבניתי כמתנה ליום הנישואין בעזרת המפה של שואב האבק. ואז השאלה: רגע, מי אני בעצם?</p>
         </div>
         <div class="card step">
           <div class="num">02</div>
           <h3>אופן ספייס</h3>
-          <p>נצפה בקטע ונפרק אותו ביחד: שני רבדים, הזדהות, ואיך בונים דמות שכל אחד מכיר מהמשרד שלו.</p>
+          <p>ואז זה התפוצץ. נפרק ביחד מה יש בסדרה: כתיבה בשני רבדים, מה שאומרים ומה שבאמת מתכוונים, והזדהות מתוך המציאות.</p>
         </div>
         <div class="card step">
           <div class="num">03</div>
-          <h3>מה הם כתבו</h3>
-          <p>התגובות שגילו לי על מה הסדרה באמת. "זה המשרד שלי", ולמה אנשים כתבו בעצם על עצמם.</p>
+          <h3>העולם החדש</h3>
+          <p>איך נולד פרק היום, ואיפה ה-AI נכנס: רק בשלושה שלבים מתוך שישה. ולמה סיפור שלא עובד כבר בשורת הטקסט, גם ה-AI לא יציל.</p>
         </div>
         <div class="card step">
           <div class="num">04</div>
-          <h3>הדלתות</h3>
-          <p>מה נפתח בזכות הסדרה, ולמה כשהתור נסגר, בונים לעצמנו במה.</p>
+          <h3>סטוריטלינג שפותח דלתות</h3>
+          <p>ההודעות וההזדמנויות שהגיעו בעקבות הסדרה, Show Don't Tell, ומה באמת עובד: קודם הזהות, הכלי אחר כך.</p>
         </div>
-      </div>
-      <div class="card exercise">
-        <span class="tag">ובסוף: משפט אחד</span>
-        <p>תרגיל על דף: המשפט שמגדיר אתכם, בלי שם של תפקיד ובלי שם של כלי. ופרויקט קטן אחד, עם תאריך.</p>
       </div>
     </div>
   </section>
@@ -233,10 +234,10 @@
         <p>ונגלה למה כל כך הרבה אנשים כתבו "זה המשרד שלי".</p>
       </div>
       <div class="cast">
-        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-erik.jpg" alt="אריק" loading="lazy"><figcaption>אריק</figcaption></figure>
-        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-kobi.jpg" alt="קובי" loading="lazy"><figcaption>קובי</figcaption></figure>
-        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-dana.jpg" alt="דנה" loading="lazy"><figcaption>דנה</figcaption></figure>
-        <figure class="card"><img src="https://www.adamlevi.net/img/series/char-dima.jpg" alt="דימה" loading="lazy"><figcaption>דימה</figcaption></figure>
+        <figure><div class="stage"><img src="https://www.adamlevi.net/img/cast/arik.png" alt="אריק" loading="lazy" class="short"></div><figcaption>אריק</figcaption></figure>
+        <figure><div class="stage"><img src="https://www.adamlevi.net/img/cast/kobi.png" alt="קובי" loading="lazy"></div><figcaption>קובי</figcaption></figure>
+        <figure><div class="stage"><img src="https://www.adamlevi.net/img/cast/dana.png" alt="דנה" loading="lazy"></div><figcaption>דנה</figcaption></figure>
+        <figure><div class="stage"><img src="https://www.adamlevi.net/img/cast/dima.png" alt="דימה" loading="lazy"></div><figcaption>דימה</figcaption></figure>
       </div>
     </div>
   </section>
@@ -251,7 +252,8 @@
           <li><b>יום שני</b> · 2.11.26</li>
           <li><b dir="ltr">20:30–22:00</b> · שעה וחצי</li>
           <li>לייב ב-Google Meet</li>
-          <li><b>כולל הקלטה</b> · לכל הנרשמים, לצפייה במשך שבוע</li>
+          <li><b>כולל הקלטה</b> · נשלחת לכל הנרשמים, וזמינה לצפייה שבועיים</li>
+          <li>הלינק לוובינר נשלח במייל ובוואטסאפ: יום לפני, ושוב ביום עצמו</li>
         </ul>
         <a href="https://pay.grow.link/NDQ2NDI~8989a6d5dc5b74b4ce0aace1f65f7c17-NDE1MjMxMg" class="btn">להרשמה ותשלום</a>
         <span class="refund">אם הוובינר יידחה מסיבה כלשהי, תוכלו לבחור: להצטרף במועד החדש, או לקבל החזר מלא.</span>
@@ -264,9 +266,10 @@
     <div class="wrap">
       <div class="sec-head"><span class="tag">למי זה מתאים?</span></div>
       <div class="aud">
-        <div class="card"><span class="dot"></span><p>לכל מי שמרגיש ש<b>משהו השתנה</b>, ורוצה ללמוד דרכים וכלים לעידן הבינה המלאכותית. לא כקלישאה, אלא מדוגמאות שעובדות.</p></div>
-        <div class="card"><span class="dot"></span><p>ליוצרים ואנשי תוכן שמחפשים את <b>הסיפור שלהם</b>, ולא עוד כלי.</p></div>
-        <div class="card"><span class="dot"></span><p>למי שרוצה ש<b>פרויקט אחד</b> יפתח לו דלתות, מעולם ההייטק או מחוץ לו.</p></div>
+        <div class="card"><span class="dot"></span><p>למי שמכיר את <b>אופן ספייס</b> ורוצה לראות איך זה נראה מאחורי הקלעים.</p></div>
+        <div class="card"><span class="dot"></span><p>לכל מי שמרגיש ש<b>משהו השתנה</b>, ורוצה ללמוד דרכים וכלים לעבודה עם בינה מלאכותית.</p></div>
+        <div class="card"><span class="dot"></span><p>ליוצרים ואנשי תוכן שמחפשים את <b>הסיפור שלהם</b>.</p></div>
+        <div class="card"><span class="dot"></span><p>למי שיש לו <b>רעיון לפרויקט</b> ולא יודע איך להוציא אותו לפועל. מעולם ההייטק או מחוץ לו.</p></div>
       </div>
     </div>
   </section>
