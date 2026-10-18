@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/lecture", "destination": "/webinar/", "permanent": false },
+    { "source": "/lecture/", "destination": "/webinar/", "permanent": false }
+  ]
+}
