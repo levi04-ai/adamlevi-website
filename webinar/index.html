@@ -164,6 +164,18 @@
   .hero-cta-row .mail-note{flex-basis:auto}
   .nw{white-space:nowrap}
 </style>
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "x47v07obxr");
+  // מסמנים לחיצה על כפתור התשלום, כדי לראות ב-Clarity כמה הגיעו עד Grow
+  document.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest('a[href*="pay.grow.link"]');
+    if (a) { clarity("event", "pay_click"); clarity("set", "pay_click", "yes"); }
+  });
+</script>
 </head>
 <body>
 <nav class="nav">
