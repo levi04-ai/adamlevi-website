@@ -889,7 +889,8 @@
             .soc { justify-content: center; }
         }
         /* OPEN SPACE LECTURE */
-        .os-lecture { padding: 5rem 1.5rem; }
+        .os-lecture { padding: 3.5rem 1.5rem; }
+        .os-lecture .sec-head { margin-bottom: 1.6rem; }
         .os-card { max-width: 760px; margin: 0 auto; background: #FFF3D6; border: 3px solid #111; border-radius: 22px; box-shadow: 8px 8px 0 #111; padding: 2.6rem 2.4rem; text-align: center; color: #111;
             background-image: radial-gradient(rgba(0,0,0,.07) 1px, transparent 1px); background-size: 22px 22px; }
         .os-bug { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-weight: 700; background: #111; color: #FFF3D6; padding: .4rem .9rem; border-radius: 10px; direction: rtl; }
@@ -906,6 +907,23 @@
         .os-btn:hover { transform: translate(3px,3px); box-shadow: 2px 2px 0 #111; }
         .os-org { display: inline-block; margin-top: 1.4rem; color: #111; font-weight: 600; text-decoration: underline; }
         @media (max-width: 600px) { .os-card { padding: 2rem 1.2rem; } .os-parts { grid-template-columns: 1fr; } }
+        .lec-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; max-width: 760px; margin: 0 auto; }
+        .lec-tile { display: flex; flex-direction: column; align-items: center; gap: .7rem; text-align: center; background: #fff; color: #111; border: 3px solid #111; border-radius: 18px; box-shadow: 5px 5px 0 #111; padding: 1rem 1rem 1.3rem; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+        a.lec-tile:hover { transform: translate(3px,3px); box-shadow: 2px 2px 0 #111; }
+        .lec-img { width: 100%; aspect-ratio: 876 / 446; border: 3px solid #111; border-radius: 12px; overflow: hidden; display: block; background: #FFF3D6; }
+        .lec-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .lec-img-night { position: relative; background-color: #2E3A6E; background-image:
+            radial-gradient(1.2px 1.2px at 62% 24%, rgba(255,255,255,.7) 99%, transparent),
+            radial-gradient(1px 1px at 80% 46%, rgba(255,255,255,.55) 99%, transparent),
+            radial-gradient(1.2px 1.2px at 90% 18%, rgba(255,255,255,.6) 99%, transparent),
+            radial-gradient(1px 1px at 72% 72%, rgba(255,255,255,.5) 99%, transparent); }
+        .lec-img-night img { position: absolute; left: 12%; bottom: 0; width: auto; height: 94%; object-fit: contain; }
+        .lec-name { font-weight: 900; font-size: 1.15rem; line-height: 1.35; text-wrap: balance; }
+        .lec-go { font-weight: 700; font-size: .9rem; color: #555; }
+        .lec-go i { font-size: .7rem; }
+        .lec-tile-off { cursor: default; }
+        .lec-tile-off .lec-name { color: #555; }
+        @media (max-width: 600px) { .lec-tiles { grid-template-columns: 1fr; } }
 
         /* =========================================================
            OPEN SPACE THEME (2026-10) - שפה אחידה לכל האתר
@@ -1094,7 +1112,7 @@
     <nav class="nav" id="nav">
         <ul class="nav-links" id="nav-links">
             <li><a href="#hero" class="active">בית</a></li>
-            <li><a href="#services">ההרצאה</a></li>
+            <li><a href="#services">הרצאות</a></li>
             <li><a href="#content">תוכן</a></li>
             <li><a href="/series/">אופן ספייס - סדרה</a></li>
             <li><a href="#about">אודות</a></li>
@@ -1129,28 +1147,20 @@
     </section>
 
     <section class="section os-lecture" id="services">
-        <div class="os-card rv">
-            <span class="os-bug">&lt;אופן<span>/</span>ספייס&gt;</span>
-            <span class="os-tag">ההרצאה</span>
-            <h2>אופן ספייס: להמציא את עצמך מחדש</h2>
-            <ol class="os-parts">
-                <li><b>01</b> נחזור להתחלה</li>
-                <li><b>02</b> אופן ספייס</li>
-                <li><b>03</b> עידן ה-AI</li>
-                <li><b>04</b> סטוריטלינג שפותח דלתות</li>
-            </ol>
-            <div class="os-next">
-                <span class="os-date">ההרצאה הקרובה · לייב אונליין · יום שני 2.11 · <bdi dir="ltr">20:30</bdi></span>
-                <div class="cd" data-start="2026-11-02T20:30:00+02:00" data-end="2026-11-02T22:00:00+02:00" aria-label="זמן עד תחילת ההרצאה">
-                    <div class="cd-box"><b data-u="d">--</b><span>ימים</span></div>
-                    <div class="cd-box"><b data-u="h">--</b><span>שעות</span></div>
-                    <div class="cd-box"><b data-u="m">--</b><span>דקות</span></div>
-                    <div class="cd-box"><b data-u="s">--</b><span>שניות</span></div>
+        <div class="sec-head rv">
+            <span class="sec-label">הרצאות</span>
         </div>
-                <p class="cd-live" hidden>ההרצאה מתחילה עכשיו!</p>
-                <a href="/webinar/" class="os-btn">לפרטים והרשמה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
+        <div class="lec-tiles rv">
+            <a class="lec-tile" href="/webinar/">
+                <span class="lec-img lec-img-night"><img src="img/lectures/arik-bag.png" alt="אריק עומד בלילה עם תיק על הכתף" width="347" height="555" loading="lazy"></span>
+                <span class="lec-name">אופן ספייס: להמציא את עצמך מחדש</span>
+                <span class="lec-go">לפרטים <i class="fas fa-arrow-left"></i></span>
+            </a>
+            <div class="lec-tile lec-tile-off" aria-disabled="true">
+                <span class="lec-img"><img src="img/lecture-cover.jpg" alt="הדמויות של אופן ספייס: 3 מיליון צפיות" width="876" height="446" loading="lazy"></span>
+                <span class="lec-name">איך יוצרים עולם: סדרת אנימציה בעזרת AI</span>
+                <span class="lec-go">בקרוב</span>
             </div>
-            <a href="#contact" class="os-org">רוצים את ההרצאה בארגון? צרו קשר</a>
         </div>
     </section>
 
