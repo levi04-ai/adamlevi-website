@@ -342,8 +342,21 @@
 (function(){
   var els=document.querySelectorAll('.cd');
   function pad(n){return n<10?'0'+n:''+n}
+  var testNow=(location.search.match(/[?&]now=([^&]+)/)||[])[1];
+  var closeAt=new Date('2026-11-02T20:30:00+02:00').getTime(), closed=false;
+  function closeReg(){
+    closed=true;
+    document.querySelectorAll('a[href*="pay.grow.link"]').forEach(function(a){
+      var s=document.createElement('span');
+      s.className='btn btn-closed'; s.textContent='ההרשמה נסגרה';
+      s.style.cssText='opacity:.55;cursor:default;pointer-events:none';
+      a.replaceWith(s);
+    });
+    document.querySelectorAll('.mail-note').forEach(function(n){n.hidden=true;});
+  }
   function tick(){
-    var now=Date.now();
+    var now=testNow?new Date(decodeURIComponent(testNow)).getTime():Date.now();
+    if(!closed&&now>=closeAt) closeReg();
     els.forEach(function(el){
       var start=new Date(el.dataset.start).getTime(), end=new Date(el.dataset.end).getTime();
       var live=el.parentNode.querySelector('.cd-live');
