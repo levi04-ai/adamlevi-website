@@ -2,6 +2,9 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/img/favicon-48.png">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>הרצאה לייב: אופן ספייס, להמציא את עצמך מחדש | אדם לוי</title>
 <meta name="description" content="הרצאה לייב אונליין עם אדם לוי, יוצר אופן ספייס: למה הסדרה עבדה, סטוריטלינג שעובד בעידן ה-AI, ואיך פרויקט אחד פותח דלתות. יום שני 2.11 ב-20:30, Google Meet.">
@@ -25,11 +28,14 @@
   a{color:inherit}
 
   /* NAV (כמו באתר) */
-  .nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:#0d0d0d}
-  .nav-logo{color:#f3eee5;font-weight:700;font-size:1.15rem;text-decoration:none}
-  .nav-links{display:flex;gap:1.6rem;list-style:none}
-  .nav-links a{color:#b8b3a3;text-decoration:none;font-size:.92rem;font-weight:500}
-  .nav-links a:hover{color:#f3eee5}
+  /* NAV: same as homepage (index.html) */
+  .nav{position:sticky;top:0;z-index:100;padding:1.1rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:#0d0d0d;border-bottom:3px solid var(--ink);transition:padding .3s ease}
+  .nav.scrolled{padding:.7rem 2.5rem}
+  .nav-logo{font-size:1.2rem;font-weight:700;color:#f3eee5;text-decoration:none;letter-spacing:-.01em}
+  .nav-links{display:flex;gap:2rem;list-style:none}
+  .nav-links a{color:#b8b3a3;text-decoration:none;font-size:.92rem;font-weight:500;transition:color .2s}
+  .nav-links a:hover,.nav-links a.active{color:#f3eee5}
+  .nav-toggle{display:none;background:none;border:none;color:#f3eee5;font-size:1.4rem;cursor:pointer}
 
   .wrap{max-width:1080px;margin:0 auto;padding:0 1.5rem}
   .bug{display:inline-flex;gap:.2rem;font-family:ui-monospace,'Courier New',monospace;font-weight:700;font-size:1rem;background:var(--ink);color:var(--cream);padding:.45rem .9rem;border-radius:10px;direction:rtl}
@@ -128,7 +134,11 @@
     .hero-art{order:-1;max-width:30rem;margin:0 auto}
     .steps,.stats{grid-template-columns:1fr}
     .cast{grid-template-columns:repeat(2,1fr)}
-    .nav-links{display:none}
+    .nav{padding:.7rem 1.5rem}
+    .nav-links{display:none;position:absolute;top:calc(100% + 6px);left:1rem;right:1rem;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);flex-direction:column;padding:1rem;gap:.3rem;border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+    .nav-links.open{display:flex}
+    .nav-links a{padding:.6rem 1rem;border-radius:8px}
+    .nav-toggle{display:block}
   }
   @media (max-width:480px){
     .wrap{padding:0 1rem}
@@ -181,14 +191,17 @@
 </script>
 </head>
 <body>
-<nav class="nav">
-  <a href="https://www.adamlevi.net/" class="nav-logo">Adam Levi</a>
-  <ul class="nav-links">
+<nav class="nav" id="nav">
+  <ul class="nav-links" id="nav-links">
     <li><a href="https://www.adamlevi.net/#hero">בית</a></li>
-    <li><a href="https://www.adamlevi.net/#services">ההרצאה</a></li>
-    <li><a href="https://www.adamlevi.net/series/">אופן ספייס</a></li>
+    <li><a href="https://www.adamlevi.net/#services" class="active">הרצאות</a></li>
+    <li><a href="https://www.adamlevi.net/#content">תוכן</a></li>
+    <li><a href="https://www.adamlevi.net/series/">אופן ספייס - סדרה</a></li>
+    <li><a href="https://www.adamlevi.net/#about">אודות</a></li>
     <li><a href="https://www.adamlevi.net/#contact">צור קשר</a></li>
   </ul>
+  <button class="nav-toggle" id="nav-toggle" aria-label="תפריט">&#9776;</button>
+  <a href="https://www.adamlevi.net/" class="nav-logo">Adam Levi</a>
 </nav>
 
 <main>
@@ -369,6 +382,12 @@
   }
   tick(); setInterval(tick,1000);
 })();
+</script>
+<script>
+  (function(){var n=document.getElementById('nav'),t=document.getElementById('nav-toggle'),l=document.getElementById('nav-links');
+  t.addEventListener('click',function(){l.classList.toggle('open')});
+  l.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){l.classList.remove('open')})});
+  window.addEventListener('scroll',function(){n.classList.toggle('scrolled',scrollY>50)});})();
 </script>
 </body>
 </html>
