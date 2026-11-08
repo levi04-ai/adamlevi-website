@@ -934,6 +934,23 @@
         .lec-more { text-align: center; margin: 1.6rem auto 0; font-weight: 700; }
         .lec-more a { color: inherit; text-decoration: none; border-bottom: 3px solid #F5A400; padding-bottom: 2px; }
         @media (max-width: 600px) { .lec-tiles { grid-template-columns: 1fr; } }
+        /* WORK WITH ME */
+        .os-work { padding: 3.5rem 1.5rem; }
+        .wk-head { text-align: center; margin-bottom: 1.8rem; }
+        .wk-bug { display: inline-flex; gap: .2rem; font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 1.05rem; background: #111; color: #FFF3D6; padding: .45rem .9rem; border-radius: 10px; direction: rtl; }
+        .wk-bug .sl { color: #F5A400; }
+        .wk-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; max-width: 1040px; margin: 0 auto; }
+        .wk-card { display: flex; flex-direction: column; background: #fff; color: #111; border: 3px solid #111; border-radius: 18px; box-shadow: 6px 6px 0 #111; text-decoration: none; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+        .wk-card:hover { transform: translate(3px,3px); box-shadow: 3px 3px 0 #111; }
+        .wk-card.flag { background: #FBE8BC; }
+        .wk-card img { width: 100%; height: 140px; object-fit: cover; display: block; border-bottom: 3px solid #111; }
+        .wk-body { display: flex; flex-direction: column; gap: .5rem; padding: .9rem 1.3rem 1.3rem; flex: 1; }
+        .wk-kind { font-size: .82rem; font-weight: 800; color: #555; }
+        .wk-name { font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
+        .wk-lead { color: #3a3a3a; font-size: .98rem; line-height: 1.55; }
+        .wk-go { margin-top: auto; padding-top: .5rem; align-self: flex-start; font-weight: 800; }
+        .wk-go { border-bottom: 3px solid #F5A400; padding-bottom: 1px; }
+        @media (max-width: 860px) { .wk-cards { grid-template-columns: 1fr; } .os-work { padding: 2.5rem 1rem; } }
 
         /* =========================================================
            OPEN SPACE THEME (2026-10) - שפה אחידה לכל האתר
@@ -1122,7 +1139,7 @@
     <nav class="nav" id="nav">
         <ul class="nav-links" id="nav-links">
             <li><a href="#hero" class="active">בית</a></li>
-            <li><a href="/work/">עבודה איתי</a></li>
+            <li><a href="#work">עבודה איתי</a></li>
             <li><a href="#content">תוכן</a></li>
             <li><a href="/series/">אופן ספייס - סדרה</a></li>
             <li><a href="#about">אודות</a></li>
@@ -1154,23 +1171,23 @@
         </div>
     </section>
 
-    <section class="section os-lecture" id="services">
-        <div class="sec-head rv">
-            <span class="sec-label">הרצאות</span>
+    <section class="section os-work" id="work">
+        <span id="services"></span>
+        <div class="wk-head rv"><span class="wk-bug"><span>&lt;</span>עבודה<span class="sl">/</span>איתי<span>&gt;</span></span></div>
+        <div class="wk-cards rv">
+            <a class="wk-card flag" href="/work/org/">
+                <img src="/img/lecture1.webp" alt="אדם לוי מרצה מול קהל בכנס" loading="lazy" width="1376" height="768">
+                <div class="wk-body"><span class="wk-kind">לארגונים ולצוותים</span><span class="wk-name">הרצאה בארגון</span><span class="wk-lead">סיפור אמיתי על זהות מקצועית בעידן ה-AI, בגרסה שמותאמת אליכם.</span><span class="wk-go">להמשך &larr;</span></div>
+            </a>
+            <a class="wk-card" href="/work/open/">
+                <img src="/img/work-open-lecture.jpg" alt="ההרצאה הלייב של אדם לוי ב-Google Meet" loading="lazy" width="1100" height="485">
+                <div class="wk-body"><span class="wk-kind">פתוח לכולם</span><span class="wk-name">הרצאות וסדנאות פתוחות</span><span class="wk-lead">ערבים בזום לכל מי שיוצר או רוצה להתחיל. הבא בתור: איך עובדים בפועל.</span><span class="wk-go">להמשך &larr;</span></div>
+            </a>
+            <a class="wk-card" href="/work/company/">
+                <img src="/img/work-company.jpg" alt="דוגמה: דמויות מסדרה מונפשת" style="object-position:right top" loading="lazy" width="876" height="336">
+                <div class="wk-body"><span class="wk-kind">פרויקטים</span><span class="wk-name">סדרה או סרטון לחברה</span><span class="wk-lead">סרטון או סדרה מונפשים לחברה: סיפור, דמויות ותסריט, מהרעיון ועד הסרטון המוכן.</span><span class="wk-go">להמשך &larr;</span></div>
+            </a>
         </div>
-        <div class="lec-tiles rv">
-            <div class="lec-tile lec-tile-off" aria-disabled="true">
-                <span class="lec-img"><img src="img/lectures/story-remains.png" alt="הכלי משתנה. הסיפור נשאר." width="1752" height="892" loading="lazy"></span>
-                <span class="lec-name">אופן ספייס: להמציא את עצמך מחדש</span>
-                <span class="lec-go">ההרשמה נסגרה</span>
-            </div>
-            <div class="lec-tile lec-tile-off" aria-disabled="true">
-                <span class="lec-img"><img src="img/lecture-cover.jpg" alt="הדמויות של אופן ספייס: 3 מיליון צפיות" width="876" height="446" loading="lazy"></span>
-                <span class="lec-name">איך יוצרים עולם: סדרת אנימציה בעזרת AI</span>
-                <span class="lec-go">בקרוב</span>
-            </div>
-        </div>
-        <p class="lec-more rv"><a href="/work/">מארגנים משהו לצוות או לחברה? &larr;</a></p>
     </section>
 
     <section class="section" id="content">
@@ -1292,8 +1309,7 @@
     <section class="section dark-section" id="lectures">
         <div class="sec-head rv">
             <span class="sec-label">לא עוד סדנת כלים</span>
-            <h2 class="sec-title">הרצאות וסדנאות</h2>
-            <p class="sec-desc">כמה מהחדרים שהייתי בהם.</p>
+            <h2 class="sec-title">כמה מהחדרים שהייתי בהם</h2>
         </div>
         <div class="lec-track-wrap rv">
             <div class="lec">
