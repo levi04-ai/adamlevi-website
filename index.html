@@ -934,12 +934,12 @@
         /* WORK WITH ME */
         .os-work { padding: 3.5rem 1.5rem; }
         .wk-head { text-align: center; margin-bottom: 1.8rem; }
-        .wk-bug { display: inline-flex; gap: .2rem; font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 1.05rem; background: #111; color: #FFF3D6; padding: .45rem .9rem; border-radius: 10px; direction: rtl; }
+        .wk-bug { display: inline-flex; gap: .3em; font-family: 'Heebo', sans-serif; font-weight: 900; font-size: clamp(1.9rem, 4.2vw, 2.7rem); line-height: 1.25; color: #111; letter-spacing: -.01em; padding: 0 .1em .12em; border-bottom: 5px solid #F5A400; direction: rtl; }
         .wk-bug .sl { color: #F5A400; }
         .wk-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; max-width: 1040px; margin: 0 auto; }
         .wk-card { display: flex; flex-direction: column; background: #fff; color: #111; border: 3px solid #111; border-radius: 18px; box-shadow: 6px 6px 0 #111; text-decoration: none; overflow: hidden; transition: transform .15s, box-shadow .15s; }
         .wk-card:hover { transform: translate(3px,3px); box-shadow: 3px 3px 0 #111; }
-        .wk-card.flag { background: #FBE8BC; }
+        .wk-card.beige { background: #FBE8BC; }
         .wk-card img { width: 100%; height: 140px; object-fit: cover; display: block; border-bottom: 3px solid #111; }
         .wk-body { display: flex; flex-direction: column; gap: .5rem; padding: .9rem 1.3rem 1.3rem; flex: 1; }
         .wk-kind { font-size: .82rem; font-weight: 800; color: #555; }
@@ -1022,11 +1022,11 @@
         /* מעבדת היצירה - טאבים וגלריה */
         .filter-tabs { flex-wrap: wrap; }
         .tab {
-            background: var(--white); border: var(--border); border-radius: 999px; color: var(--ink);
-            font-weight: 800; box-shadow: 3px 3px 0 var(--ink);
+            background: var(--white); border: var(--border); border-radius: 10px; color: var(--ink);
+            font-weight: 800; box-shadow: 3px 3px 0 var(--ink); transition: transform .12s, box-shadow .12s, background .12s;
         }
         .tab:hover { color: var(--ink); border-color: var(--ink); background: var(--cream-2); }
-        .tab.active { background: var(--yellow); color: var(--ink); border-color: var(--ink); }
+        .tab.active { background: var(--ink); color: var(--cream); border-color: var(--ink); box-shadow: 0 0 0 var(--ink); transform: translate(3px,3px); }
         .bento { gap: 16px; }
         .bento-item { border: var(--border); border-radius: 14px; box-shadow: 4px 4px 0 var(--ink); background: var(--white); }
         .bento-item:hover { border-color: var(--ink); }
@@ -1172,7 +1172,7 @@
         <span id="services"></span>
         <div class="wk-head rv"><span class="wk-bug"><span>&lt;</span>עבודה<span class="sl">/</span>איתי<span>&gt;</span></span></div>
         <div class="wk-cards rv">
-            <a class="wk-card flag" href="/work/org/">
+            <a class="wk-card" href="/work/org/">
                 <img src="/img/lecture1.webp" alt="אדם לוי מרצה מול קהל בכנס" loading="lazy" width="1376" height="768">
                 <div class="wk-body"><span class="wk-kind">לארגונים ולצוותים</span><span class="wk-name">הרצאה בארגון</span><span class="wk-lead">סיפור אמיתי על זהות מקצועית בעידן ה-AI, בגרסה שמותאמת אליכם.</span><span class="wk-go">להמשך &larr;</span></div>
             </a>
@@ -1180,7 +1180,7 @@
                 <img src="/img/work-open-lecture.jpg" alt="ההרצאה הלייב של אדם לוי ב-Google Meet" loading="lazy" width="1100" height="485">
                 <div class="wk-body"><span class="wk-kind">פתוח לכולם</span><span class="wk-name">הרצאות וסדנאות פתוחות</span><span class="wk-lead">ערבים בזום לכל מי שיוצר או רוצה להתחיל. הבא בתור: איך עובדים בפועל.</span><span class="wk-go">להמשך &larr;</span></div>
             </a>
-            <a class="wk-card" href="/work/company/">
+            <a class="wk-card beige" href="/work/company/">
                 <img src="/img/work-company.jpg" alt="דוגמה: דמויות מסדרה מונפשת" style="object-position:right top" loading="lazy" width="876" height="336">
                 <div class="wk-body"><span class="wk-kind">פרויקטים</span><span class="wk-name">סדרה או סרטון לחברה</span><span class="wk-lead">סרטון או סדרה מונפשים לחברה: סיפור, דמויות ותסריט, מהרעיון ועד הסרטון המוכן.</span><span class="wk-go">להמשך &larr;</span></div>
             </a>
@@ -1337,7 +1337,7 @@
 
     <section class="section press-section">
         <a href="https://www.mako.co.il/nexter-news/Article-89fcb397caefd91026.htm" target="_blank" class="press-card rv">
-            <div class="press-thumb"><img src="img/press-mako.jpg" alt="כתבה ב-mako" loading="lazy" decoding="async"></div>
+            <div class="press-thumb"><img src="img/press-mako-game.jpg" alt="כתבה ב-mako" loading="lazy" decoding="async"></div>
             <div class="press-content">
                 <span class="press-badge">סקירה בתקשורת</span>
                 <h3>איך סטוריטלינג ו&#8209;AI הגיעו לכותרות ב&#8209;mako</h3>

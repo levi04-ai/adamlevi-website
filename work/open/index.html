@@ -38,7 +38,7 @@
   .nav-toggle{display:none;background:none;border:none;color:#f3eee5;font-size:1.4rem;cursor:pointer}
 
   .wrap{max-width:1080px;margin:0 auto;padding:0 1.5rem}
-  .bug{display:inline-flex;gap:.2rem;font-family:ui-monospace,'Courier New',monospace;font-weight:700;font-size:1rem;background:var(--ink);color:var(--cream);padding:.45rem .9rem;border-radius:10px;direction:rtl}
+  .bug{display:inline-flex;gap:.3em;font-family:'Heebo',sans-serif;font-weight:900;font-size:clamp(1.7rem,4vw,2.3rem);line-height:1.25;color:var(--ink);padding:0 .1em .1em;border-bottom:5px solid var(--yellow);direction:rtl}
   .bug .sl{color:var(--yellow)}
   .tag{display:inline-block;background:var(--yellow);border:var(--border);border-radius:999px;padding:.35rem 1rem;font-weight:800;font-size:.95rem;box-shadow:3px 3px 0 var(--ink)}
   .card{background:var(--white);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
@@ -107,6 +107,12 @@
   .dbody .price{padding-top:.9rem;border-top:2px dashed rgba(0,0,0,.2);font-weight:800}
   .dbody .price small{display:block;font-weight:500;color:var(--ink-soft)}
   .dbody .btn{align-self:flex-start;margin-top:.4rem}
+  .archive{margin-top:.6rem;padding-top:1rem;border-top:2px dashed rgba(0,0,0,.2);display:flex;flex-direction:column;gap:.7rem}
+  .archive h3{font-size:1rem;color:var(--ink-soft)}
+  .past{position:relative;display:flex;flex-direction:column;gap:.15rem;padding:.8rem 1rem;border:2px dashed rgba(0,0,0,.3);border-radius:12px;background:rgba(0,0,0,.04);color:var(--ink-soft);cursor:default;user-select:none;filter:grayscale(1)}
+  .past b{color:var(--ink-soft);font-size:1rem;padding-inline-end:7.5rem}
+  .past small{font-size:.85rem}
+  .past .stamp{position:absolute;top:.7rem;left:.8rem;padding:.12rem .6rem;border:2px solid var(--ink-soft);border-radius:6px;font-weight:900;font-size:.8rem;transform:rotate(-4deg);color:var(--ink-soft);background:var(--white)}
   .note{text-align:center;color:var(--ink-soft);padding-bottom:4rem}
   @media (max-width:860px){.dthumb{height:190px}.dbody{padding:1.3rem 1.2rem 1.5rem}.dbody h2{font-size:1.6rem}.wrap.detail{padding:1.8rem 1rem 1.6rem}.offers{grid-template-columns:1fr}.voices{padding:.5rem 1rem 2.4rem}.offer .lead{min-height:0}
     .stats{gap:1.1rem}.stats div{font-size:1.5rem}.hero h1{font-size:1.9rem}.hero h1 .hl{display:inline-block;margin-top:.45rem;white-space:nowrap}
@@ -152,11 +158,15 @@
         <ul>
           <li>מתפרסם כאן ובקבוצת הוואטסאפ</li>
           <li>הקלטה לכל מי שנרשם</li>
-          <li>התקיים: "אופן ספייס: להמציא את עצמך מחדש" (2.11, ההרשמה נסגרה)</li>
           <li>בקרוב: "איך יוצרים עולם: סדרת אנימציה בעזרת AI"</li>
         </ul>
         <div class="price">המועד הבא יפורסם בקרוב<small>המחיר יופיע יחד עם התאריך</small></div>
         <a class="btn" href="https://chat.whatsapp.com/Cq3Kqg5mXo37vIwiAMuH91" target="_blank" rel="noopener">להצטרף לקבוצת הוואטסאפ ←</a>
+        <section class="archive" aria-label="התקיימו בעבר">
+          <h3>התקיימו בעבר</h3>
+          <div class="past" aria-disabled="true"><span class="stamp">ההרצאה הסתיימה</span><b>אופן ספייס: להמציא את עצמך מחדש</b><small>2.11.2026 · הקלטה לנרשמים</small></div>
+          <div class="past" aria-disabled="true"><span class="stamp">הסדנה הסתיימה</span><b>סדנת Stories Before Tools</b><small>27.5.2026</small></div>
+        </section>
       </div>
     </article>
   </section>
