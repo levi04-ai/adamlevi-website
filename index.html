@@ -943,6 +943,9 @@
         .wk-card img { width: 100%; height: 140px; object-fit: cover; display: block; border-bottom: 3px solid #111; }
         .wk-zoom { display: block; overflow: hidden; border-bottom: 3px solid #111; line-height: 0; }
         .wk-zoom img { border-bottom: 0; height: 137px; }
+        .wk-fit { position: relative; display: block; box-sizing: border-box; height: 140px; overflow: hidden; border-bottom: 3px solid #111; background: #d9c7a8 url(/img/work-company.jpg) center / cover; }
+        .wk-fit::before { content: ""; position: absolute; inset: -14px; background: inherit; filter: blur(10px); }
+        .wk-fit img { position: relative; width: 100%; height: 100%; object-fit: contain; border-bottom: 0; }
         .wk-body { display: flex; flex-direction: column; gap: .5rem; padding: .9rem 1.3rem 1.3rem; flex: 1; }
         .wk-kind { font-size: .82rem; font-weight: 800; color: #555; }
         .wk-name { font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
@@ -1183,7 +1186,7 @@
                 <div class="wk-body"><span class="wk-kind">פתוח לכולם</span><span class="wk-name">הרצאות וסדנאות פתוחות</span><span class="wk-lead">ערבים בזום לכל מי שיוצר או רוצה להתחיל. הבא בתור: איך עובדים בפועל.</span><span class="wk-go">להמשך &larr;</span></div>
             </a>
             <a class="wk-card beige" href="/work/company/">
-                <img src="/img/work-company.jpg" alt="דוגמה: דמויות מסדרה מונפשת" style="object-position:right top" loading="lazy" width="876" height="336">
+                <span class="wk-fit"><img src="/img/work-company.jpg" alt="דוגמה: דמויות מסדרה מונפשת" loading="lazy" width="876" height="336"></span>
                 <div class="wk-body"><span class="wk-kind">פרויקטים</span><span class="wk-name">סדרה או סרטון לחברה</span><span class="wk-lead">סרטון או סדרה מונפשים לחברה: סיפור, דמויות ותסריט, מהרעיון ועד הסרטון המוכן.</span><span class="wk-go">להמשך &larr;</span></div>
             </a>
         </div>
