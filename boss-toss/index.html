@@ -359,14 +359,14 @@ function loadLevel(i){lvl=i;const L=LEVELS[i];engine=Engine.create();world=engin
  for(const b of bodies)if(b.kind==='laptop'){b.home={x:b.position.x,y:b.position.y};const f=kobi.pt(0,0);if(Math.abs(b.position.x-(f.x-45))<26&&Math.abs(b.position.y-(f.y-DH-20))<26)kobi.lap=b}
  Events.on(engine,'collisionStart',onHit);Events.on(engine,'beforeUpdate',preStep);
  queue=L.balls.map((t,j)=>({type:t,v:(j*3+i*5)%8}));ballsLeft=queue.length;score=0;shownScore=0;fx=[];debris=[];fading=[];breakQ=[];specials=[];confetti=[];uifx=[];
- ball=null;result=null;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
+ ball=null;result=null;talk=null;talkNext=0;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
  pouch={x:REST.x,y:REST.y,vx:0,vy:0};nextBall()}
 /* ---------- camera: ONE fixed screen. No pan, no zoom while aiming or flying. Only a tiny eased zoom punch on the KO. ---------- */
 const cam={z:1,x:W/2,y:H/2,pt:9,px:W/2,py:H/2};
 const camT=()=>({z:1,cx:W/2,cy:H/2}),w2s=(x,y)=>({x,y}),s2w=(x,y)=>({x,y});
 function koPunch(){const t=cam.pt;if(t>1.3)return 1;const c=clamp((t-.4)/.9,0,1);return 1+.045*easeOut(t/.16)*(1-c*c*(3-2*c))}
 function nextBall(){if(ballsLeft<=0||!queue.length){ball=null;return}ballsLeft--;const q=queue.shift();
- ball={type:q.type,v:q.v,state:'load',x:QX(0),y:QY,t:0,body:null,bodies:[],used:false,still:0};if(!headless)sfx('load',{vol:.6})}
+ ball={hp0:kobi?kobi.hp:0,type:q.type,v:q.v,state:'load',x:QX(0),y:QY,t:0,body:null,bodies:[],used:false,still:0};if(!headless)sfx('load',{vol:.6})}
 // paper plane: glides (part of gravity cancelled) and points along its path until it hits something or dives
 function preStep(){if(!ball||ball.state!=='fly')return;for(const b of ball.bodies)if(b.glide){if(ball.hit){b.glide=0;continue}b.force.y-=b.mass*engine.gravity.y*engine.gravity.scale*b.glide;
  const v=b.velocity;Body.setAngle(b,Math.atan2(v.y,v.x));Body.setAngularVelocity(b,0)}}
@@ -416,7 +416,7 @@ function hurtKobi(dmg,hi,q,vn){const k=kobi,head=hi.zone==='head',ball=!!q.isBal
   fx.push({k:'pop',x:p.x-(crit?84:46),y:p.y+(crit?32:14),txt:'-'+dmg,col:crit?'#ff8a5a':hi.zone==='legs'?'#cfd4ea':'#fff',s:crit?28:hi.zone==='legs'?18:22,t:0,life:.9})}
  if(k.hp<=0){k.hp=0;const s=ball?.3:.2;k.pending={x:clamp(q.velocity.x*s+sg*1.5,-7.5,7.5),y:clamp(q.velocity.y*s-1.6,-7,4),pt:p,head:crit};return}
  // non-lethal: flinch (upper body recoils around the waist), flash, small shove; he stays on his feet
- const f=clamp(dmg/45,.25,1.4);k.flash=.16;k.flv+=sg*(1.3+2.2*f)*(head?1.25:1);hitStop=Math.max(hitStop,crit?.04:.015);shake(crit?10:3+5*f);
+ const f=clamp(dmg/45,.25,1.4);shush();k.flash=.16;k.flv+=sg*(1.3+2.2*f)*(head?1.25:1);hitStop=Math.max(hitStop,crit?.04:.015);shake(crit?10:3+5*f);
  const v=k.body.velocity;Body.setVelocity(k.body,{x:clamp(v.x,-1.6,1.6),y:Math.min(v.y,0)});
  if(lapHome()&&ball){const l=k.lap;Body.setVelocity(l,{x:l.velocity.x,y:-1.6-1.2*f})}
  for(let i=0;i<(crit?10:5);i++)fx.push({k:'spark',x:p.x,y:p.y,vx:(R()-.5)*8-sg*2,vy:(R()-.8)*7,t:0,life:.35+R()*.25,col:crit?'#ffe14d':'#fff',sz:3+R()*3});
@@ -501,7 +501,7 @@ function step(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;FDT=dt||1/
  if(trans){trans.t+=dt;if(!trans.done&&trans.t>=.2){trans.done=true;trans.fn()}if(trans.t>=.46)trans=null}
  let ts2=1;if(hitStop>0){hitStop-=dt;ts2=0}else if(slowT>0){slowT-=dt;ts2=.55}
  const gdt=dt*ts2;
- if(mode==='play'||mode==='result'){acc+=gdt;let n=0;while(acc>=1/60&&n<4){physStep();acc-=1/60;n++}if(n===4)acc=0;levelT+=gdt;if(mode==='play')update(gdt);updFx(gdt,dt);if(mode==='result')resultTick(dt)}
+ if(mode==='play'||mode==='result'){acc+=gdt;let n=0;while(acc>=1/60&&n<4){physStep();acc-=1/60;n++}if(n===4)acc=0;levelT+=gdt;if(mode==='play'){update(gdt);talkTick()}updFx(gdt,dt);if(mode==='result')resultTick(dt)}
  else if(mode!=='pause')updFx(dt,dt);
  updUifx(dt);
  if(!ball||ball.state!=='drag'){pouch.vx+=(REST.x-pouch.x)*.32;pouch.vy+=(REST.y-pouch.y)*.32;pouch.vx*=.78;pouch.vy*=.78;pouch.x+=pouch.vx;pouch.y+=pouch.vy}
@@ -520,7 +520,7 @@ function update(dt){
   for(const x of ball.bodies)if(x.position.y>GROUND-x.rad-3&&Math.abs(x.velocity.y)<1.5){const f=Math.pow(.97,dt*60);Body.setVelocity(x,{x:x.velocity.x*f,y:x.velocity.y});Body.setAngularVelocity(x,x.angularVelocity*f)}// rolling resistance on the carpet
   const still=ball.bodies.every(x=>Math.hypot(x.velocity.x,x.velocity.y)<.3);if(ball.t>1&&still)ball.still+=dt;else ball.still=0;
   if(!ball.bodies.length||ball.still>.7||ball.t>7){ball.state='done';ball.t=0}}
- if(ball&&ball.state==='done')ball.t+=dt;
+ if(ball&&ball.state==='done'){if(!ball.saidMiss&&ball.t>.5&&kobi&&!kobi.dead&&kobi.hp>=ball.hp0){ball.saidMiss=1;if(R()<.7)say('miss',1)}ball.t+=dt}
  if(kobi.dead){kobi.deadT+=dt;if((kobi.deadT>2&&settled())||kobi.deadT>3.6)finish(true);return}
  if(ball&&ball.state==='done'&&(settled()||ball.t>4)&&ball.t>.6){for(const b of ball.bodies)fading.push({b,t:0});if(ballsLeft>0)nextBall();else{ball=null}}
  if(!ball&&!result){kobi.loseT=(kobi.loseT||0)+dt;if(kobi.loseT>.8)finish(false)}}
@@ -582,8 +582,29 @@ function drawKobiStatic(x,yb,sc,t,desk){X.save();X.translate(x,yb);X.scale(sc,sc
  if(desk){pieceAt('desk',-27,0);pieceAt('laptop',-42,-DH);kobiSprite({hand:'handR',dy:handDy(t||0)[1]})}
  X.restore()}
 // compact boss HP bar above his head (fixed camera: world px = screen px)
+/* ---------- Tobi talks: annoying manager lines in a speech bubble ---------- */
+const TALK={
+ idle:["Got a minute?","Quick sync?","Let's circle back.","Per my last email...","Can we take this offline?","Just a tiny change...","Is it done yet?","Let's touch base.","Small favour...","Ping me when free.","Low-hanging fruit!","Let's align on this.","Who moved my stapler?","Did you see my invite?","Is it on the roadmap?","Bandwidth check?"],
+ start:["Got a minute?","Morning! Quick question...","Do you have a sec?","I booked us a 2-hour sync."],
+ hit:["Not cool!","HR will hear about this.","That's not agile!","I'll note that.","Ouch! Anyway...","We'll discuss in 1:1.","Bold move.","Hey! I'm the boss!"],
+ miss:["Missed! Like the deadline.","Is that your KPI?","Let's call it learning.","Try again after lunch.","Not even close!","Low effort.","Back to work!","Was that a sprint?"],
+ low:["Fine, EMAIL me!","Okay okay, not urgent!","Let's... reschedule?","I'll cancel the meeting!"]};
+let talk=null,talkNext=0;const pick=a=>a[(R()*a.length)|0];
+function say(kind,force){const k=kobi;if(!k||k.dead||k.state!=='stand'||headless)return;if(!force&&talk&&levelT-talk.t<1.6)return;
+ talk={txt:pick(TALK[kind]),t:levelT,life:2.4};talkNext=levelT+5.5+R()*4;try{sfx('pop',{vol:.18,rate:1.5,vary:.1})}catch(e){}}
+// a paper hit shuts him up: the current sentence is cut off mid-word, then silence for a while
+function shush(){if(talk&&levelT-talk.t<talk.life){const t=talk.txt,n=Math.max(3,Math.ceil(t.length*.45));talk={txt:t.slice(0,n).trim()+'—',t:levelT,life:.7,cut:1}}talkNext=levelT+7+R()*3}
+function talkTick(){if(mode!=='play'||!kobi||kobi.dead){if(kobi&&kobi.dead)talk=null;return}
+ if(levelT>1.4&&!talk&&talkNext===0){say('start',1);return}if(talkNext&&levelT>talkNext)say('idle')}
+function talkDraw(){const k=kobi;if(!talk||!k||k.dead||k.state!=='stand')return;const a=levelT-talk.t;if(a>talk.life){talk=null;return}
+ const hd=k.pt(-8,-KCFG.stand.h*.82),pop=a<.18?easeOutBack(a/.18):a>talk.life-.25?(talk.life-a)/.25:1;if(pop<=0)return;
+ X.save();font(17,800);const tw2=X.measureText(talk.txt).width,w=tw2+30,h=40;let bx=hd.x-28-w,by=hd.y-h/2;bx=clamp(bx,10,W-w-10);by=clamp(by,74,H-h-10);
+ const tx=hd.x-18,ty=hd.y+4;X.translate(bx+w,by+h/2);X.scale(pop,pop);X.translate(-(bx+w),-(by+h/2));
+ X.shadowColor='rgba(0,0,0,.25)';X.shadowBlur=8;X.shadowOffsetY=3;X.fillStyle='#fff';rr(bx,by,w,h,h/2);X.fill();X.shadowColor='transparent';
+ X.beginPath();X.moveTo(bx+w-22,by+h-6);X.lineTo(tx,ty);X.lineTo(bx+w-8,by+h-14);X.closePath();X.fill();
+ X.lineWidth=2.5;X.strokeStyle=INK;rr(bx,by,w,h,h/2);X.stroke();X.fillStyle='#1C2150';X.textAlign='center';X.textBaseline='middle';X.fillText(talk.txt,bx+w/2,by+h/2+1);X.restore()}
 function hpBar(){const k=kobi;if(!k||k.state!=='stand'||k.dead)return;const j=k.hpT<.22?(R()-.5)*4:0,hd=k.pt(4,-KCFG.stand.h),w=104,h=10;
- const x=Math.round(clamp(hd.x,w/2+16,W-w/2-16)-w/2+j),y=Math.round(Math.max(92,hd.y-26)),r=clamp(k.hp/k.hp0,0,1),rl=clamp(k.hpLag/k.hp0,0,1);
+ const side=hd.y-58<80,x=Math.round(side?clamp(hd.x+62,16,W-w-16)+j:clamp(hd.x,w/2+16,W-w/2-16)-w/2+j),y=Math.round(side?Math.max(96,hd.y+24):hd.y-58),r=clamp(k.hp/k.hp0,0,1),rl=clamp(k.hpLag/k.hp0,0,1);
  X.save();X.shadowColor='rgba(0,0,0,.4)';X.shadowBlur=6;X.shadowOffsetY=2;rr(x-3,y-3,w+6,h+6,(h+6)/2);X.fillStyle=INK;X.fill();X.restore();
  X.save();rr(x,y,w,h,h/2);X.clip();X.fillStyle='#2A3160';X.fillRect(x,y,w,h);if(rl>r){X.fillStyle='#fff';X.fillRect(x,y,w*rl,h)}
  const c=r>.5?['#B4F84A','#2FB41A']:r>.25?['#FFE066','#FF9A1F']:['#FF9A8A','#F0464E'];X.fillStyle=vgrad(y,y+h,c[0],c[1]);X.fillRect(x,y,w*r,h);X.fillStyle='rgba(255,255,255,.4)';X.fillRect(x,y+1.5,w*r,2.5);X.restore();
@@ -597,7 +618,7 @@ function render(){btns=[];X.setTransform(C.width/W,0,0,C.height/H,0,0);X.imageSm
   drawBg(shakeAmp>0);world2D()}
  else{drawBg(false);attract()}
  X.restore();
- if(inGame){if(mode!=='result'||stateT<.3)hpBar();hud()}
+ if(inGame){if(mode!=='result'||stateT<.3){hpBar();talkDraw()}hud()}
  if(mode==='title')titleScreen();if(mode==='map')mapScreen();if(mode==='pause')pauseScreen();if(mode==='result')resultScreen();if(mode==='board')boardScreen();
  drawUifx();drawToast();
  if(trans){const t=trans.t,a=t<.2?t/.2:1-(t-.2)/.26;X.fillStyle='rgba(12,14,40,'+clamp(a,0,1)+')';X.fillRect(0,0,W,H)}}
