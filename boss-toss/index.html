@@ -591,11 +591,11 @@ const TALK={
  low:["Fine, EMAIL me!","Okay okay, not urgent!","Let's... reschedule?","I'll cancel the meeting!"]};
 let talk=null,talkNext=0;const pick=a=>a[(R()*a.length)|0];
 function say(kind,force){const k=kobi;if(!k||k.dead||k.state!=='stand'||headless)return;if(!force&&talk&&levelT-talk.t<1.6)return;
- talk={txt:pick(TALK[kind]),t:levelT,life:2.4};talkNext=levelT+5.5+R()*4;try{sfx('pop',{vol:.18,rate:1.5,vary:.1})}catch(e){}}
+ talk={txt:pick(TALK[kind]),t:levelT,life:2.4};talkNext=levelT+3.5+R()*2.5;try{sfx('pop',{vol:.18,rate:1.5,vary:.1})}catch(e){}}
 // a paper hit shuts him up: the current sentence is cut off mid-word, then silence for a while
 function shush(){if(talk&&levelT-talk.t<talk.life){const t=talk.txt,n=Math.max(3,Math.ceil(t.length*.45));talk={txt:t.slice(0,n).trim()+'—',t:levelT,life:.7,cut:1}}talkNext=levelT+7+R()*3}
 function talkTick(){if(mode!=='play'||!kobi||kobi.dead){if(kobi&&kobi.dead)talk=null;return}
- if(levelT>1.4&&!talk&&talkNext===0){say('start',1);return}if(talkNext&&levelT>talkNext)say('idle')}
+ if(levelT>.5&&!talk&&talkNext===0){say('start',1);return}if(talkNext&&levelT>talkNext)say('idle')}
 function talkDraw(){const k=kobi;if(!talk||!k||k.dead||k.state!=='stand')return;const a=levelT-talk.t;if(a>talk.life){talk=null;return}
  const hd=k.pt(-8,-KCFG.stand.h*.82),pop=a<.18?easeOutBack(a/.18):a>talk.life-.25?(talk.life-a)/.25:1;if(pop<=0)return;
  X.save();font(17,800);const tw2=X.measureText(talk.txt).width,w=tw2+30,h=40;let bx=hd.x-28-w,by=hd.y-h/2;bx=clamp(bx,10,W-w-10);by=clamp(by,74,H-h-10);
