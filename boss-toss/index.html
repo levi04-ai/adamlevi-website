@@ -749,11 +749,11 @@ function hintPill(msg,type,pulse){const fs=17,w=Math.min(W-80,tW(msg,fs,800,1)+(
  text(msg,type?16:0,1,fs,'#fff',{w:800,f2:1,shadow:false,maxW:w-(type?72:36)});X.restore()}
 /* ---------- HUD (compact: score chip · level chip · pause/restart. Ammo is the physical queue next to the chair) ---------- */
 function hud(){const L=LEVELS[lvl],now=NOW,play=mode==='play';
- const sw=Math.max(132,tW(fmt(shownScore),22)+64);chip(16,14,sw,44);coin(38,36,13);text(fmt(shownScore),60,37,22,'#fff',{align:'left',shadow:false});
  const nm=L.name.toUpperCase(),nw=Math.min(220,tW(nm,16)),pw=nw+68,px=W/2-pw/2;chip(px,14,pw,44);
+ const sw=Math.max(132,tW(fmt(shownScore),22)+64),sx=px-sw-12;chip(sx,14,sw,44);coin(sx+22,36,13);text(fmt(shownScore),sx+44,37,22,'#fff',{align:'left',shadow:false});
  X.beginPath();X.arc(px+22,36,15,0,7);X.fillStyle=vgrad(21,51,LCOL[lvl][0],LCOL[lvl][1]);X.fill();X.lineWidth=1.5;X.strokeStyle='rgba(255,255,255,.5)';X.stroke();text(lvl+1,px+22,37,16,'#fff',{stroke:3,strokeCol:'rgba(10,12,40,.55)',shadow:false});
  text(nm,px+46+nw/2,37,16,'#fff',{shadow:false,maxW:220});
- if(play){const d=52*US,y=14+d/2;circleBtn('pause',W-16-d/2,y,d,'pause','slate',pauseGame);circleBtn('restart',W-16-d/2-d-12,y,d,'restart','slate',()=>go(()=>loadLevel(lvl)))}
+ if(play){const d=52*US,y=14+d/2;const bx=px+pw+12+d/2;circleBtn('restart',bx,y,d,'restart','slate',()=>go(()=>loadLevel(lvl)));circleBtn('pause',bx+d+10,y,d,'pause','slate',pauseGame)}
  if(!play)return;
  // projectile above the top of the screen: small marker
  if(ball&&ball.state==='fly')for(const b of ball.bodies)if(b.position.y<-14){const x=clamp(b.position.x,30,W-30);X.save();X.globalAlpha=.9;X.fillStyle='#fff';X.strokeStyle=INK;X.lineWidth=3;X.lineJoin='round';X.beginPath();X.moveTo(x,6);X.lineTo(x+9,20);X.lineTo(x-9,20);X.closePath();X.stroke();X.fill();X.restore();drawBallAt(b.btype,b.var,x,40,b.angle,.6)}
