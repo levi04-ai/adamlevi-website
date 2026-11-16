@@ -23,5 +23,5 @@ module.exports = async (req, res) => {
     }
     if (!pid) res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     res.status(200).json({ top, players:players || 0, me, around:near });
-  } catch(e){ res.status(500).json({ error:'server' }); }
+  } catch(e){ res.status(500).json({ error:'server', why:String(e && (e.cause && e.cause.code || e.message) || e).replace(/https?:\/\/\S+/g,'[url]').slice(0,120) }); }
 };
