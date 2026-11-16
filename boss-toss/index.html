@@ -533,7 +533,7 @@ function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=L.balls.
  if(win&&LB_ON&&!headless){lbPending=true;lbTries=0;lbSubmit()}   // background submit (needs a nickname; otherwise the prompt below sends it)
  if(win)for(let i=0;i<150;i++)confetti.push({x:R()*W,y:-R()*H*.6-10,vx:(R()-.5)*3,vy:1+R()*2,r:R()*6,vr:(R()-.5)*.3,w:7+R()*7,h:4+R()*4,col:['#ffe14d','#ff6b6b','#5af08a','#6bc8ff','#c38bff','#fff'][(R()*6)|0],t:0})}
 const STARX=[-126,0,126],STARY=[306,284,306],STARR=[44,56,44];
-function resultTick(dt){const r=result;if(r.win&&!r.asked&&stateT>2.7&&LB_ON&&!lb.name&&!nameAsked&&!trans){r.asked=1;askName()}
+function resultTick(dt){const r=result;if(r.win&&!r.asked&&stateT>2.7&&!lb.name&&!nameAsked&&!trans){r.asked=1;askName()}
  if(!r.sfx&&stateT>.35){r.sfx=true;if(!headless)sfx(r.win?'win':'lose',{vary:0,volVary:0})}
  const t0=1.05;if(r.win)for(let i=0;i<r.stars;i++)if(!r.starT[i]&&stateT>t0+i*.38){r.starT[i]=stateT;sfx('star'+i,{vary:0,vol:.9});if(!headless)burst(W/2+STARX[i],STARY[i],26,['#ffe14d','#ffb020','#fff','#ff9de0']);for(let q=0;q<6;q++)uifx.push({spk:1,x:W/2+STARX[i]+(R()-.5)*120,y:STARY[i]+(R()-.5)*110,vx:0,vy:-14,g:1,t:-R()*.3,life:.7+R()*.5,sz:8+R()*8})}
  const cs=r.win?t0+r.stars*.38+.1:1.0;if(stateT>cs&&r.shown<r.total){r.shown=Math.min(r.total,r.shown+Math.max(r.total*dt/1.1,40));r.tickT-=dt;if(r.tickT<=0){r.tickT=.06;sfx('tick',{vol:.4,rate:1+r.shown/Math.max(1,r.total)*.4,vary:.02})}
@@ -801,9 +801,10 @@ let mapPop={},HEADC=null;
 function tobiHead(x,y,d){const img=KIMG;if(!img||!img.width)return;const f=img.width/KCFG.st.w;X.save();X.beginPath();X.arc(x,y,d/2,0,7);X.fillStyle='#BFE3FF';X.fill();X.clip();X.drawImage(img,42*f,0,106*f,106*f,x-d*.55,y-d*.5,d*1.1,d*1.1);X.restore();X.beginPath();X.arc(x,y,d/2,0,7);X.lineWidth=3;X.strokeStyle='#fff';X.stroke();X.beginPath();X.arc(x,y,d/2+2.5,0,7);X.lineWidth=2.5;X.strokeStyle=INK;X.stroke()}
 const nodeP=i=>({x:118+i*(W-236)/(LEVELS.length-1),y:i%2?446:306});
 function pathTo(n){X.beginPath();let p=nodeP(0);X.moveTo(p.x,p.y);for(let i=1;i<=n;i++){const q=nodeP(i);X.bezierCurveTo(p.x+70,p.y,q.x-70,q.y,q.x,q.y);p=q}}
+let resetArm=-9;function resetAll(){if(NOW-resetArm>4){resetArm=NOW;showToast('Tap RESET again to erase all progress');return}resetArm=-9;save.stars=[];save.best=[];save.unlocked=1;persist();mapPop={};stateT=0;showToast('Progress erased. Fresh start!')}
 function mapScreen(){shade(.74,.86);vignette(.4);const now=NOW,n=LEVELS.length;if(stateT<.07)mapPop={};
  text('PICK A MEETING',W/2,74,56,'#fff',{stroke:14,ext:8,extCol:'#2E49C9',grad:['#FFFFFF','#FFFFFF','#CFE2FF'],gloss:1,sc:popIn('mt',0),maxW:720});
- const d=56*US;circleBtn('back',24+d/2,22+d/2,d,'back','slate',()=>go(()=>{mode='title';stateT=0}));circleBtn('lbm',24+d+14+d/2,22+d/2,d,'trophy','yellow',openBoard);circleBtn('mute',W-24-d/2,22+d/2,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute));starsChip(W-24-d-16-150,26);
+ const d=56*US;circleBtn('back',24+d/2,22+d/2,d,'back','slate',()=>go(()=>{mode='title';stateT=0}));circleBtn('lbm',24+d+14+d/2,22+d/2,d,'trophy','yellow',openBoard);circleBtn('rst',24+2*(d+14)+d/2,22+d/2,d,'restart','slate',resetAll);text('RESET',24+2*(d+14)+d/2,22+d+12,12,'rgba(220,228,255,.75)',{shadow:false});circleBtn('mute',W-24-d/2,22+d/2,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute));starsChip(W-24-d-16-150,26);
  // path
  X.lineCap='round';X.lineJoin='round';pathTo(n-1);X.lineWidth=30;X.strokeStyle=INK;X.stroke();X.lineWidth=22;X.strokeStyle='#2A3A9A';X.stroke();X.lineWidth=22;X.save();X.setLineDash([2,20]);X.lineWidth=5;X.strokeStyle='rgba(190,215,255,.4)';X.stroke();X.restore();
  const cur=Math.min(n,save.unlocked)-1;if(cur>0){pathTo(cur);X.lineWidth=14;X.strokeStyle='#F59300';X.stroke();X.lineWidth=8;X.strokeStyle='#FFE066';X.stroke()}
