@@ -754,6 +754,8 @@ function hud(){const L=LEVELS[lvl],now=NOW,play=mode==='play';
  X.beginPath();X.arc(px+22,36,15,0,7);X.fillStyle=vgrad(21,51,LCOL[lvl][0],LCOL[lvl][1]);X.fill();X.lineWidth=1.5;X.strokeStyle='rgba(255,255,255,.5)';X.stroke();text(lvl+1,px+22,37,16,'#fff',{stroke:3,strokeCol:'rgba(10,12,40,.55)',shadow:false});
  text(nm,px+46+nw/2,37,16,'#fff',{shadow:false,maxW:220});
  if(play){const d=52*US,y=14+d/2;const bx=px+pw+12+d/2;circleBtn('restart',bx,y,d,'restart','slate',()=>go(()=>loadLevel(lvl)));circleBtn('pause',bx+d+10,y,d,'pause','slate',pauseGame)}
+ if(mode==='result'){const d=52*US;circleBtn('hmute',W-16-d/2,14+d/2,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute))}
+ if(play){const d=52*US,y=14+d/2,bx=px+pw+12+d/2;circleBtn('hmute',bx+2*(d+10),y,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute))}
  if(!play)return;
  // projectile above the top of the screen: small marker
  if(ball&&ball.state==='fly')for(const b of ball.bodies)if(b.position.y<-14){const x=clamp(b.position.x,30,W-30);X.save();X.globalAlpha=.9;X.fillStyle='#fff';X.strokeStyle=INK;X.lineWidth=3;X.lineJoin='round';X.beginPath();X.moveTo(x,6);X.lineTo(x+9,20);X.lineTo(x-9,20);X.closePath();X.stroke();X.fill();X.restore();drawBallAt(b.btype,b.var,x,40,b.angle,.6)}
