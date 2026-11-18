@@ -80,8 +80,9 @@ const I={};let nload=0;const NA=Object.keys(A).length;
 for(const k in A){I[k]=new Image();I[k].onload=()=>{if(++nload===NA)boot()};I[k].onerror=I[k].onload;I[k].src=A[k]}
 
 /* ---------- save ---------- */
-let save={stars:[],best:[],unlocked:1,mute:false};
+let save={stars:[],best:[],tries:[],unlocked:1,mute:false};
 try{const s=JSON.parse(localStorage.getItem('toss_the_boss_v1'));if(s)save=Object.assign(save,s)}catch(e){}
+if(!Array.isArray(save.tries))save.tries=[];
 function persist(){try{localStorage.setItem('toss_the_boss_v1',JSON.stringify(save))}catch(e){}}
 
 /* ---------- global leaderboard (same-origin /api/toss on adamlevi.net: Vercel functions + Upstash Redis) ----------
@@ -338,7 +339,7 @@ const LCOL=[['#5BE06B','#23A845'],['#4FD1C5','#1E9E95'],['#5AB8FF','#2D7BE0'],['
 {let hi=-1;for(let i=0;i<LEVELS.length;i++)if((save.stars[i]||0)>0)hi=i;save.unlocked=Math.max(1,Math.min(LEVELS.length,Math.max(save.unlocked|0,hi+2)))}
 
 /* ---------- state ---------- */
-let engine,world,bodies=[],kobi=null,ball=null,olds=[],mode='title',lvl=0,score=0,shownScore=0,ballsLeft=0,queue=[],stateT=0,levelT=0,result=null;
+let thrown=false,engine,world,bodies=[],kobi=null,ball=null,olds=[],mode='title',lvl=0,score=0,shownScore=0,ballsLeft=0,queue=[],stateT=0,levelT=0,result=null;
 let fx=[],debris=[],fading=[],breakQ=[],specials=[],confetti=[],uifx=[];
 let shakeAmp=0,hitStop=0,slowT=0,introT=.5;
 let headless=false,hintShown={},trans=null,FDT=1/60,NOW=0;
@@ -502,7 +503,7 @@ function loadLevel(i){lvl=i;WR=mulberry32((i+1)*2654435761+97);const L=LEVELS[i]
  if(L.sit)kobi.sit=1;
  wNow=null;wDisp=null;stains=[];Events.on(engine,'collisionStart',onHit);Events.on(engine,'beforeUpdate',preStep);
  queue=L.balls.map((t,j)=>({type:t,v:(j*3+i*5)%8}));ballsLeft=queue.length;score=0;shownScore=0;fx=[];debris=[];fading=[];breakQ=[];specials=[];confetti=[];uifx=[];
- ball=null;olds=[];result=null;talk=null;tEnd=cEnd=-9;talkNext=0;hear=0;hearAt=0;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
+ thrown=false;ball=null;olds=[];result=null;talk=null;tEnd=cEnd=-9;talkNext=0;hear=0;hearAt=0;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
  pouch={x:REST.x,y:REST.y,vx:0,vy:0};nextBall()}
 /* ---------- camera: ONE fixed screen. No pan, no zoom while aiming or flying. Only a tiny eased zoom punch on the KO. ---------- */
 const cam={z:1,x:W/2,y:H/2,pt:9,px:W/2,py:H/2};
@@ -702,7 +703,8 @@ function spawnBall(type,v,x,y,vx,vy,scale){const t=BALLS[type],s=scale||1,r=t.r*
  const b=t.box?Bodies.rectangle(x,y,t.box[0]*s,t.box[1]*s,Object.assign({chamfer:{radius:4}},o)):Bodies.circle(x,y,r,o);
  b.isBall=true;b.btype=type;b.var=v||0;b.rad=r;b.glide=t.glide||0;Composite.add(world,b);Body.setVelocity(b,{x:vx,y:vy});Body.setAngularVelocity(b,t.spin!==undefined?t.spin:vx*.012);return b}
 function release(dx,dy){const p=Math.hypot(dx,dy)/MAXPULL;const b=spawnBall(ball.type,ball.v,ball.x,ball.y,dx*POWER,dy*POWER);
- ball.body=b;ball.bodies=[b];hintShown[ball.type]=(hintShown[ball.type]||0)+1;if(col)col.seen=1;ball.state='fly';ball.t=0;ball.still=0;
+ ball.body=b;ball.bodies=[b];hintShown[ball.type]=(hintShown[ball.type]||0)+1;if(col)col.seen=1;ball.state='fly';ball.t=0;ball.still=0;if(!thrown){thrown=true;save.tries[lvl]=(save.tries[lvl]||0)+1;persist()}   // every attempt that throws something counts (loss / restart / quit all included)
+ 
  pouch.x=ball.x;pouch.y=ball.y;pouch.vx=dx*.35;pouch.vy=dy*.35;if(!headless){sfx('thwip',{vol:.6+.4*p,rate:.9+.2*p});sfx('whoosh',{vol:.25+.45*p,rate:.9+.25*p,delay:.04})}}
 function ability(){const b=ball.body;if(!b||!Composite.get(world,b.id,'body')||ball.t<.08)return;const v=b.velocity,sp=Math.hypot(v.x,v.y);
  if(ball.type==='sticky'){ball.used=true;const a0=Math.atan2(v.y,v.x);Composite.remove(world,b);ball.bodies=[];
@@ -747,11 +749,14 @@ function flyTick(B,dt){B.t+=dt;B.bodies=B.bodies.filter(b=>{const ok=Composite.g
  const still=B.bodies.every(x=>Math.hypot(x.velocity.x,x.velocity.y)<.3);if(B.t>1&&still)B.still+=dt;else B.still=0;
  if(!B.bodies.length||B.still>.7||B.t>7){B.state='done';B.t=0}}
 function settled(){return bodies.concat(kobi?kobi.all():[]).every(b=>Math.hypot(b.velocity.x,b.velocity.y)<.18&&Math.abs(b.angularVelocity)<.012)}
-function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=L.balls.length;let stars=0,bonus=0;
- if(win){const used=n-ballsLeft;bonus=ballsLeft*1000;stars=used<=Math.max(1,n-2)?3:used<=n-1?2:1;
+function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=L.balls.length;let stars=0,bonus=0,speed=0,first=0,secs=0;
+ if(win){const wonBefore=(save.best[lvl]||0)>0||(save.stars[lvl]||0)>0;secs=Math.max(0,levelT-1.9);   // intro banner (1.9 s) excluded; levelT does not tick while paused
+  speed=Math.round(2000*clamp(1-(secs-(8+3*n))/((25+16*n)-(8+3*n)),0,1)/10)*10;   // full 2000 up to 8+3n s, linear to 0 at 25+16n s (scales with #items)
+  first=!wonBefore&&thrown&&(save.tries[lvl]||0)<=1?1:0;const used=n-ballsLeft;bonus=ballsLeft*1000;stars=used<=Math.max(1,n-2)?3:used<=n-1?2:1;
   save.stars[lvl]=Math.max(save.stars[lvl]||0,stars);save.unlocked=Math.max(save.unlocked,Math.min(LEVELS.length,lvl+2))}
- const base=score;score+=bonus;const prev=save.best[lvl]||0,newBest=win&&score>prev;if(newBest)save.best[lvl]=score;persist();
- result={win,stars,used:n-ballsLeft,base,bonus,total:score,newBest,shown:0,starT:[],tickT:0,sfx:false,bestT:0};mode='result';stateT=0;
+ const base=score;score+=bonus+speed;let ftb=0;if(first){ftb=Math.round(score*.25/10)*10;score+=ftb}
+ const prev=save.best[lvl]||0,newBest=win&&score>prev;if(newBest)save.best[lvl]=score;persist();
+ result={win,stars,used:n-ballsLeft,base,bonus,speed,ftb,secs,total:score,newBest,shown:0,starT:[],tickT:0,sfx:false,bestT:0};mode='result';stateT=0;
  if(win&&LB_ON&&!headless){lbPending=true;lbTries=0;lbSubmit()}   // background submit (needs a nickname; otherwise the prompt below sends it)
  if(win)for(let i=0;i<150;i++)confetti.push({x:R()*W,y:-R()*H*.6-10,vx:(R()-.5)*3,vy:1+R()*2,r:R()*6,vr:(R()-.5)*.3,w:7+R()*7,h:4+R()*4,col:['#ffe14d','#ff6b6b','#5af08a','#6bc8ff','#c38bff','#fff'][(R()*6)|0],t:0})}
 const STARX=[-126,0,126],STARY=[306,284,306],STARR=[44,56,44];
@@ -1200,7 +1205,7 @@ function resultScreen(){const r=result;if(stateT<.3)return;const t=stateT-.3;sha
  else{drawKobiStatic(cx+16,352,.62,stateT,true);text('Tobi the Manager is still online...',cx,386,22,'rgba(225,232,255,.95)',{w:800,f2:1})}
  text('SCORE',cx,420,15,'rgba(190,205,255,.85)',{w:800,f2:1,shadow:false});
  const done=r.shown>=r.total,bump=done&&r.bestT?1+Math.max(0,.25-(stateT-r.bestT))*1.2:1;text(fmt(r.shown),cx,466,58,'#fff',{stroke:11,ext:5,extCol:'#A85300',strokeCol:'#7A3A00',grad:['#FFF9B0','#FFDD3C','#FFA60F'],gloss:1,sc:bump});
- if(r.win)text(r.bonus?'Supplies saved  +'+fmt(r.bonus):'No supplies left over',cx,516,16,'rgba(200,212,255,.9)',{w:700,f2:1,shadow:false});
+ if(r.win){let ly=506;const ln=(t,c)=>{text(t,cx,ly,15,c||'rgba(200,212,255,.9)',{w:700,f2:1,shadow:false});ly+=22};ln(r.bonus?'Supplies saved  +'+fmt(r.bonus):'No supplies left over');if(r.speed)ln('Speed bonus  +'+fmt(r.speed)+'  ('+r.secs.toFixed(0)+'s)','#9DF0FF');if(r.ftb)ln('First try!  +'+fmt(r.ftb),'#FFE14D')}
  if(r.newBest&&done){const bb=1+Math.sin(stateT*6)*.06;X.save();X.translate(cx+196,440);X.rotate(.16);X.scale(bb,bb);rr(-61,-21,122,42,21);X.fillStyle=INK;X.fill();rr(-58,-18,116,36,18);X.fillStyle=vgrad(-18,18,'#FF9A8A','#E8323C');X.fill();text('NEW BEST!',0,1,16,'#fff',{shadow:false,maxW:100});X.restore()}
  X.restore();
  if(t>.55){const by=572,e=k=>popIn('rb'+k,.85+k*.08);
