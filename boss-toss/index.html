@@ -471,16 +471,16 @@ function doorHit(q,vn){const d=door;if(!d||d.state>=2||d.pend||!q.isBall||q.door
  if(!headless){fx.push({k:'pop',x:d.x,y:d.yb-DOOR.h-18,txt:'CRACK!',col:'#bfe9ff',s:30,t:0,life:1.1});for(let i=0;i<10;i++)fx.push({k:'bit',x:p.x,y:p.y,vx:-(R()*5+1),vy:-R()*5,t:0,life:.6+R()*.4,col:['#cfe8ff','#ffffff','#9fd4ff'][(R()*3)|0],sz:2+R()*3,r:R()*6,vr:(R()-.5)*.6});
   sfx('brk_glass',{vol:.55,rate:1.25,vary:.05})}}
 function doorBreak(){const d=door;if(!d||d.state>=2)return;d.state=2;d.pend=0;Composite.remove(world,d.body);addScore(1500,d.x,d.yb-DOOR.h-10,'#bfe9ff',true);shake(12);hitStop=Math.max(hitStop,.04);
- if(!headless){const cols=['#cfe8ff','#ffffff','#9fd4ff','#bfe9ff','#7fb8e6'];for(let i=0;i<46;i++)fx.push({k:'bit',x:d.x+(R()-.5)*DOOR.w*.8,y:d.yb-R()*DOOR.h*.9,vx:(R()-.6)*7,vy:-R()*6,t:0,life:.8+R()*.7,col:cols[(R()*5)|0],sz:2+R()*4,r:R()*6,vr:(R()-.5)*.7});
-  for(let i=0;i<16;i++)fx.push({k:'spark',x:d.x+(R()-.5)*DOOR.w,y:d.yb-R()*DOOR.h,vx:(R()-.5)*6,vy:-R()*5,t:0,life:.35+R()*.25,col:'#fff',sz:3+R()*2});
-  // C24: the side glass panes go too -> shards over the whole office wall (560x500 sprite px at WS, door centre = wall px 276)
-  const s=WS,wx0=d.x-276*s,wy0=d.yb-500*s;for(let i=0;i<110;i++){const x=wx0+(10+R()*540)*s,y=wy0+(25+R()*440)*s;if(Math.abs(x-d.x)<DOOR.w*.5&&R()<.6)continue;
-   fx.push({k:'bit',x,y,vx:(x-d.x)*.03+(R()-.6)*6,vy:-R()*7,t:0,life:.9+R()*.8,col:cols[(R()*5)|0],sz:2+R()*5,r:R()*6,vr:(R()-.5)*.8})}
+ if(!headless){  for(let i=0;i<16;i++)fx.push({k:'spark',x:d.x+(R()-.5)*DOOR.w,y:d.yb-R()*DOOR.h,vx:(R()-.5)*6,vy:-R()*5,t:0,life:.35+R()*.25,col:'#fff',sz:3+R()*2});
+  // C25: the whole glass office is gone: ~280 triangular shards burst from the entire wall + door area (wall 560x500 sprite px at WS, door centre = wall px 276), land and fade
+  const s=WS,wx0=d.x-276*s,wy0=d.yb-500*s,gc=['rgba(255,255,255,.75)','rgba(214,244,255,.6)','rgba(150,225,235,.55)','rgba(110,205,220,.5)','rgba(235,252,255,.7)'];
+  for(let i=0;i<280;i++){const x=wx0+(8+R()*544)*s,y=wy0+(12+R()*480)*s,z=4+R()*R()*22,a0=R()*6.28;
+   fx.push({k:'gl',x,y,vx:(x-d.x)*.025+(R()-.5)*6,vy:-R()*8+(y-wy0)*.004,t:0,life:3.2+R()*2.2,col:gc[(R()*5)|0],sz:z,r:R()*6.28,vr:(R()-.5)*.5,sk:.5+R()*.6,a0,rest:R()*10})}
   shake(16);sfx('brk_glass',{vol:1,vary:.04});sfx('brk_glass',{vol:.6,rate:.8,delay:.08});sfx('brk_glass',{vol:.9,rate:.9,delay:.18,vary:.06})}}
 // wall + door are drawn over Tobi, his desk and laptop (glass: he stays visible), under the thrown items
-function drawOffice(){const d=door;if(!d)return;const s=WS,wb=d.state>=2&&I.office_wall_broken&&I.office_wall_broken.width,wi=wb?I.office_wall_broken:I.office_wall,di=I[DOOR.img[d.state]];   // C24: the whole glass office shatters with the door
+function drawOffice(){const d=door;if(!d||d.state>=2)return;const s=WS,wi=I.office_wall,di=I[DOOR.img[d.state]];   // C25: after the break nothing of the office is drawn (shards are fx 'gl')
  if(wi&&wi.width)X.drawImage(wi,d.x-276*s,d.yb-500*s,560*s,500*s);
- if(!di||!di.width)return;const jx=d.hitT<.25&&d.state<2?Math.sin(d.hitT*70)*3*(1-d.hitT/.25):0;
+ if(!di||!di.width)return;const jx=d.hitT<.25?Math.sin(d.hitT*70)*3*(1-d.hitT/.25):0;
  X.save();X.translate(d.x-100*s+jx,d.yb-420*s);X.drawImage(di,0,0,200*s,420*s);
  if(d.flash>0){X.globalCompositeOperation='lighter';X.globalAlpha=Math.min(.6,d.flash*4);X.drawImage(di,0,0,200*s,420*s)}X.restore()}
 
@@ -660,7 +660,8 @@ function updFx(gdt,dt){const k=gdt*60;
   if(f.k==='sheet'){if(!f.down){f.vy=Math.min(f.vy+.14*k,1.5);f.vx*=Math.pow(.975,k);f.ph+=.14*k;f.x+=(f.vx+Math.sin(f.ph)*1.1)*k;f.y+=f.vy*k;f.r+=(f.vr+Math.cos(f.ph)*.02)*k;   // paper flutters down
     if(f.y>=GROUND-3&&f.vy>0){f.down=1;f.y=GROUND-3+R()*7;f.r=(R()-.5)*.25}}continue}
   if(f.vx!==undefined){f.x+=f.vx*k;f.y+=f.vy*k;
-  if(f.k==='bit'||f.k==='spark'){f.vy+=.45*k;f.r=(f.r||0)+(f.vr||0)*k;if(f.y>GROUND-2&&f.vy>0){f.y=GROUND-2;f.vy*=-.3;f.vx*=.6}}else{f.vx*=.94;f.vy*=.94}}}
+  if(f.k==='gl'){f.vy+=.45*k;f.r+=f.vr*k;if(f.y>GROUND-2-f.rest&&f.vy>0){f.y=GROUND-2-f.rest;f.vy*=-.25;f.vx*=.5;f.vr*=.4;if(Math.abs(f.vy)<1){f.vy=0;f.vx*=.5;f.vr=0}}}
+  else if(f.k==='bit'||f.k==='spark'){f.vy+=.45*k;f.r=(f.r||0)+(f.vr||0)*k;if(f.y>GROUND-2&&f.vy>0){f.y=GROUND-2;f.vy*=-.3;f.vx*=.6}}else{f.vx*=.94;f.vy*=.94}}}
  fx=fx.filter(f=>f.t<f.life);
  for(const d of debris){d.t+=gdt;d.x+=d.vx*k;d.y+=d.vy*k;d.vy+=.45*k;d.a+=d.va*k;if(d.y>GROUND-d.h/3&&d.vy>0){d.y=GROUND-d.h/3;d.vy*=-.25;d.vx*=.7;d.va*=.6}}
  debris=debris.filter(d=>d.t<d.life);
@@ -979,6 +980,7 @@ function world2D(){const now=NOW;
  for(const d of debris){const a=d.t>d.life-.4?(d.life-d.t)/.4:1;X.save();X.globalAlpha=Math.max(0,a);X.translate(d.x,d.y);X.rotate(d.a);X.drawImage(d.img,d.sx,d.sy,d.sw,d.sh,-d.w/2,-d.h/2,d.w,d.h);X.restore()}
  for(const f of fx){const a=Math.max(0,1-f.t/f.life);
   if(f.k==='dust'){X.globalAlpha=a*.6;X.fillStyle=f.col;const s=f.sz*(1+f.t*2);X.beginPath();X.arc(f.x,f.y,s/2,0,7);X.fill()}
+  else if(f.k==='gl'){X.globalAlpha=Math.min(1,a*2.5);X.save();X.translate(f.x,f.y);X.rotate(f.r);X.beginPath();X.moveTo(f.sz,0);X.lineTo(Math.cos(f.a0+2.1)*f.sz*f.sk,Math.sin(f.a0+2.1)*f.sz*f.sk);X.lineTo(Math.cos(f.a0+4.3)*f.sz,Math.sin(f.a0+4.3)*f.sz*f.sk);X.closePath();X.fillStyle=f.col;X.fill();X.strokeStyle='rgba(255,255,255,.8)';X.lineWidth=1;X.stroke();X.restore()}
   else if(f.k==='bit'){X.globalAlpha=Math.min(1,a*2);X.save();X.translate(f.x,f.y);X.rotate(f.r);X.fillStyle=f.col;f.thin?X.fillRect(-f.sz,-1,f.sz*2,2):X.fillRect(-f.sz/2,-f.sz/2,f.sz,f.sz);X.restore()}
   else if(f.k==='spark'){X.globalAlpha=a;X.fillStyle=f.col;X.fillRect(Math.round(f.x-f.sz/2),Math.round(f.y-f.sz/2),f.sz,f.sz)}
   else if(f.k==='sheet'){X.globalAlpha=clamp((f.life-f.t)/.5,0,1);X.save();X.translate(f.x,f.y);X.rotate(f.r);if(f.down)X.scale(1,.4);else X.scale(Math.max(.2,Math.abs(Math.cos(f.ph*.7))),1);
