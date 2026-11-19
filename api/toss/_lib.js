@@ -62,10 +62,13 @@ async function allow(kind, req, max, windowSec){
   return n <= max;
 }
 
+const ORIGIN_OK = /^https:\/\/((www\.)?adamlevi\.net|([a-z0-9-]+\.)*itch\.(zone|io))$/;
 function cors(req, res){
-  // only the game's own pages may call these
-  const o = req.headers.origin || '';
-  if (/^https:\/\/(www\.)?adamlevi\.net$/.test(o)) res.setHeader('Access-Control-Allow-Origin', o);
+  // only the game's own pages may call these: adamlevi.net and the itch.io copy (served in an iframe from *.itch.zone,
+  // e.g. https://html-classic.itch.zone). CORS only stops other web pages from reading the answers; it is NOT the
+  // anti-cheat (curl ignores it) - that is the signed token, caps, clock and rate limits in submit.js.
+  const o = String(req.headers.origin || '');
+  if (ORIGIN_OK.test(o)) res.setHeader('Access-Control-Allow-Origin', o);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -106,5 +109,5 @@ const around = (rank0, pid) => rows(Math.max(0, rank0 - 2), rank0 + 2, pid);
 
 function body(req){ try { return typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch(e){ return {}; } }
 
-module.exports = { redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body,
+module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body,
   BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, SEC_PER_LEVEL, LEVEL_CAP, LEVELS, PID_OK };

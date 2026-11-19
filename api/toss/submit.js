@@ -2,7 +2,8 @@
 //   -> { rank, total, players, top:[10 rows], around:[rows near the player] }      row = { rank, name, total, lv, me? }
 // Ranking = TOTAL = sum of the player's best score on each level. One row per player (pid), only ever raised.
 // Checks: signed single-use token from start.js (<= 12 h old), pid format, clean name, <= 10 levels cleared in order,
-// every level score an integer within that level's cap, >= 6 s of real time per newly cleared level, per-IP rate limit.
+// every level score an integer within that level's cap, >= 6 s of real time per newly cleared level, per-IP rate limits
+// (40 submits / hour, 30 new players / day).
 const { redis, pipe, readToken, allow, cors, ready, cleanName, rows, around, body,
   BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, SEC_PER_LEVEL, LEVEL_CAP, LEVELS, PID_OK } = require('./_lib');
 
@@ -40,6 +41,9 @@ module.exports = async (req, res) => {
     const before = oldScore == null ? 0 : Number(oldScore);
     const need = total > before ? SEC_PER_LEVEL*Math.max(1, cleared - (Number(old.lv) || 0)) : 2;
     if (elapsed < need) return res.status(400).json({ error:'clock', wait:Math.ceil(need - elapsed) });
+    // at most 30 brand-new board rows per IP per day (a script cannot flood the board with fresh player ids;
+    // an office sharing one IP still fits)
+    if (oldScore == null && !await allow('new', req, 30, 86400)) return res.status(429).json({ error:'slow down' });
 
     // every token counts once
     const fresh = await redis('SET', 'toss:used:' + tok.n, '1', 'NX', 'EX', TOKEN_MAX_AGE + 600);
