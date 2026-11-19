@@ -21,7 +21,9 @@ const SEC_PER_LEVEL = 6;            // nobody clears a level faster than this (a
 // unused-supply bonus; sticky notes split in three) + 10 x (boss hp + 300 overkill) damage points
 // + for every breakable piece: its break points + 20 x (hp + 25) damage points; x1.15, rounded up to 1000.
 // The best scores found by 150 random games per level are 12-18 k, so honest players sit well below these.
-const LEVEL_CAP = [26000, 28000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 43000, 60000];
+// 19/11 (C39): theoretical max incl. speed bonus 2000 and first-try +25% = (raw + 2000) x 1.25; levels 2 and 10
+// (28675 / 47575) were above their caps, raised to 30000 / 50000 (~5 % headroom). All other levels stay above that max.
+const LEVEL_CAP = [26000, 30000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 50000, 60000];
 const LEVELS = LEVEL_CAP.length;
 
 const ready = () => !!(RURL && RTOK && SECRET);
