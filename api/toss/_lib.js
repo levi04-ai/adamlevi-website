@@ -62,10 +62,11 @@ async function allow(kind, req, max, windowSec){
   return n <= max;
 }
 
-const ORIGIN_OK = /^https:\/\/((www\.)?adamlevi\.net|([a-z0-9-]+\.)*itch\.(zone|io))$/;
+const ORIGIN_OK = /^(https:\/\/((www\.)?adamlevi\.net|([a-z0-9-]+\.)*itch\.(zone|io)|([a-z0-9-]+\.)*crazygames\.com)|capacitor:\/\/([a-z0-9-]+\.)*crazygames\.com)$/;
 function cors(req, res){
   // only the game's own pages may call these: adamlevi.net and the itch.io copy (served in an iframe from *.itch.zone,
-  // e.g. https://html-classic.itch.zone). CORS only stops other web pages from reading the answers; it is NOT the
+  // e.g. https://html-classic.itch.zone) and the CrazyGames copy (*.crazygames.com, e.g. https://<game>.game-files.crazygames.com;
+  // capacitor://*.crazygames.com = their iOS app). CORS only stops other web pages from reading the answers; it is NOT the
   // anti-cheat (curl ignores it) - that is the signed token, caps, clock and rate limits in submit.js.
   const o = String(req.headers.origin || '');
   if (ORIGIN_OK.test(o)) res.setHeader('Access-Control-Allow-Origin', o);
