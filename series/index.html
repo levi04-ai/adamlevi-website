@@ -7,11 +7,11 @@
     <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>אופן ספייס | סדרת אנימציה על החיים בהייטק — Adam Levi</title>
-    <meta name="description" content="אופן ספייס - סדרת אנימציה ישראלית שמדייקת את עולם ההייטק מבפנים עד שזה נהיה מצחיק. 17 פרקים, נוצרה מקצה לקצה בכלי AI על ידי אדם לוי.">
+    <meta name="description" content="אופן ספייס - סדרת אנימציה ישראלית שמדייקת את עולם ההייטק מבפנים עד שזה נהיה מצחיק. עונה 1 (17 פרקים) וגם עונה 2, נוצרה מקצה לקצה בכלי AI על ידי אדם לוי.">
     <link rel="canonical" href="https://www.adamlevi.net/series/">
     <meta property="og:type" content="video.tv_show">
     <meta property="og:title" content="אופן ספייס | סדרת אנימציה על החיים בהייטק">
-    <meta property="og:description" content="17 פרקים על מה שבאמת קורה במשרד. סדרת אנימציה של אדם לוי.">
+    <meta property="og:description" content="עונה 1 (17 פרקים) ועונה 2 על מה שבאמת קורה במשרד. סדרת אנימציה של אדם לוי.">
     <meta property="og:image" content="https://www.adamlevi.net/img/series/ep2.jpg">
     <meta property="og:url" content="https://www.adamlevi.net/series/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,6 +148,17 @@
             border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 26px 60px rgba(0,0,0,0.55);
         }
+
+
+        /* ===== SEASON SWITCHER ===== */
+        .season-tabs { display:flex; justify-content:center; gap:10px; margin:0 auto 2rem; }
+        .season-tab { font-family:inherit; font-size:1rem; font-weight:700; padding:0.6rem 1.5rem; border-radius:999px; border:2px solid #111; background:#fff; color:#111; cursor:pointer; transition:all .2s; }
+        .season-tab[aria-selected="true"] { background:#111; color:#fff; }
+        .season-tab:focus-visible { outline:3px solid #F5A400; outline-offset:2px; }
+        .ep-grid[hidden] { display:none; }
+        .ep-grid.s2-grid { grid-template-columns: repeat(4, 1fr); }
+        @media (max-width: 1080px) { .ep-grid.s2-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { .ep-grid.s2-grid { grid-template-columns: repeat(2, 1fr); } .season-tab { padding:0.5rem 1.1rem; font-size:0.92rem; } }
 
         /* ===== EPISODES ===== */
         .ep-grid {
@@ -581,8 +592,13 @@
             <h2 class="sec-title">כל הפרקים</h2>
         </div>
 
-        <div class="ep-grid rv">
-            <button class="ep" data-yt="qA69hmsEkoA" data-title="פרק 1 · אבולוציה של הייטקיסט">
+        <div class="season-tabs rv" role="tablist" aria-label="בחירת עונה">
+            <button class="season-tab" role="tab" id="tab-s1" aria-selected="true" aria-controls="grid-s1" data-season="1">עונה 1</button>
+            <button class="season-tab" role="tab" id="tab-s2" aria-selected="false" aria-controls="grid-s2" data-season="2">עונה 2</button>
+        </div>
+
+        <div class="ep-grid rv" id="grid-s1" role="tabpanel" aria-labelledby="tab-s1">
+            <button class="ep" data-yt="QVxa3nTFilY" data-title="פרק 1 · אבולוציה של הייטקיסט">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 01</span>
                     <picture><source srcset="/img/series/ep1.webp" type="image/webp"><img src="/img/series/ep1.jpg" alt="פרק 1 - אבולוציה של הייטקיסט" loading="lazy" decoding="async"></picture>
@@ -592,7 +608,7 @@
                 <div class="ep-body"><h3>אבולוציה של הייטקיסט</h3></div>
             </button>
 
-            <button class="ep" data-yt="GYKjQ-WT-vU" data-title="פרק 2 · בלונים לנטלי">
+            <button class="ep" data-yt="YPx7rpK3vl8" data-title="פרק 2 · בלונים לנטלי">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 02</span>
                     <picture><source srcset="/img/series/ep2.webp" type="image/webp"><img src="/img/series/ep2.jpg" alt="פרק 2 - בלונים לנטלי" loading="lazy" decoding="async"></picture>
@@ -602,7 +618,7 @@
                 <div class="ep-body"><h3>בלונים לנטלי</h3></div>
             </button>
 
-            <button class="ep" data-yt="QU7YJvID1h0" data-title="פרק 3 · בוקר בהייטק">
+            <button class="ep" data-yt="cRi2mNv5GYI" data-title="פרק 3 · בוקר בהייטק">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 03</span>
                     <picture><source srcset="/img/series/ep3.webp" type="image/webp"><img src="/img/series/ep3.jpg" alt="פרק 3 - בוקר בהייטק" loading="lazy" decoding="async"></picture>
@@ -612,7 +628,7 @@
                 <div class="ep-body"><h3>בוקר בהייטק</h3></div>
             </button>
 
-            <button class="ep" data-yt="UUYtS79VvCY" data-title="פרק 4 · עובד חדש">
+            <button class="ep" data-yt="UrUl3ajdb4Q" data-title="פרק 4 · עובד חדש">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 04</span>
                     <picture><source srcset="/img/series/ep4.webp" type="image/webp"><img src="/img/series/ep4.jpg" alt="פרק 4 - עובד חדש" loading="lazy" decoding="async"></picture>
@@ -622,7 +638,7 @@
                 <div class="ep-body"><h3>עובד חדש</h3></div>
             </button>
 
-            <button class="ep" data-yt="42D_Q02vkMQ" data-title="פרק 5 · חולצה מכופתרת">
+            <button class="ep" data-yt="nk84wsMQ1MM" data-title="פרק 5 · חולצה מכופתרת">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 05</span>
                     <picture><source srcset="/img/series/ep5.webp" type="image/webp"><img src="/img/series/ep5.jpg" alt="פרק 5 - חולצה מכופתרת" loading="lazy" decoding="async"></picture>
@@ -632,7 +648,7 @@
                 <div class="ep-body"><h3>חולצה מכופתרת</h3></div>
             </button>
 
-            <button class="ep" data-yt="X5cV0MyHi2M" data-title="פרק 6 · ילד טוב">
+            <button class="ep" data-yt="IUf6Ld4rpjI" data-title="פרק 6 · ילד טוב">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 06</span>
                     <picture><source srcset="/img/series/ep6.webp" type="image/webp"><img src="/img/series/ep6.jpg" alt="פרק 6 - ילד טוב" loading="lazy" decoding="async"></picture>
@@ -642,7 +658,7 @@
                 <div class="ep-body"><h3>ילד טוב</h3></div>
             </button>
 
-            <button class="ep" data-yt="eGMgubOwvbI" data-title="פרק 7 · סאפ">
+            <button class="ep" data-yt="0VKU2PDn-KQ" data-title="פרק 7 · סאפ">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 07</span>
                     <picture><source srcset="/img/series/ep7.webp" type="image/webp"><img src="/img/series/ep7.jpg" alt="פרק 7 - סאפ" loading="lazy" decoding="async"></picture>
@@ -652,7 +668,7 @@
                 <div class="ep-body"><h3>סאפ</h3></div>
             </button>
 
-            <button class="ep" data-yt="TXOYb_O1Fp4" data-title="פרק 8 · ראמן">
+            <button class="ep" data-yt="95nNmbUIKU0" data-title="פרק 8 · ראמן">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 08</span>
                     <picture><source srcset="/img/series/ep8.webp" type="image/webp"><img src="/img/series/ep8.jpg" alt="פרק 8 - ראמן" loading="lazy" decoding="async"></picture>
@@ -662,7 +678,7 @@
                 <div class="ep-body"><h3>ראמן</h3></div>
             </button>
 
-            <button class="ep" data-yt="DN-KXRom7Vs" data-title="פרק 9 · קרואסון סלמון">
+            <button class="ep" data-yt="QMXTmJ1NX2c" data-title="פרק 9 · קרואסון סלמון">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 09</span>
                     <picture><source srcset="/img/series/ep9.webp" type="image/webp"><img src="/img/series/ep9.jpg" alt="פרק 9 - קרואסון סלמון" loading="lazy" decoding="async"></picture>
@@ -672,7 +688,7 @@
                 <div class="ep-body"><h3>קרואסון סלמון</h3></div>
             </button>
 
-            <button class="ep" data-yt="stOalHwPtCw" data-title="פרק 10 · משאבי אנוש">
+            <button class="ep" data-yt="5HZ_vz2vLmQ" data-title="פרק 10 · משאבי אנוש">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 10</span>
                     <picture><source srcset="/img/series/ep10.webp" type="image/webp"><img src="/img/series/ep10.jpg" alt="פרק 10 - משאבי אנוש" loading="lazy" decoding="async"></picture>
@@ -682,7 +698,7 @@
                 <div class="ep-body"><h3>משאבי אנוש</h3></div>
             </button>
 
-            <button class="ep" data-yt="KhCyvCbW65Q" data-title="פרק 11 · CyberFlowers">
+            <button class="ep" data-yt="-gO5BryiP2I" data-title="פרק 11 · CyberFlowers">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 11</span>
                     <picture><source srcset="/img/series/ep11.webp" type="image/webp"><img src="/img/series/ep11.jpg" alt="פרק 11 - CyberFlowers" loading="lazy" decoding="async"></picture>
@@ -692,7 +708,7 @@
                 <div class="ep-body"><h3>CyberFlowers</h3></div>
             </button>
 
-            <button class="ep" data-yt="GWriuOgIpxo" data-title="פרק 12 · קהוט">
+            <button class="ep" data-yt="AQ3rv3CrI-I" data-title="פרק 12 · קהוט">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 12</span>
                     <picture><source srcset="/img/series/ep12.webp" type="image/webp"><img src="/img/series/ep12.jpg" alt="פרק 12 - קהוט" loading="lazy" decoding="async"></picture>
@@ -702,7 +718,7 @@
                 <div class="ep-body"><h3>קהוט</h3></div>
             </button>
 
-            <button class="ep" data-yt="-ioZ4ehuaEQ" data-title="פרק 13 · כלבים">
+            <button class="ep" data-yt="vlRsCTM-StQ" data-title="פרק 13 · כלבים">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 13</span>
                     <picture><source srcset="/img/series/ep13.webp" type="image/webp"><img src="/img/series/ep13.jpg" alt="פרק 13 - כלבים" loading="lazy" decoding="async"></picture>
@@ -712,7 +728,7 @@
                 <div class="ep-body"><h3>כלבים</h3></div>
             </button>
 
-            <button class="ep" data-yt="xw3ZfgFxTv0" data-title="פרק 14 · מייקל">
+            <button class="ep" data-yt="HogzjyQD5-Q" data-title="פרק 14 · מייקל">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 14</span>
                     <picture><source srcset="/img/series/ep14.webp" type="image/webp"><img src="/img/series/ep14.jpg" alt="פרק 14 - מייקל" loading="lazy" decoding="async"></picture>
@@ -722,7 +738,7 @@
                 <div class="ep-body"><h3>מייקל</h3></div>
             </button>
 
-            <button class="ep" data-yt="r_Q2R8DPEfY" data-title="פרק 15 · ערב חברה — חלק א'">
+            <button class="ep" data-yt="am7aeG081R4" data-title="פרק 15 · ערב חברה — חלק א'">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 15 · חלק א'</span>
                     <picture><source srcset="/img/series/ep15a.webp" type="image/webp"><img src="/img/series/ep15a.jpg" alt="פרק 15 ערב חברה, חלק א'" loading="lazy" decoding="async"></picture>
@@ -732,7 +748,7 @@
                 <div class="ep-body"><h3>ערב חברה &middot; חלק א'</h3></div>
             </button>
 
-            <button class="ep" data-yt="vWiwOORR3_E" data-title="פרק 15 · ערב חברה — חלק ב'">
+            <button class="ep" data-yt="BXbhZwAYlAI" data-title="פרק 15 · ערב חברה — חלק ב'">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 15 · חלק ב'</span>
                     <picture><source srcset="/img/series/ep15b.webp" type="image/webp"><img src="/img/series/ep15b.jpg" alt="פרק 15 ערב חברה, חלק ב'" loading="lazy" decoding="async"></picture>
@@ -742,7 +758,7 @@
                 <div class="ep-body"><h3>ערב חברה &middot; חלק ב'</h3></div>
             </button>
 
-            <button class="ep" data-yt="uG-wAbCT2ss" data-title="פרק 15 · ערב חברה — חלק ג'">
+            <button class="ep" data-yt="L1TazsrOfy4" data-title="פרק 15 · ערב חברה — חלק ג'">
                 <div class="ep-thumb">
                     <span class="ep-num">פרק 15 · חלק ג'</span>
                     <picture><source srcset="/img/series/ep15c.webp" type="image/webp"><img src="/img/series/ep15c.jpg" alt="פרק 15 ערב חברה, חלק ג'" loading="lazy" decoding="async"></picture>
@@ -752,16 +768,26 @@
                 <div class="ep-body"><h3>ערב חברה &middot; חלק ג'</h3></div>
             </button>
 
-            <button class="ep bonus" data-yt="gz8jyiFA9nc" data-title="בונוס · CyberFlowers Anthem">
+            <button class="ep bonus" data-yt="u4ZNH0T87LU" data-title="בונוס · CyberFlowers Anthem">
                 <div class="ep-thumb">
                     <span class="ep-num">בונוס</span>
-                    <img src="https://i.ytimg.com/vi/gz8jyiFA9nc/hqdefault.jpg" alt="CyberFlowers Anthem" loading="lazy" decoding="async">
+                    <img src="https://i.ytimg.com/vi/u4ZNH0T87LU/hqdefault.jpg" alt="CyberFlowers Anthem" loading="lazy" decoding="async">
                     <span class="ep-dur">קליפ</span>
                     <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
                 </div>
                 <div class="ep-body"><h3>CyberFlowers Anthem</h3></div>
             </button>
 
+        </div>
+
+        <div class="ep-grid s2-grid" id="grid-s2" role="tabpanel" aria-labelledby="tab-s2" hidden>
+            <button class="ep s2" data-yt="T6d2evpgj84" data-title="עונה 2 · פרק 1 · דיילי">
+                <div class="ep-thumb">
+                    <picture><img src="/img/series/s2e1-daily.jpg" alt="עונה 2 פרק 1 - דיילי" loading="lazy" decoding="async"></picture>
+                    <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
+                </div>
+                <div class="ep-body"><h3>דיילי</h3></div>
+            </button>
         </div>
 
         <p class="ep-note rv">איזה פרק הכי אהבתם? <a href="#contact" style="color:#0d0d0d;font-weight:600;">ספרו לי</a> 👇</p>
@@ -832,7 +858,7 @@
                 <a href="https://www.linkedin.com/in/adamlevi/" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 <a href="https://www.instagram.com/adamlevi_storyteller/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 <a href="https://www.facebook.com/adamlevi.storyteller" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.youtube.com/channel/UCivgRspyvbtxQ5-L_kp6qGw" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.youtube.com/channel/UCitKZuTeWfcNQYm8Mm7Lf-w" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                 <a href="https://www.tiktok.com/@.adam.levi" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
@@ -906,7 +932,7 @@
 
         // רצף הפרקים — בלי הבונוס, כדי שהקליפ לא יתנגן אוטומטית אחרי הפינאלה
         const episodes = cards
-            .filter(c => c.dataset.yt && !c.classList.contains('bonus'))
+            .filter(c => c.dataset.yt && !c.classList.contains('bonus') && !c.classList.contains('s2'))
             .map(c => ({
                 id: c.dataset.yt,
                 title: c.dataset.title || '',
@@ -1015,6 +1041,17 @@
                 const i = episodes.findIndex(ep => ep.card === card);
                 if (i >= 0) playEpisode(i);
                 else { current = -1; playVideo(card.dataset.yt, card.dataset.title || ''); }
+            });
+        });
+
+
+        // בורר עונות
+        document.querySelectorAll('.season-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const n = tab.dataset.season;
+                document.querySelectorAll('.season-tab').forEach(t => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+                document.getElementById('grid-s1').hidden = n !== '1';
+                document.getElementById('grid-s2').hidden = n !== '2';
             });
         });
 
