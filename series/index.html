@@ -459,6 +459,18 @@
         .btn-main:hover, .contact-form button:hover { background: var(--yellow); }
         .btn-sec:hover { background: var(--white); border-color: var(--ink); }
 
+        /* בורר עונות: כמו btn-sec; הנבחר "לחוץ" */
+        .season-tabs { gap: 14px; padding: 0 6px 6px 0; }
+        .season-tabs .season-tab {
+            background: var(--white); color: var(--ink); border: var(--border); border-radius: 14px;
+            box-shadow: 4px 4px 0 var(--ink); font-weight: 800; transition: transform .15s, box-shadow .15s, background .15s, color .15s;
+        }
+        .season-tabs .season-tab:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+        .season-tabs .season-tab[aria-selected="true"],
+        .season-tabs .season-tab[aria-selected="true"]:hover {
+            background: var(--ink); color: var(--white); box-shadow: inset 2px 2px 0 rgba(255,255,255,.18); transform: translate(4px,4px);
+        }
+
         /* HERO */
         .hero { background: transparent; min-height: auto; padding-bottom: 4rem; }
         .hero::before { display: none; }
