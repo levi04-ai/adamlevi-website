@@ -555,6 +555,10 @@
             .cast-card { padding: 1.2rem .6rem 1rem; box-shadow: 4px 4px 0 var(--ink); }
             .cast-card img { width: 96px; height: 96px; }
         }
+    
+        /* מילה בודדת בשורה: איזון שורות בכותרות/כפתורים, וביטוי באנגלית נשאר יחד */
+        .hero-sub, .hero-desc strong, .sec-title, .sec-desc, .ep-body h3, .btn-main, .btn-sec { text-wrap: balance; }
+        .hero-desc span[dir="ltr"] { white-space: nowrap; }
     </style>
     <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
     <script defer src="/_vercel/insights/script.js"></script>
@@ -580,18 +584,18 @@
             <div class="hero-content">
                 <span class="bug rv">&#8249;אופן<span class="sl">/</span>ספייס&#8250;</span>
                 <h1 class="rv d1">אופן <em>ספייס</em></h1>
-                <p class="hero-sub rv d1">סדרת אנימציה על מה שבאמת קורה במשרד.</p>
+                <p class="hero-sub rv d1">סדרת אנימציה על מה שבאמת קורה&nbsp;במשרד.</p>
                 <p class="hero-desc rv d2">
-                    <strong>לא סאטירה על ההייטק מבחוץ - דיוק שלו מבפנים!</strong>
+                    <strong>לא סאטירה על ההייטק מבחוץ - דיוק שלו&nbsp;מבפנים!</strong>
                     <br>
                     אריק, קובי, דנה ודימה מפנטזים על קרואסון סלמון בזמן שהמנכ״ל מכריז מלמעלה
-                    <span dir="ltr" style="unicode-bidi:isolate;">"Tech. Code. Family."</span>
+                    <span dir="ltr" style="unicode-bidi:isolate;white-space:nowrap;">"Tech. Code. Family."</span>
                     <br>
                     הפער הזה הוא כל הסדרה.
                 </p>
                 <div class="btn-row rv d3" style="margin-top:2rem;">
-                    <a href="#episodes" class="btn-main">לצפייה בפרקים <i class="fas fa-play" style="font-size:0.75rem"></i></a>
-                    <a href="/quiz/" class="btn-sec">איזו דמות אתה? <i class="fas fa-user-check" style="font-size:0.8rem"></i></a>
+                    <a href="#episodes" class="btn-main">לצפייה בפרקים&nbsp;<i class="fas fa-play" style="font-size:0.75rem"></i></a>
+                    <a href="/quiz/" class="btn-sec">איזו דמות אתה?&nbsp;<i class="fas fa-user-check" style="font-size:0.8rem"></i></a>
                 </div>
             </div>
             <div class="hero-art rv d2">
@@ -619,7 +623,7 @@
                     <span class="ep-dur">0:21</span>
                     <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
                 </div>
-                <div class="ep-body"><h3>אבולוציה של הייטקיסט</h3></div>
+                <div class="ep-body"><h3>אבולוציה של&nbsp;הייטקיסט</h3></div>
             </button>
 
             <button class="ep" data-yt="YPx7rpK3vl8" data-title="פרק 2 · בלונים לנטלי">
@@ -789,7 +793,7 @@
                     <span class="ep-dur">קליפ</span>
                     <span class="ep-play"><span><i class="fas fa-play"></i></span></span>
                 </div>
-                <div class="ep-body"><h3>CyberFlowers Anthem</h3></div>
+                <div class="ep-body"><h3>CyberFlowers&nbsp;Anthem</h3></div>
             </button>
 
         </div>
@@ -835,7 +839,7 @@
         <div class="quiz-cta rv">
             <h3>אז איזו מהן אתה?</h3>
             <p>8 שאלות קצרות, בלי תשובות נכונות, ובסוף מגלים מי אתה במשרד.</p>
-            <a href="/quiz/" class="btn-main">בוא נגלה איזו דמות אתה <i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
+            <a href="/quiz/" class="btn-main">בוא נגלה איזו דמות&nbsp;אתה&nbsp;<i class="fas fa-arrow-left" style="font-size:0.75rem"></i></a>
         </div>
 
     </section>
@@ -844,7 +848,7 @@
         <div class="sec-head rv">
             <span class="sec-label">בואו נדבר</span>
             <h2 class="sec-title">השאירו הודעה</h2>
-            <p class="sec-desc" style="font-size:1rem;margin-top:1rem;">סדנה, הרצאה, או סתם רעיון משוגע - אשמח לשמוע.</p>
+            <p class="sec-desc" style="font-size:1rem;margin-top:1rem;">סדנה, הרצאה, או סתם רעיון משוגע - אשמח&nbsp;לשמוע.</p>
         </div>
         <form action="https://formsubmit.co/Levi04@Gmail.com" method="POST" class="contact-form rv">
             <input type="hidden" name="_subject" value="הודעה חדשה מעמוד הסדרה!">
