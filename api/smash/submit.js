@@ -1,7 +1,7 @@
 // POST /api/smash/submit { token, pid, name, score, t, ko }
 //   -> { rank, score, players, top:[10 rows], around:[rows near the player] }      row = { rank, name, score, me? }
 // Only a FULL run (boss down) is submitted. Ranking = the player's best run score. One row per player (pid), only ever raised.
-// Checks: signed single-use token from start.js (<= 12 h old), pid format, initials (1-3 x A-Z0-9, rude ones refused),
+// Checks: signed single-use token from start.js (<= 12 h old), pid format, name (2-14 letters in any language / digits / space . _ -, TtB profanity filter),
 // score an integer 1..20000, >= 45 s of real time since the token and <= 100 points per real second,
 // reported fight time 25 s .. (real time + 5 s), KO count sane, per-IP rate limits (40 submits / hour, 30 new players / day).
 const { redis, pipe, readToken, allow, cors, ready, cleanName, rows, around, body, P,

@@ -5,7 +5,7 @@
 //
 // Storage (same Redis as TtB, its own keys - nothing here ever reads or writes a toss:* key):
 //   smash:board:v1    sorted set   member = player id (pid), score = the player's BEST full-run score (floor 1 -> boss down)
-//   smash:players:v1  hash         pid -> JSON { name (initials), t (fight seconds of that run), ko, d (date) }
+//   smash:players:v1  hash         pid -> JSON { name (2-14 chars, TtB rules), t (fight seconds of that run), ko, d (date) }
 // One row per player: re-submitting only ever raises the row (ZADD GT). Player ids never leave the server.
 const crypto = require('crypto');
 
@@ -82,15 +82,17 @@ function cors(req, res){
 }
 
 const PID_OK = /^[0-9a-f]{16,32}$/;
-// arcade initials: 1-3 characters A-Z / 0-9 (the game's box is 3 wide and upper-cases what you type)
-const INI_OK = /^[A-Z0-9]{1,3}$/;
-// light filter for 3-letter rude initials, matched after folding digit look-alikes (0->O 1->I 3->E 4->A 5->S)
-const BAD = ['FUK', 'FUC', 'FCK', 'FUQ', 'FKU', 'SHT', 'ASS', 'CUM', 'COK', 'KOK', 'DIK', 'DIC', 'KKK', 'NIG', 'NGR', 'FAG',
-  'SEX', 'TIT', 'PUS', 'VAG', 'POO', 'PEE', 'WTF', 'HTL', 'NAZ'];
+// names: the same rules as Toss the Boss (copied from api/toss/_lib.js, not required, so a TtB change never touches this game)
+// 2-14 characters: letters / digits in any language (Hebrew included), space . _ -
+const NAME_OK = /^[\p{L}\p{M}\p{N} ._-]{2,14}$/u;
+// light profanity filter: matched against the name with spaces/punctuation removed and common digit look-alikes folded
+const BAD = ['fuck', 'shit', 'bitch', 'cunt', 'nigg', 'fagg', 'whore', 'slut', 'dick', 'cock', 'pussy', 'penis', 'vagina', 'rapist', 'nazi', 'hitler', 'porn', 'asshole',
+  'זונה', 'זונות', 'שרמוט', 'כוסאמ', 'כוסעמ', 'כוסאחות', 'כוסאחת', 'מניאק', 'מזדיי', 'לזיינ', 'תזדיי', 'קוקסינל', 'היטלר', 'נאצי', 'כושי'];
+const FINAL = { 'ם':'מ', 'ן':'נ', 'ץ':'צ', 'ף':'פ', 'ך':'כ' };
 function cleanName(raw){
-  const name = String(raw == null ? '' : raw).trim().toUpperCase();
-  if (!INI_OK.test(name)) return null;
-  const flat = name.replace(/0/g, 'O').replace(/1/g, 'I').replace(/3/g, 'E').replace(/4/g, 'A').replace(/5/g, 'S');
+  const name = String(raw == null ? '' : raw).normalize('NFC').replace(/[‎‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim();
+  if (!NAME_OK.test(name) || !/[\p{L}\p{N}]/u.test(name)) return null;
+  const flat = name.toLowerCase().replace(/[ ._-]/g, '').replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/\$/g, 's').replace(/[םןץףך]/g, c => FINAL[c]);
   if (BAD.some(w => flat.includes(w))) return null;
   return name;
 }
@@ -98,7 +100,7 @@ function cleanName(raw){
 // rows for the client: never contains a pid
 function row(rank, score, meta, me){
   let m = {}; try { m = JSON.parse(meta) || {}; } catch(e){}
-  const r = { rank, name:String(m.name || '???'), score:Number(score) || 0 };
+  const r = { rank, name:String(m.name || 'Anonymous'), score:Number(score) || 0 };
   if (me) r.me = true; return r;
 }
 // rows [from..to] (0-based ranks, inclusive) of the board, best first
