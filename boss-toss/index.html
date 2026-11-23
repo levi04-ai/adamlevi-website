@@ -42,9 +42,19 @@ canvas{display:block;width:100vw;height:56vw;max-height:100vh;max-width:178vh;to
 @keyframes nmno{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
 /* phone in landscape: the keyboard covers the lower half, so the panel sits at the top and loses its sub-line */
 @media (max-height:480px){#nm{align-items:flex-start;padding-top:30px}#nm .pn{padding:34px 16px 4px}#nm p{display:none}#nm .err{min-height:16px;margin-top:5px;font-size:13px}#nm .skip{padding:4px 18px 6px}}
-</style>    <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-    <script defer src="/_vercel/insights/script.js"></script>
-</head><body><div id="wrap"><canvas id="c" width="1376" height="768"></canvas></div>
+/* 23/11: loading screen, shown at once (before the big scripts), removed by boot() */
+#ld{position:fixed;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(ellipse at center,#27358A 0%,#0C1030 100%);color:#fff;
+ font:900 34px "Arial Black","Segoe UI Black","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;letter-spacing:1px;text-shadow:0 3px 0 #1C2B8A,3px 0 0 #1C2B8A,-3px 0 0 #1C2B8A,0 -3px 0 #1C2B8A,0 6px 0 rgba(4,6,30,.45)}
+#ld .bar{width:min(320px,70vw);height:18px;border:3px solid #121735;border-radius:12px;background:#19215F;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+#ld .bar i{display:block;width:40%;height:100%;border-radius:9px;background:linear-gradient(#FFF39A,#FFC823 45%,#F59300);animation:ldb 1.1s ease-in-out infinite alternate}
+#ld{font-size:clamp(20px,4.2vw,34px)}
+#ld .tx{position:relative;width:94vw;height:1.4em;text-align:center}
+#ld .tx span{position:absolute;left:0;right:0;top:0;opacity:0;animation:ldt 3s linear infinite}
+#ld .tx span:nth-child(2){animation-delay:1s}#ld .tx span:nth-child(3){animation-delay:2s}
+@keyframes ldt{0%{opacity:0;transform:translateY(10px)}5%,28%{opacity:1;transform:none}33%,100%{opacity:0;transform:translateY(-8px)}}
+/* pure CSS (no timers): the line rotation keeps running while the browser is still parsing the big script */
+@keyframes ldb{0%{transform:translateX(-10%)}100%{transform:translateX(160%)}}
+</style></head><body><div id="ld"><div class="tx"><span>Booking meeting room...</span><span>Tobi wants a quick word...</span><span>Hiding behind the monitor...</span></div><div class="bar"><i></i></div></div><div id="wrap"><canvas id="c" width="1376" height="768"></canvas></div>
 <div id="rot"><div class="ph"></div><div>Rotate your device</div><small>Toss the Boss plays in landscape</small></div>
 <div id="nm"><form class="pn" autocomplete="off" novalidate><div class="rb">JOIN THE LEADERBOARD</div><p>Pick a nickname for the office top list</p>
 <div class="row"><input type="text" name="nick" maxlength="14" dir="auto" enterkeyhint="done" autocapitalize="words" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="Your nickname" aria-label="Nickname"><button type="submit" class="go">SAVE</button></div>
@@ -69,7 +79,10 @@ const R=Math.random,clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t;
 const easeOutBack=t=>{const c=1.70158;t=clamp(t,0,1)-1;return 1+(c+1)*t*t*t+c*t*t};
 const easeOut=t=>1-Math.pow(1-clamp(t,0,1),3);
 const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-function mkCanvas(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(w));c.height=Math.max(1,Math.ceil(h));const x=c.getContext('2d');x.imageSmoothingEnabled=false;return[c,x]}
+// 23/11: getContext can return null (out of canvas memory on phones): retry at 1x1, else a do-nothing stand-in so callers never crash
+const NOCTX=(()=>{const f=function(){return P2};const P2=typeof Proxy==='function'?new Proxy({},{get:(t,k)=>k==='measureText'?()=>({width:0}):k==='canvas'?null:(k in t?t[k]:f),set:(t,k,v)=>{t[k]=v;return true}}):null;return P2})();
+function mkCanvas(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(w));c.height=Math.max(1,Math.ceil(h));let x=null;try{x=c.getContext('2d')}catch(e){}
+ if(!x){c.width=c.height=1;try{x=c.getContext('2d')}catch(e){}}if(!x)x=NOCTX||{};x.imageSmoothingEnabled=false;return[c,x]}
 
 /* ---------- responsive canvas (crisp UI on hi-dpi, letterboxed 16:9-ish) ---------- */
 let cssScale=1,US=1;
@@ -91,11 +104,13 @@ function persist(){try{localStorage.setItem('toss_the_boss_v1',JSON.stringify(sa
 /* ---------- global leaderboard (same-origin /api/toss on adamlevi.net: Vercel functions + Upstash Redis) ----------
    Ranking = TOTAL = sum of the best score on every level (save.best). One row per player: a random player id (pid) is made once and kept
    in localStorage next to the nickname. Everything here fails silently: no network / other host / file:// => the game simply has no board. */
-const LBK='toss_the_boss_lb_v1',LB_API='/api/toss/';
-let lb={pid:'',name:'',rank:0,players:0,total:0};
+const LBK='toss_the_boss_lb_v1';
+// C40: on adamlevi.net the API is same-origin; anywhere else served over http(s) (itch.io iframe on *.itch.zone) it is the absolute
+// https://www.adamlevi.net/api/toss/ (the apex adamlevi.net 307-redirects to www, and a redirect breaks the CORS preflight; the server's CORS list decides who may read it). file:// still has no board.
+let LB_API='/api/toss/',LB_ON=false;try{if(/^https?:$/.test(location.protocol)){LB_ON=true;if(!/^(www\.)?adamlevi\.net$/.test(location.hostname))LB_API='https://www.adamlevi.net/api/toss/'}}catch(e){}
+let lb={pid:'',name:'',rank:0,players:0,total:0,top:0};   // top (23/11): best top-10 rank ever celebrated (0 = never)
 try{const s=JSON.parse(localStorage.getItem(LBK));if(s&&typeof s==='object')for(const k in lb)if(typeof s[k]===typeof lb[k])lb[k]=s[k]}catch(e){}
 function lbPersist(){try{localStorage.setItem(LBK,JSON.stringify(lb))}catch(e){}}
-let LB_ON=false;try{LB_ON=/^https?:$/.test(location.protocol)&&/^(www\.)?adamlevi\.net$/.test(location.hostname)}catch(e){}
 let lbMock=false,lbTok=null,lbBusy=false,lbTimer=0,lbTries=0,lbPending=false,lbBack=null,toast=null,nameOpen=false,nameAsked=false;
 let lbData={state:'idle',top:[],around:[],players:0,me:null};
 const lbAvail=()=>LB_ON||lbMock;
@@ -108,13 +123,34 @@ async function lbFetch(path,body){const ctl=typeof AbortController!=='undefined'
  try{const o=body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{};if(ctl)o.signal=ctl.signal;const r=await fetch(LB_API+path,o);let j=null;try{j=await r.json()}catch(e){}return{ok:r.ok,j:j||{}}}finally{clearTimeout(tm)}}
 // signed single-use token; the server wants a few seconds of real time between the token and a submit, so one is fetched early (boot / after every submit)
 async function lbToken(){if(!LB_ON||lbMock)return null;if(lbTok&&Date.now()-lbTok.t<11*3600e3)return lbTok;try{const r=await lbFetch('start',{});if(r.ok&&r.j.token)return lbTok={token:r.j.token,t:Date.now()}}catch(e){}return null}
-function lbApply(j){const me=j.me||(j.rank?{rank:j.rank,total:j.total,name:lb.name,lv:lbLevels().length}:null);
+// 23/11: entering the top 10 / top 3 (or climbing inside them) after a win: a badge on the win card. Rank 4-10: small blue TOP 10 badge + a bit of confetti;
+// rank 1-3: big medal badge, lots of confetti + fanfare. Once per new best rank (lb.top = best rank already celebrated).
+let top3=null;   // {rank, t0:null|NOW when shown, res: the result it belongs to}
+function top3Check(rank){rank=rank|0;if(rank<1||rank>10||(lb.top>0&&rank>=lb.top))return;lb.top=rank;if(!lbMock)lbPersist();top3={rank,t0:null,res:null}}
+function top3Draw(){const s=top3;if(!s||s.t0===null||mode!=='result'||result!==s.res)return;const t=NOW-s.t0,k=t<.5?easeOutBack(t/.5):1+Math.sin(t*5)*.035;
+ if(s.rank>3){X.save();X.translate(W/2-372,320);X.rotate(-.08);X.scale(k*.9,k*.9);   // top 10: smaller, calmer
+  X.beginPath();X.arc(0,-50,36,0,7);X.fillStyle=INK;X.fill();X.beginPath();X.arc(0,-52,32,0,7);X.fillStyle=vgrad(-84,-20,'#9CE8FF','#2D7BE0');X.fill();icon('trophy',0,-52,30,'#FFD23F');
+  rr(-110,-14,220,54,20);X.fillStyle=INK;X.fill();rr(-106,-11,212,47,17);X.fillStyle=vgrad(-11,36,'#8FE3FF','#2D7BE0');X.fill();rr(-100,-7,200,16,8);X.fillStyle='rgba(255,255,255,.3)';X.fill();
+  text('TOP 10!',0,13,30,'#fff',{stroke:7,strokeCol:'#1C3F8A',maxW:200,shD:2});text('#'+s.rank+' IN THE WORLD',0,64,20,'#fff',{stroke:6,strokeCol:INK,maxW:240});X.restore();return}
+ const m=MEDAL[s.rank-1];
+ X.save();X.translate(W/2-372,300);X.rotate(-.1+Math.sin(t*1.6)*.025);X.scale(k,k);
+ X.save();X.globalAlpha=.35+.15*Math.sin(t*4);const g=X.createRadialGradient(0,0,10,0,0,150);g.addColorStop(0,m[0]);g.addColorStop(1,'rgba(255,255,255,0)');X.fillStyle=g;X.beginPath();X.arc(0,0,150,0,7);X.fill();X.restore();
+ for(const sg of[-1,1]){X.beginPath();X.moveTo(sg*8,-20);X.lineTo(sg*46,58);X.lineTo(sg*30,52);X.lineTo(sg*22,72);X.lineTo(sg*-12,-6);X.closePath();X.fillStyle=sg<0?'#E8323C':'#2D7BE0';X.fill();X.lineWidth=3;X.strokeStyle=INK;X.stroke()}
+ X.beginPath();X.arc(0,-6,62,0,7);X.fillStyle=INK;X.fill();X.beginPath();X.arc(0,-8,57,0,7);X.fillStyle=vgrad(-65,49,m[0],m[1]);X.fill();
+ X.beginPath();X.arc(0,-8,45,0,7);X.lineWidth=3;X.strokeStyle='rgba(255,255,255,.7)';X.stroke();
+ text('#'+s.rank,0,-6,54,'#fff',{stroke:10,strokeCol:m[2],shD:3});
+ rr(-122,62,244,58,22);X.fillStyle=INK;X.fill();rr(-118,65,236,51,19);X.fillStyle=vgrad(65,116,'#FFF39A','#F59300');X.fill();rr(-112,69,224,18,9);X.fillStyle='rgba(255,255,255,.35)';X.fill();
+ text(s.rank===1?'NEW #1!':'TOP 3!',0,92,34,'#fff',{stroke:8,strokeCol:'#A85300',maxW:220,shD:2});
+ text('#'+s.rank+' IN THE WORLD',0,146,21,'#fff',{stroke:6,strokeCol:INK,maxW:250});
+ for(let q=0;q<4;q++){const ph=(t*.8+q*.25)%1,an=q*1.7+Math.floor(t*.8+q*.25)*2.3;sparkle(Math.cos(an)*70,-8+Math.sin(an)*70,12*Math.sin(ph*Math.PI),Math.sin(ph*Math.PI))}
+ X.restore()}
+function lbApply(j,fromWin){const me=j.me||(j.rank?{rank:j.rank,total:j.total,name:lb.name,lv:lbLevels().length}:null);
  lbData={state:'ok',top:Array.isArray(j.top)?j.top:[],around:Array.isArray(j.around)?j.around:[],players:+j.players||0,me};
- if(me&&me.rank){lb.rank=me.rank;lb.players=lbData.players;lb.total=me.total||0;lbPersist()}}
+ if(me&&me.rank){lb.rank=me.rank;lb.players=lbData.players;lb.total=me.total||0;lbPersist();if(fromWin)top3Check(me.rank)}}
 async function lbSubmit(){if(!LB_ON||lbMock||lbBusy||!lb.name)return false;const levels=lbLevels();if(!levels.length)return false;lbBusy=true;clearTimeout(lbTimer);let again=0,ok=false;
  try{const tk=await lbToken();if(tk){let stars=0;levels.forEach((v,i)=>{stars+=clamp(Math.round(+save.stars[i]||1),1,3)});
    const r=await lbFetch('submit',{token:tk.token,pid:lbPid(),name:lb.name,levels,stars}),er=r.j.error;
-   if(r.ok&&r.j.rank){ok=true;lbTok=null;lbPending=false;lbTries=0;lbApply(r.j);lbToken()}
+   if(r.ok&&r.j.rank){ok=true;lbTok=null;lbPending=false;lbTries=0;lbApply(r.j,true);lbToken()}
    else if(er==='clock')again=(+r.j.wait||6)+1;                       // too soon after the token: wait and send again
    else if(er==='token'||er==='used'){lbTok=null;again=7}
    else if(er==='name'){lb.name='';lbPersist();if(mode==='board'||mode==='result')askName(null,'Please pick a different name')}}
@@ -301,12 +337,12 @@ const P={
 const PM=Math.PI*15*15*.005;                 // mass of a paper ball = reference for boss damage
 const BALLS={
  paper:{r:15,d:.005,re:.3,fr:.6,img:'ball',dw:35,snd:'paper',wd:1,name:'Paper ball',col:'#e9ecf5'},
- stapler:{r:15,d:.016,re:.08,fr:.4,img:'pj_stapler',dw:46,snd:'staple',wd:.55,name:'Stapler',tip:'STAPLER  Heavy! Tap mid-air to slam it down',col:'#d8393c',ab:1},
+ stapler:{r:15,d:.016,re:.08,fr:.4,img:'pj_stapler',dw:46,snd:'staple',wd:.55,name:'Stapler',tip:'STAPLER  Heavy! Throw it at his head',col:'#d8393c'},   // 23/11: no tap special (was a slam)
  sticky:{r:15,d:.005,re:.25,fr:.7,img:'pj_sticky',dw:44,snd:'paper',wd:1,name:'Sticky notes',tip:'STICKY NOTES  Tap mid-air to split into three',col:'#ffd21f',ab:1},
- mouse:{r:14,d:.009,re:.2,fr:.9,img:'pj_mouse',dw:42,snd:'staple',wd:.7,name:'Mouse',tip:'MOUSE  Tap to whip it forward. Double damage on the head',col:'#8d93a8',head:1.8,spin:.22,ab:1},
- keyboard:{r:11,box:[52,20],d:.0105,re:.1,fr:.5,img:'pj_keyboard',dw:64,snd:'staple',wd:.4,name:'Keyboard',tip:'KEYBOARD  Smashes furniture to bits',col:'#3a3d4c',furn:3,dmg:.7,spin:.07,keys:1},
+ mouse:{r:14,d:.009,re:.2,fr:.9,img:'pj_mouse',dw:42,snd:'staple',wd:.7,name:'Mouse',tip:'MOUSE  Aim for the head: double damage!',col:'#8d93a8',head:2,spin:.22},   // 23/11: no tap special (was a forward whip), head 1.8 -> 2
+ keyboard:{r:11,box:[52,20],d:.0105,re:.1,fr:.5,img:'pj_keyboard',dw:64,snd:'staple',wd:.4,name:'Keyboard',tip:'KEYBOARD  Smashes wood and boxes to bits',col:'#3a3d4c',furn:3,wood:5,dmg:.7,spin:.07,keys:1},
  mug:{r:15,d:.013,re:.05,fr:.5,img:'pj_mug',dw:42,snd:'glass',wd:.35,name:'Coffee mug',tip:'COFFEE MUG  Shatters and splashes everything nearby',col:'#efe6d2',smash:1},
- plane:{r:12,d:.003,re:.1,fr:.4,img:'pj_plane',dw:58,snd:'paper',wd:.6,name:'Paper plane',tip:'PAPER PLANE  Glides far. Tap to dive!',col:'#ffffff',glide:1,air:.007,dmg:2.3,spin:0,rot:-.62,flip:1,ab:1}
+ plane:{r:12,d:.003,re:.1,fr:.4,img:'pj_plane',dw:58,snd:'paper',wd:.6,name:'Paper plane',tip:'PAPER PLANE  Throw it high. Tap to dash straight ahead!',col:'#ffffff',glide:1,air:.007,dmg:2.3,spin:0,rot:-.62,flip:1,ab:1}
 };
 const G=GROUND;
 /* levels: [type, centerX, bottomY, angle?]; bottom-up. hp = Tobi's hit points. intro = projectile introduced here (hint pill + map badge).
@@ -318,25 +354,37 @@ const atDesk=(x,y)=>[['desk',x-27,y],['laptop',x-42,y-DH],['kobi',x,y]];
    A heavy item (heavy:) hitting it with power >= min (power = impact speed x sqrt(mass / paper mass) x item dmg, like the colleague) counts as one hit:
    1 hit = cracked, 2 hits or one hit >= strong = broken (blocker removed, glass shards). Paper, sticky notes and the plane do nothing. */
 const DOOR={w:117,h:246,min:6,gap:.3,need:3,heavy:{stapler:1,keyboard:1,mug:1,mouse:1},img:['door_closed','door_cracked','door_cracked2','door_broken']};   // 19/11: hit counter: 1 crack, 2 more cracks, 3 break (any power >= min counts as ONE step, gap = min seconds between hits)
-const DOOR_HP=600;   // 18/11 C28: was 200 (one heavy head KO). After the door: ~2 heavy + 3 paper left, all needed (MC: 2 left unthrown <3% win)
+const DOOR_HP=760;   // 18/11 C28: was 200 (one heavy head KO). After the door: ~2 heavy + 3 paper left, all needed (MC: 2 left unthrown <3% win)
 const atBoxes=(x,y)=>[['box',x-60,y],['box',x-60,y-BH],['laptop',x-52,y-2*BH],['kobi',x,y]];
 /* ONE fixed screen (1376 px): slingshot chair at the far left (x~185), Tobi ~1000 px to the right. 18/11 C31: Tobi never closer than ~1080 (Adam). Variety = height (floor / low stage / high stage), walls and small distance shifts. */
 const LEVELS=[
  {name:'Daily',hp:40,balls:['paper','paper','paper','paper'],items:[...atDesk(1205,G),['cabinet',1330,G],['box',1330,G-CH]]},
  {name:'Monday',hp:90,balls:['paper','paper','paper'],items:[['crate',1010,G],['box',1010,G-CR],['crate',1205,G],['crate',1330,G],['plank',1265,G-CR],...atBoxes(1290,G-CR-PK)]},
  {name:'Coffee Break',hp:120,intro:'stapler',balls:['paper','stapler','paper'],items:[['cabinet',1040,G],['crate',1040,G-CH],...atBoxes(1190,G),['cabinet',1326,G],['monitor',1326,G-CH]]},
- {name:'Open Space',hp:140,intro:'sticky',balls:['paper','sticky','paper'],items:[['cabinet',1100,G],['cabinet',1250,G],['plankL',1175,G-CH],...atBoxes(1200,G-CH-PL),['crate',985,G],['box',985,G-CR]]},
- {name:'Perf Review',hp:190,intro:'mouse',colIntro:1,balls:['paper','mouse','paper'],items:[['cabinet',860,G],['box',860,G-CH],['postS',960,G],['postS',1060,G],['plankS',1010,G-PSH],['printer',1010,G-PSH-PS],['box',1010,G-PSH-PS-PRH],...atDesk(1215,G),['cabinet',1332,G],['binders',1332,G-CH],['col',1118,G]]},
- {name:'Sprint Review',hp:190,intro:'keyboard',balls:['paper','keyboard','paper','paper'],wind:[3,145],windR:[2.5,3.5,140,150],items:[['cabinet',860,G],['box',860,G-CH],['crate',1000,G],['box',1000,G-CR],['postL',1095,G],['postL',1195,G],...atBoxes(1300,G),['plankL',1010,G-PLH],['crate',960,G-PLH-PL],['bottle',1110,G-PLH-PL]]},
- {name:'Budget Meeting',hp:210,intro:'mug',balls:['paper','mug','paper','sticky'],wind:[2.5,145],windR:[2,3,140,150],items:[['cabinet',900,G],['crate',900,G-CH],['crate',900,G-CH-CR],['crate',1040,G],['crate',1260,G],['plankL',1150,G-CR],...atBoxes(1165,G-CR-PL),['cabinet',1330,G],['box',1330,G-CH]]},
- {name:'All Hands',hp:145,intro:'plane',balls:['paper','plane','paper','stapler'],items:[['cabinet',980,G],['printer',980,G-CH],['box',980,G-CH-PRH],...atDesk(1210,G),['cabinet',1332,G],['binders',1332,G-CH],['cabinet',850,G],['box',850,G-CH],['col',1115,G]]},
- {name:'Q4 Deadline',hp:170,balls:['paper','sticky','keyboard','mug','paper'],wind:[3,145],windR:[2.5,3.5,140,150],items:[['cabinet',880,G],['box',880,G-CH],['cabinet',1022,G],['crate',1022,G-CH],['crate',1022,G-CH-CR],...atDesk(1200,G),['cabinet',1330,G],['cabinet',1330,G-CH],['plankXL',1176,G-2*CH],['monitor',1085,G-2*CH-PL],['binders',1195,G-2*CH-PL],['box',1195,G-2*CH-PL-P.binders.h],['crate',1305,G-2*CH-PL],['col',1110,G]]},
- {name:'Friday 5 PM',hp:700,balls:['paper','paper','mouse','plane','stapler','mug'],wind:[2,145],windR:[2,4,140,150],items:[['cabinet',770,G],['box',770,G-CH],['postS',950,G],['postS',1040,G],['plankS',995,G-PSH],['crate',995,G-PSH-PS],['monitor',995,G-PSH-PS-CR],['crate',1130,G],['binders',1130,G-CR],['crate',1290,G],['binders',1290,G-CR],['plankL',1210,G-CR-PB],...atBoxes(1240,G-CR-PB-PL),['crate',1030,G-CR-PB-PL],['box',1030,G-CR-PB-PL-CR],['col',1100,G-CR-PB-PL]]},
+ {name:'Open Space',hp:115,intro:'sticky',balls:['paper','sticky','paper'],items:[['cabinet',1100,G],['cabinet',1250,G],['plankL',1175,G-CH],...atBoxes(1200,G-CH-PL),['crate',985,G],['box',985,G-CR]]},
+ {name:'Perf Review',hp:150,intro:'mouse',colIntro:1,balls:['paper','mouse','paper','paper'],items:[['cabinet',860,G],['box',860,G-CH],['postS',960,G],['postS',1060,G],['plankS',1010,G-PSH],['printer',1010,G-PSH-PS],['box',1010,G-PSH-PS-PRH],...atDesk(1215,G),['cabinet',1332,G],['binders',1332,G-CH],['col',1118,G]]},
+ {name:'Sprint Review',hp:160,intro:'keyboard',lead:['keyboard','Start with the KEYBOARD!','Smash the wooden planks first, then hit Tobi','AC is ON: wind pushes your throws (see top)'],balls:['keyboard','paper','paper','paper'],wind:[3,145],windR:[2.5,3.5,140,150],items:[['cabinet',860,G],['box',860,G-CH],['crate',1000,G],['box',1000,G-CR],['postL',1095,G],['postL',1195,G],...atBoxes(1300,G),['plankL',1010,G-PLH],['crate',960,G-PLH-PL],['bottle',1110,G-PLH-PL]]},
+ {name:'Budget Meeting',hp:180,intro:'mug',balls:['paper','mug','paper','sticky'],wind:[2.5,145],windR:[2,3,140,150],items:[['cabinet',900,G],['crate',900,G-CH],['crate',900,G-CH-CR],['crate',1040,G],['crate',1260,G],['plankL',1150,G-CR],...atBoxes(1165,G-CR-PL),['cabinet',1330,G],['box',1330,G-CH]]},
+ {name:'All Hands',hp:185,intro:'plane',balls:['paper','plane','paper','stapler'],items:[['cabinet',980,G],['printer',980,G-CH],['box',980,G-CH-PRH],...atDesk(1210,G),['cabinet',1332,G],['binders',1332,G-CH],['cabinet',850,G],['box',850,G-CH],['col',1115,G]]},
+ {name:'Q4 Deadline',hp:215,balls:['paper','sticky','keyboard','mug','paper'],wind:[3,145],windR:[2.5,3.5,140,150],items:[['cabinet',880,G],['box',880,G-CH],['cabinet',1022,G],['crate',1022,G-CH],['crate',1022,G-CH-CR],...atDesk(1200,G),['cabinet',1330,G],['cabinet',1330,G-CH],['plankXL',1176,G-2*CH],['monitor',1085,G-2*CH-PL],['binders',1195,G-2*CH-PL],['box',1195,G-2*CH-PL-P.binders.h],['crate',1305,G-2*CH-PL],['col',1110,G]]},
+ {name:'Friday 5 PM',hp:880,balls:['paper','paper','mouse','plane','stapler','mug'],wind:[2,145],windR:[2,4,140,150],items:[['cabinet',770,G],['box',770,G-CH],['postS',950,G],['postS',1040,G],['plankS',995,G-PSH],['crate',995,G-PSH-PS],['monitor',995,G-PSH-PS-CR],['crate',1130,G],['binders',1130,G-CR],['crate',1290,G],['binders',1290,G-CR],['plankL',1210,G-CR-PB],...atBoxes(1240,G-CR-PB-PL),['crate',1030,G-CR-PB-PL],['box',1030,G-CR-PB-PL-CR],['col',1100,G-CR-PB-PL]]},
  /* 18/11 C23: L11, the last level. Tobi works at his desk inside his glass office; ['door', TobiX, floorY] = office wall (scenery) + glass door (static blocker over Tobi, desk and laptop).
     Only heavy items crack/break the door (see DOOR); after it breaks, everything hits Tobi as usual. */
  {name:"Tobi's Office",hp:DOOR_HP,doorIntro:1,sit:1,balls:['stapler','keyboard','paper','mouse','paper','mug','keyboard','paper','paper'],wind:[3,145],windR:[2,4,140,150],
   items:[['cabinet',880,G],['crate',880,G-CH],['odesk',1220-27,G],['laptop',1220-42,G-P.odesk.h],['kobi',1220,G],['door',1205,G]]}   // seated Tobi (tobi_sit) 15 px right of the door centre so desk + chair stay inside the wall
 ];
+// 23/11: after 2 losses in a row on a level: a tip in the hint pill + one extra item on the next attempts (until a win). save.losses[lvl] = losses in a row.
+const HELP=[['Aim for the head! Headshots hit 3x harder','paper'],['Hit him on top, or knock the boxes out from under him','paper'],['The stapler is heavy: throw it at his head','stapler'],
+ ['Break the plank under him: a fall knocks him out','paper'],['Throw high, over the colleague, at the boss','paper'],['The wind pushes your throw: aim a bit against it','paper'],
+ ['Smash the plank under him and he falls','paper'],['Knock the colleague out of the way first, then go for the boss','paper'],['Aim for the head! Headshots hit 3x harder','paper'],
+ ['Topple his tower: falls hurt a lot','stapler'],['Break the glass door with heavy stuff first','keyboard']];
+let helpTip=null,lvlN=0,tipOff=0,itemCard=null,acCard=null;
+// 23/11: NEW ITEM card the first times a special item sits in the pouch, until the player has thrown it once (save.itemSeen[type])
+const ITEM_INFO={stapler:['HEAVY: hits hard and smashes boxes and glass','Throw it straight at his head'],sticky:['TAP IN THE AIR: splits into 3','Spread the hits over a wide area'],
+ mouse:['HEADSHOT: double damage on the head','No tap needed: just aim at his face'],keyboard:['HEAVY: smashes wooden planks, posts and boxes','Break his structure first'],
+ mug:['HEAVY: shatters and splashes everything nearby','Land it next to him'],plane:['Throw it high: it glides slowly','TAP IN THE AIR: dashes straight ahead, fast']};
+// 23/11 L6: a restart (R / restart button / pause RESTART / LEVELS) after at least one throw, before the result, counts as a loss too
+function quitLoss(){if(headless||!thrown||result||(kobi&&kobi.dead))return;if(!Array.isArray(save.losses))save.losses=[];save.losses[lvl]=(save.losses[lvl]||0)+1;persist()}
 const LCOL=[['#5BE06B','#23A845'],['#4FD1C5','#1E9E95'],['#5AB8FF','#2D7BE0'],['#7E8CFF','#4B55E0'],['#B07CFF','#7B45E0'],['#FF7EC8','#D8409A'],['#FFA34D','#E06A12'],['#FF6B6B','#D8343C'],['#FFD23F','#E09A00'],['#FF5A4D','#B81F2A'],['#E05CFF','#8E1FB8']];
 // C23: old saves (10 levels): finishing the old last level now also opens the next one
 {let hi=-1;for(let i=0;i<LEVELS.length;i++)if((save.stars[i]||0)>0)hi=i;save.unlocked=Math.max(1,Math.min(LEVELS.length,Math.max(save.unlocked|0,hi+2)))}
@@ -469,7 +517,7 @@ function makeDoor(x,yb){const b=Bodies.rectangle(x,yb-DOOR.h/2,DOOR.w-6,DOOR.h,{
 const doorUp=()=>!!(door&&door.state<2);
 function doorHit(q,vn){const d=door;if(!d||d.state>=2||d.pend||!q.isBall||q.doorHit)return;
  if(!DOOR.heavy[q.btype]){if(vn>3&&!headless&&levelT-(d.tink||-9)>.2){d.tink=levelT;d.flash=.08;sfx('brk_glass',{vol:.12,rate:1.8,vary:.1})}return}   // paper & co: a soft tap on the glass, no damage
- const T=BALLS[q.btype],pw=vn*Math.sqrt(q.mass/PM)*(T.dmg||1);d.lastPw=pw;if(pw<DOOR.min||levelT-(d.lastHit??-9)<DOOR.gap)return;q.doorHit=1;d.lastHit=levelT;d.hits++;d.hitT=0;d.flash=.18;
+ const T=BALLS[q.btype],pw=vn*Math.sqrt(q.mass/PM)*(T.dmg||1);d.lastPw=pw;if(pw<DOOR.min||levelT-(d.lastHit!=null?d.lastHit:-9)<DOOR.gap)return;q.doorHit=1;d.lastHit=levelT;d.hits++;d.hitT=0;d.flash=.18;
  const p=q.position;if(d.hits>=DOOR.need){d.pend=1;return}
  d.state=0;score+=500;shake(d.hits>1?8:6);hitStop=Math.max(hitStop,.02);
  if(!headless){for(let i=fx.length-1;i>=0;i--)if(fx[i].crack)fx.splice(i,1);fx.push({k:'pop',crack:1,x:d.x,y:clamp(p.y,d.yb-DOOR.h+50,d.yb-80),txt:'CRACK!',col:'#bfe9ff',s:26,t:0,life:.8});   // 19/11: one CRACK! at the impact point, replaces the previous one
@@ -505,8 +553,8 @@ function loadLevel(i){lvl=i;WR=mulberry32((i+1)*2654435761+97);const L=LEVELS[i]
  for(const b of bodies)if(b.kind==='laptop'){b.home={x:b.position.x,y:b.position.y};const f=kobi.pt(0,0);if(Math.abs(b.position.x-(f.x-45))<26&&Math.abs(b.position.y-(f.y-DHc-20))<26)kobi.lap=b}
  if(L.sit)kobi.sit=1;
  wNow=null;wDisp=null;stains=[];Events.on(engine,'collisionStart',onHit);Events.on(engine,'beforeUpdate',preStep);
- queue=L.balls.map((t,j)=>({type:t,v:(j*3+i*5)%8}));ballsLeft=queue.length;score=0;shownScore=0;fx=[];debris=[];fading=[];breakQ=[];specials=[];confetti=[];uifx=[];
- ctaLine=null;thrown=false;ball=null;olds=[];result=null;talk=null;tEnd=cEnd=-9;talkNext=0;hitSayAt=0;hear=0;hearAt=0;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
+ queue=L.balls.map((t,j)=>({type:t,v:(j*3+i*5)%8}));const hp=HELP[i]&&!headless&&((save.losses||[])[i]||0)>=2;helpTip=hp?HELP[i][0]:null;tipOff=0;itemCard=null;acCard=null;if(hp)queue.push({type:HELP[i][1],v:(queue.length*3+i*5)%8});lvlN=queue.length;ballsLeft=queue.length;score=0;shownScore=0;fx=[];debris=[];fading=[];breakQ=[];specials=[];confetti=[];uifx=[];
+ if(top3&&top3.t0!==null)top3=null;ctaLine=null;thrown=false;ball=null;olds=[];result=null;talk=null;tEnd=cEnd=-9;talkNext=0;hitSayAt=0;hear=0;hearAt=0;mode='play';stateT=0;levelT=0;shakeAmp=0;hitStop=0;slowT=0;cam.pt=9;drag=null;creakStop();
  pouch={x:REST.x,y:REST.y,vx:0,vy:0};nextBall()}
 /* ---------- camera: ONE fixed screen. No pan, no zoom while aiming or flying. Only a tiny eased zoom punch on the KO. ---------- */
 const cam={z:1,x:W/2,y:H/2,pt:9,px:W/2,py:H/2};
@@ -549,7 +597,7 @@ function drawStains(floorPass){for(const s of stains){const age=levelT-s.t0;if(a
   const blobs=[[0,0,1,1],[-.36,.1,.5,.8],[.38,-.05,.55,.85],[.12,.2,.4,.6],[-.1,-.18,.45,.6]];
   for(let k=0;k<2;k++){X.fillStyle=k?'#7a4a26':'#3f2410';const sh=k?.7:1;for(let i=0;i<blobs.length;i++){const q=blobs[i],j=Math.sin(s.seed+i*2.3)*.12;X.beginPath();X.ellipse(q[0]*STAIN.w*.5*g,q[1]*ry*g,STAIN.w*.5*q[2]*(1+j)*g*sh,ry*q[3]*g*sh,0,0,7);X.fill()}}
   X.globalAlpha=.25*a;X.fillStyle='#fff';X.beginPath();X.ellipse(-STAIN.w*.12*g,-ry*.3*g,STAIN.w*.14*g,ry*.22*g,0,0,7);X.fill();X.restore()}}
-// paper plane: glides (part of gravity cancelled) and points along its path until it hits something or dives
+// paper plane: glides (part of gravity cancelled) and points along its path until it hits something or dashes (23/11: tap = straight horizontal dash, was a dive)
 /* ---------- round A: air-conditioner wind. Only inside the zone below/in front of the unit, only while it is ON, only on thrown objects
    (never furniture or Tobi). Accel is in multiples of gravity for an object with wd=1 (BALLS[..].wd: paper 1, plane 1.4, mouse .3, heavy ones ~0). ---------- */
 /* 17/11 C1: wind over the WHOLE screen, CONSTANT for the level (Adam). Per level: wind:[mph, angleDeg] (0 = blowing right/towards Tobi, 90 = down, 180 = left, -90 = up).
@@ -583,7 +631,7 @@ function settleDamp(){const hot=stains.length>0;for(const b of bodies){if(b.isSt
    sp0/stall = px/step: full cruise above sp0, target fully "sink" at stall; lift + steering fade out in the last 3 px/step above stall.
    Ceiling: lift fades between ceil and ceil+ceilSoft px above the release height, so it never climbs much higher than that.
    steer = turn rate per step per (px/step of speed) per rad of error (steerUp while climbing = how soon a steep pull levels off), capped at maxTurn rad/step. Tune here. */
-const PLANE={ang:0,sink:1.2,steer:.0028,steerUp:.0015,maxTurn:.05,sp0:12,stall:4.5,ceil:320,ceilSoft:60};
+const PLANE={ang:0,sink:1.2,steer:.0028,steerUp:.0015,maxTurn:.05,sp0:12,stall:4.5,ceil:320,ceilSoft:60,dash:20,dashT:90};   // 23/11: tap = dash: flat to the right at dash px/step, no gravity, up to dashT steps or the first contact
 function planeAero(b){const v=b.velocity,sp=Math.hypot(v.x,v.y),g=engine.gravity.y*engine.gravity.scale,k=1/((1000/60)*(1000/60));
  if(b.y0===undefined)b.y0=b.position.y;if(v.x<.5||sp<.01)return;
  const th=Math.atan2(v.y,v.x),s=clamp((sp-PLANE.stall)/(PLANE.sp0-PLANE.stall),0,1),au=clamp((sp-PLANE.stall)/3,0,1),
@@ -592,7 +640,10 @@ function planeAero(b){const v=b.velocity,sp=Math.hypot(v.x,v.y),g=engine.gravity
  const an=g*Math.cos(th)*au*c-sp*turn*k;   // accel along the "up" normal of the path (sin th, -cos th)
  b.force.x+=b.mass*an*Math.sin(th);b.force.y-=b.mass*an*Math.cos(th)}
 function preStep(){windPush();stainFriction();settleDamp();for(const b of allFly())if(b.glide){if(ball&&ball.hit){b.glide=0;continue}planeAero(b);
- const v=b.velocity;Body.setAngle(b,Math.atan2(v.y,v.x));Body.setAngularVelocity(b,0)}}
+ const v=b.velocity;Body.setAngle(b,Math.atan2(v.y,v.x));Body.setAngularVelocity(b,0)}
+ for(const b of allFly())if(b.dash>0){const v=b.velocity;if(Math.abs(v.x-PLANE.dash)>2.5||Math.abs(v.y)>2.5){b.dash=0;continue}   // touched something: the dash ends, physics takes over
+  b.dash--;b.force.x=0;b.force.y=-b.mass*engine.gravity.y*engine.gravity.scale;Body.setVelocity(b,{x:PLANE.dash,y:0});Body.setAngle(b,0);Body.setAngularVelocity(b,0);
+  if(!headless&&b.dash%3===0)fx.push({k:'spark',x:b.position.x-18,y:b.position.y+(R()-.5)*10,vx:-3,vy:0,t:0,life:.25,col:'#ffffff',sz:3})}}
 // coffee mug: shatters on its first real impact, the splash shoves and damages everything nearby
 const SPL=95;
 function mugSmash(o){if(!Composite.get(world,o.id,'body'))return;const p={x:o.position.x,y:o.position.y};Composite.remove(world,o);if(ball)ball.bodies=ball.bodies.filter(b=>b!==o);
@@ -633,7 +684,7 @@ function hitBody(o,q,vn,mu,part){if(o.isStatic||o.isBall||levelT<.4)return;
    if(hi.zone==='head'&&!q.crushed&&q.mass>=4.2&&vn>=1.5&&q.bounds.min.y<kobi.body.bounds.min.y+13){q.crushed=1;dmg=Math.min(300,Math.max(dmg,40+q.mass*14))}  // something heavy landed on his head: crushed
    if(dmg<6)return}
   hurtKobi(dmg,hi,q,vn);return}
- if(o.kobiP||!o.hp0)return;const k=dv*(q.isBall?BALLS[q.btype].furn||1:1);if(k<.8)return;o.hp-=k;score+=Math.round(k*2)*10;
+ if(o.kobiP||!o.hp0)return;const k=dv*(q.isBall?(BALLS[q.btype].furn||1)*(BALLS[q.btype].wood&&P[o.kind]&&(P[o.kind].m==='wood'||P[o.kind].m==='card')?BALLS[q.btype].wood:1):1);if(k<.8)return;o.hp-=k;score+=Math.round(k*2)*10;   // 23/11: BALLS.wood = extra multiplier vs wood/card (keyboard)
  if(q.isBall&&k>5){hitStop=Math.max(hitStop,.015);shake(k*1.1)}
  if(o.hp<=0&&!o.broken){o.broken=true;breakQ.push(o)}}
 function processBreaks(){while(specials.length)mugSmash(specials.shift());while(breakQ.length){const o=breakQ.shift();if(!Composite.get(world,o.id,'body'))continue;removeBody(o);const p=P[o.kind];
@@ -716,17 +767,18 @@ function endDrag(cancel){if(!drag||!ball||ball.state!=='drag'){drag=null;return}
 C.addEventListener('pointerup',e=>{const p=gp(e);if(pressId){const id=pressId;pressId=null;if(id==='__title'){if(mode==='title'){sfx('tap');playFromTitle()}return}if(id==='__intro'){if(mode==='intro'&&!trans)introNext();return}if(id==='__outro'){skipOutro();return}
   const bt=btns.find(b=>b.id===id);if(bt&&inR(p,bt.hr)&&!trans){if(bt.deny)sfx('deny',{vol:.7});else sfx('tap',{vol:.8});bt.fn&&bt.fn()}return}endDrag(false)});
 C.addEventListener('pointercancel',()=>{pressId=null;endDrag(true)});
-window.addEventListener&&window.addEventListener('keydown',e=>{if(nameOpen)return;if(e.key==='m'||e.key==='M')setMute(!save.mute);if(mode==='outro'){if(!e.repeat&&e.key!=='m'&&e.key!=='M')skipOutro();return}if(mode==='intro'&&!trans){if(e.key==='Escape')skipIntro();else if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight')introNext();return}if(mode==='play'&&(e.key==='r'||e.key==='R'))loadLevel(lvl);
+window.addEventListener&&window.addEventListener('keydown',e=>{if(nameOpen)return;if(e.key==='m'||e.key==='M')setMute(!save.mute);if(mode==='outro'){if(!e.repeat&&e.key!=='m'&&e.key!=='M')skipOutro();return}if(mode==='intro'&&!trans){if(e.key==='Escape')skipIntro();else if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight')introNext();return}if(mode==='play'&&(e.key==='r'||e.key==='R')){quitLoss();loadLevel(lvl)}
  if(e.key==='Escape'){if(mode==='play')pauseGame();else if(mode==='pause'){mode='play'}}if(e.key===' '&&mode==='play'&&ball&&ball.state==='fly'&&!ball.used)ability();if(mode==='play'&&/^[1-9]$/.test(e.key)){const t=barTypes()[+e.key-1];if(t)selectBall(t)}});
 function pauseGame(){mode='pause';stateT=0;creakStop();drag=null;if(ball&&ball.state==='drag')ball.state='ready'}
 function spawnBall(type,v,x,y,vx,vy,scale){const t=BALLS[type],s=scale||1,r=t.r*s,o={density:t.d,restitution:t.re,friction:t.fr,frictionAir:t.air||.002};
  const b=t.box?Bodies.rectangle(x,y,t.box[0]*s,t.box[1]*s,Object.assign({chamfer:{radius:4}},o)):Bodies.circle(x,y,r,o);
  b.isBall=true;b.btype=type;b.var=v||0;b.rad=r;b.glide=t.glide||0;Composite.add(world,b);Body.setVelocity(b,{x:vx,y:vy});Body.setAngularVelocity(b,t.spin!==undefined?t.spin:vx*.012);return b}
 function release(dx,dy){const p=Math.hypot(dx,dy)/MAXPULL;const b=spawnBall(ball.type,ball.v,ball.x,ball.y,dx*POWER,dy*POWER);
- ball.body=b;ball.bodies=[b];hintShown[ball.type]=(hintShown[ball.type]||0)+1;if(col)col.seen=1;ball.state='fly';ball.t=0;ball.still=0;if(!thrown){thrown=true;save.tries[lvl]=(save.tries[lvl]||0)+1;persist()}   // every attempt that throws something counts (loss / restart / quit all included)
+ ball.body=b;ball.bodies=[b];hintShown[ball.type]=(hintShown[ball.type]||0)+1;if(ITEM_INFO[ball.type]&&!headless){if(!save.itemSeen||typeof save.itemSeen!=='object')save.itemSeen={};if(!save.itemSeen[ball.type]){save.itemSeen[ball.type]=1;persist()}}if(col)col.seen=1;ball.state='fly';ball.t=0;ball.still=0;if(!thrown){thrown=true;save.tries[lvl]=(save.tries[lvl]||0)+1;persist()}   // every attempt that throws something counts (loss / restart / quit all included)
  
  pouch.x=ball.x;pouch.y=ball.y;pouch.vx=dx*.35;pouch.vy=dy*.35;if(!headless){sfx('thwip',{vol:.6+.4*p,rate:.9+.2*p});sfx('whoosh',{vol:.25+.45*p,rate:.9+.25*p,delay:.04})}}
-function ability(){const b=ball.body;if(!b||!Composite.get(world,b.id,'body')||ball.t<.08)return;const v=b.velocity,sp=Math.hypot(v.x,v.y);
+function ability(){if(!BALLS[ball.type].ab)return;const b=ball.body;   // 23/11: only the plane (dash) and the sticky notes (split) have a tap special
+if(!b||!Composite.get(world,b.id,'body')||ball.t<.08)return;const v=b.velocity,sp=Math.hypot(v.x,v.y);
  if(ball.type==='sticky'){ball.used=true;const a0=Math.atan2(v.y,v.x);Composite.remove(world,b);ball.bodies=[];
   for(const da of[-.2,0,.2]){const nb=spawnBall('sticky',ball.v,b.position.x,b.position.y+da*30,Math.cos(a0+da)*sp,Math.sin(a0+da)*sp,.7);ball.bodies.push(nb)}ball.body=ball.bodies[1];
   sfx('split');puff(b.position.x,b.position.y,10,'#ffe14d')}
@@ -734,7 +786,7 @@ function ability(){const b=ball.body;if(!b||!Composite.get(world,b.id,'body')||b
   for(let i=0;i<8;i++)fx.push({k:'spark',x:b.position.x,y:b.position.y,vx:(R()-.5)*6,vy:-R()*5,t:0,life:.4,col:'#fff',sz:3})}
  else if(ball.type==='mouse'){ball.used=true;const k=clamp(sp*1.7,17,30)/(sp||1);Body.setVelocity(b,{x:v.x*k,y:v.y*k-1});Body.setAngularVelocity(b,.5);sfx('whoosh',{vol:.8,rate:1.5});sfx('thwip',{vol:.5,rate:1.3});   // cable whip
   for(let i=0;i<8;i++)fx.push({k:'spark',x:b.position.x,y:b.position.y,vx:-v.x*.2+(R()-.5)*4,vy:-v.y*.2+(R()-.5)*4,t:0,life:.35,col:'#cfe4ff',sz:3})}
- else if(ball.type==='plane'){ball.used=true;b.glide=0;Body.setVelocity(b,{x:Math.max(v.x*.8,5),y:15});Body.setAngle(b,Math.atan2(15,Math.max(v.x*.8,5)));sfx('whoosh',{vol:.7,rate:1.7});puff(b.position.x,b.position.y,5,'#fff')}}
+ else if(ball.type==='plane'){ball.used=true;b.glide=0;b.dash=PLANE.dashT;Body.setVelocity(b,{x:PLANE.dash,y:0});Body.setAngle(b,0);Body.setAngularVelocity(b,0);sfx('whoosh',{vol:.8,rate:1.4});puff(b.position.x,b.position.y,6,'#fff')}}   // 23/11: dash straight ahead
 /* ---------- 18/11 C32: intro scene (once, before level 1; save.introSeen; RESET shows it again) ----------
    1) fade-in on plate A (Arik at his desk, Tobi leaning on the partition) - plate A then stays STILL for all bubbles (no fades while he talks)
    2) Tobi's bubbles (game bubble style); auto-advance, or tap / click / Space / Enter / -> for the next one
@@ -743,7 +795,7 @@ function ability(){const b=ball.body;if(!b||!Composite.get(world,b.id,'body')||b
    4) fade to dark -> 5) C36: call-to-action card (INTRO_CTA, INTRO.cta s, tap / key skips it) -> level 1. SKIP button (top right) or Esc skips at any moment. Missing art => no intro, level 1 starts as before. */
 const INTRO_LINES=["Hey! What are you working on?","","Come with me. We need to talk."];   // "" = Arik stays silent (watching football on his screen): no bubble, INTRO.silence seconds
 const INTRO_WALK_PLACEHOLDER=false;  // C34: off - the real clip (INTRO_ANIM) plays. true = old sliding-layer walk when no clip is built in
-const INTRO_CTA=["DON'T LET THE BOSS CATCH YOU!",'Toss anything to keep him away.'];   // 19/11 C38: no separate dark card any more: this line appears over level 1 (centre, after the LEVEL 1 title) only when the intro was shown (INTRO.cta s, gone as soon as the player starts a pull)
+const INTRO_CTA=['KNOCK TOBI OUT!','Headshots hit 3x harder.'];   // 23/11: says the goal (was "DON'T LET THE BOSS CATCH YOU!")   // 19/11 C38: no separate dark card any more: this line appears over level 1 (centre, after the LEVEL 1 title) only when the intro was shown (INTRO.cta s, gone as soon as the player starts a pull)
 let ctaLine=null;   // {t0:null|levelT, cut:null|levelT}
 const INTRO={lead:1.0,arikX:720,cta:2.5,ctaIn:.4,ctaOut:.4,ctaY:196,fadeIn:.5,first:.7,line:2.6,silence:1.4,walk:1.3,hold:.4,clipX:680,xfade:.35,walkX0:760,walkX1:W+40,walkY:H-535+8,bob:6,stepHz:7,out:.55,cutX:722,bubX:842,bubBottom:205};
 // C37: Arik's monitor plays a looping football match: sprite sheet A.intro_screen (n frames side by side, each rect w x h, alpha = visible
@@ -857,7 +909,14 @@ function outroUI(){const s=outro;if(!s||s.ph!=='scene'||s.t>OUTRO.len-OUTRO.out)
 /* ---------- loop ---------- */
 let last=0,acc=0;
 function physStep(){settleRec();Engine.update(engine,1000/60);settleFix();processBreaks()}
-function step(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;FDT=dt||1/60;NOW=ts/1000;stateT+=dt;sndBudget=Math.min(6,sndBudget+dt*40);
+// 23/11: one bad frame must never stop the game: update and render each in try/catch, RAF always goes on (first errors still logged)
+let stepErr=0;
+function step(ts){try{stepTick(ts)}catch(e){if(stepErr++<3)console.error('step',e)}
+ try{if(!headless)render()}catch(e){if(stepErr++<3)console.error('render',e);try{X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;X.globalCompositeOperation='source-over'}catch(e2){}}
+ requestAnimationFrame(step)}
+window.onerror=function(){stepErr++;return false};   // count it, let the console show it, never stop the loop
+if(window.addEventListener){window.addEventListener('unhandledrejection',e=>{try{e.preventDefault()}catch(x){}})}
+function stepTick(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;FDT=dt||1/60;NOW=ts/1000;stateT+=dt;sndBudget=Math.min(6,sndBudget+dt*40);
  if(trans){trans.t+=dt;if(!trans.done&&trans.t>=.2){trans.done=true;trans.fn()}if(trans.t>=.46)trans=null}
  let ts2=1;if(hitStop>0){hitStop-=dt;ts2=0}else if(slowT>0){slowT-=dt;ts2=.55}
  const gdt=dt*ts2;
@@ -868,7 +927,7 @@ function step(ts){const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;FDT=dt||1/
  if(!ball||ball.state!=='drag'){pouch.vx+=(REST.x-pouch.x)*.32;pouch.vy+=(REST.y-pouch.y)*.32;pouch.vx*=.78;pouch.vy*=.78;pouch.x+=pouch.vx;pouch.y+=pouch.vy}
  cam.pt+=dt;
  shakeAmp*=Math.exp(-dt*7);if(shakeAmp<.3)shakeAmp=0;shownScore+=(score-shownScore)*Math.min(1,dt*10);if(Math.abs(score-shownScore)<1)shownScore=score;
- if(!headless)render();requestAnimationFrame(step)}
+ }
 function update(dt){
  for(const b of bodies.slice()){if(b.position.y>H+250||b.position.x<-250||b.position.x>WW+250)removeBody(b);else if(b.kind==='laptop'&&!b.flew&&levelT>.5&&Math.hypot(b.velocity.x,b.velocity.y)>5){b.flew=1;lapSay(b);if(!headless)sfx('laptop_fly',{vol:.8})}}
  colTick(dt);if(door){door.flash=Math.max(0,door.flash-dt);door.hitT+=dt}
@@ -889,7 +948,7 @@ function flyTick(B,dt){B.t+=dt;B.bodies=B.bodies.filter(b=>{const ok=Composite.g
  const still=B.bodies.every(x=>Math.hypot(x.velocity.x,x.velocity.y)<.3);if(B.t>1&&still)B.still+=dt;else B.still=0;
  if(!B.bodies.length||B.still>.7||B.t>7){B.state='done';B.t=0}}
 function settled(){return bodies.concat(kobi?kobi.all():[]).every(b=>Math.hypot(b.velocity.x,b.velocity.y)<.18&&Math.abs(b.angularVelocity)<.012)}
-function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=L.balls.length;let stars=0,bonus=0,speed=0,first=0,secs=0;
+function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=lvlN||L.balls.length;if(!headless){if(!Array.isArray(save.losses))save.losses=[];save.losses[lvl]=win?0:(save.losses[lvl]||0)+1}let stars=0,bonus=0,speed=0,first=0,secs=0;
  if(win){const wonBefore=(save.best[lvl]||0)>0||(save.stars[lvl]||0)>0;secs=Math.max(0,levelT-1.9);   // intro banner (1.9 s) excluded; levelT does not tick while paused
   speed=Math.round(2000*clamp(1-(secs-(8+3*n))/((25+16*n)-(8+3*n)),0,1)/10)*10;   // full 2000 up to 8+3n s, linear to 0 at 25+16n s (scales with #items)
   first=!wonBefore&&thrown&&(save.tries[lvl]||0)<=1?1:0;const used=n-ballsLeft;bonus=ballsLeft*1000;stars=used<=Math.max(1,n-2)?3:used<=n-1?2:1;
@@ -902,7 +961,9 @@ function finish(win){if(result)return;creakStop();const L=LEVELS[lvl],n=L.balls.
  if(win&&LB_ON&&!headless){lbPending=true;lbTries=0;lbSubmit()}   // background submit (needs a nickname; otherwise the prompt below sends it)
  if(win&&!outroNow)winConfetti()}   // after the outro the confetti comes with the win card (outroResult / closeBoard)
 const STARX=[-126,0,126],STARY=[306,284,306],STARR=[44,56,44];
-function resultTick(dt){const r=result;if(r.win&&!r.asked&&stateT>2.7&&!lb.name&&!nameAsked&&!trans){r.asked=1;askName()}
+function resultTick(dt){const r=result;if(top3&&top3.t0===null&&r.win&&stateT>1.6&&!trans&&!nameOpen){top3.t0=NOW;top3.res=r;if(top3.rank<=3){winConfetti();winConfetti();if(!headless){sfx('win',{vol:.7,rate:1.15,vary:0});sfx('star2',{vol:.9,rate:1.2,vary:0});burst(W/2-372,292,40,['#ffe14d','#ffb020','#fff','#ff9de0'],380)}}
+  else{for(let i=0;i<60;i++)confetti.push({x:R()*W,y:-R()*H*.4-10,vx:(R()-.5)*3,vy:1+R()*2,r:R()*6,vr:(R()-.5)*.3,w:6+R()*6,h:4+R()*3,col:['#6bc8ff','#9CE8FF','#fff','#ffe14d'][(R()*4)|0],t:0});if(!headless){sfx('star1',{vol:.8,rate:1.1,vary:0});burst(W/2-372,270,18,['#6bc8ff','#fff','#ffe14d'],300)}}}
+ if(r.win&&lvl>=2&&!r.asked&&stateT>2.7&&!lb.name&&!nameAsked&&!trans){r.asked=1;askName()}
  if(!r.sfx&&stateT>.35){r.sfx=true;if(!headless)sfx(r.win?'win':'lose',{vary:0,volVary:0})}
  const t0=1.05;if(r.win)for(let i=0;i<r.stars;i++)if(!r.starT[i]&&stateT>t0+i*.38){r.starT[i]=stateT;sfx('star'+i,{vary:0,vol:.9});if(!headless)burst(W/2+STARX[i],STARY[i],26,['#ffe14d','#ffb020','#fff','#ff9de0']);for(let q=0;q<6;q++)uifx.push({spk:1,x:W/2+STARX[i]+(R()-.5)*120,y:STARY[i]+(R()-.5)*110,vx:0,vy:-14,g:1,t:-R()*.3,life:.7+R()*.5,sz:8+R()*8})}
  const cs=r.win?t0+r.stars*.38+.1:1.0;if(stateT>cs&&r.shown<r.total){r.shown=Math.min(r.total,r.shown+Math.max(r.total*dt/1.1,40));r.tickT-=dt;if(r.tickT<=0){r.tickT=.06;sfx('tick',{vol:.4,rate:1+r.shown/Math.max(1,r.total)*.4,vary:.02})}
@@ -1053,7 +1114,7 @@ function render(){btns=[];X.setTransform(C.width/W,0,0,C.height/H,0,0);X.imageSm
  else{drawBg(false);attract()}
  X.restore();
  if(inGame){if(mode!=='result'||stateT<.3){hpBar();colTalkDraw();talkDraw()}hud()}
- if(mode==='title')titleScreen();if(mode==='intro')introUI();if(mode==='outro')outroUI();if(mode==='map')mapScreen();if(mode==='pause')pauseScreen();if(mode==='result')resultScreen();if(mode==='board')boardScreen();
+ if(mode==='title')titleScreen();if(mode==='intro')introUI();if(mode==='outro')outroUI();if(mode==='map')mapScreen();if(mode==='pause')pauseScreen();if(mode==='result'){resultScreen();top3Draw()}if(mode==='board')boardScreen();
  drawUifx();drawToast();
  if(trans){const t=trans.t,a=t<.2?t/.2:1-(t-.2)/.26;X.fillStyle='rgba(12,14,40,'+clamp(a,0,1)+')';X.fillRect(0,0,W,H)}}
 function drawSling(bx,by,pull,held,type,v,ang,sq){const now=NOW;
@@ -1112,7 +1173,7 @@ function drawWindAC(now,xr){const v=windVec();if(!v)return;
  const f=clamp(wDisp.mph/7,0,1),a=wDisp.ang,dx=Math.cos(a);
  // HUD-language chip: same row as the score/level chips (y 14, h 44, centre 36), dark glass + ink outline; white A/C icon inside, number + mph like the score number
  const w=46,h=22,cy=36,mw=tW('88',22),uw=tW('mph',17),cw=16+w+12+mw+5+uw+16,chx=xr-cw,cx=chx+16+w/2;
- chip(chx,14,cw,44);
+ chip(chx,14,cw,44);drawWindAC.box={x:chx,y:14,w:cw,h:44};
  X.save();X.lineJoin='round';X.lineCap='round';
  // streamers (behind the unit, out of the vent; may hang below the chip), flutter speed follows the wind strength
  const cols=['#FF8FB1','#FFD84A','#7FE3C4','#9FB4FF'];
@@ -1282,7 +1343,7 @@ function hud(){const L=LEVELS[lvl],now=NOW,play=mode==='play';
  if(play)drawWindAC(now,sx-12);   // wind A/C + streamers + mph badge, left of the score chip
  X.beginPath();X.arc(px+22,36,15,0,7);X.fillStyle=vgrad(21,51,LCOL[lvl][0],LCOL[lvl][1]);X.fill();X.lineWidth=1.5;X.strokeStyle='rgba(255,255,255,.5)';X.stroke();text(lvl+1,px+22,37,16,'#fff',{stroke:3,strokeCol:'rgba(10,12,40,.55)',shadow:false});
  text(nm,px+46+nw/2,37,16,'#fff',{shadow:false,maxW:220});
- if(play){const d=52*US,y=14+d/2;const bx=px+pw+12+d/2;circleBtn('restart',bx,y,d,'restart','slate',()=>go(()=>loadLevel(lvl)));circleBtn('pause',bx+d+10,y,d,'pause','slate',pauseGame)}
+ if(play){const d=52*US,y=14+d/2;const bx=px+pw+12+d/2;circleBtn('restart',bx,y,d,'restart','slate',()=>{quitLoss();go(()=>loadLevel(lvl))});circleBtn('pause',bx+d+10,y,d,'pause','slate',pauseGame)}
  if(mode==='result'){const d=52*US;circleBtn('hmute',W-16-d/2,14+d/2,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute))}
  if(play){const d=52*US,y=14+d/2,bx=px+pw+12+d/2;circleBtn('hmute',bx+2*(d+10),y,d,save.mute?'mute':'snd','slate',()=>setMute(!save.mute))}
  if(!play)return;
@@ -1295,14 +1356,53 @@ function hud(){const L=LEVELS[lvl],now=NOW,play=mode==='play';
   if(ball.state==='ready'){const k=(now%1.7)/1.7,e=easeOut(Math.min(1,k/.65)),hx=REST.x-e*70,hy=REST.y+e*42,a=k>.85?(1-k)/.15:Math.min(1,k/.1);X.save();X.globalAlpha=a*.95;
    X.setLineDash([5,6]);X.lineWidth=3;X.strokeStyle='rgba(255,255,255,.8)';X.beginPath();X.moveTo(REST.x,REST.y);X.lineTo(hx,hy);X.stroke();X.setLineDash([]);
    X.beginPath();X.arc(hx,hy,15,0,7);X.fillStyle='rgba(255,255,255,.28)';X.fill();X.lineWidth=3;X.strokeStyle='#fff';X.stroke();X.beginPath();X.arc(hx,hy,5,0,7);X.fillStyle='#fff';X.fill();X.restore()}}
+ else if(helpTip&&!thrown&&tipOff&&NOW-tipOff>.3&&ball&&(ball.state==='ready'||ball.state==='drag'||ball.state==='load'))hintPill('TIP  '+helpTip+'  (+1 extra item)',queue.length?queue[queue.length-1].type:null);   // 23/11: after 2 losses in a row
  else if(L.doorIntro&&doorUp()&&ball&&(ball.state==='ready'||ball.state==='drag'||ball.state==='load'))hintPill(door.hits?(door.hits>1?'CRACKED!  One more heavy hit breaks the door':'CRACKED!  Two more heavy hits break the door'):'GLASS DOOR  Paper bounces off. Smash it with heavy stuff');   // C23
- else if(ball&&BALLS[ball.type].tip){const t=BALLS[ball.type],st=ball.state,first=L.intro===ball.type||(hintShown[ball.type]||0)<2;
+ else if(ball&&BALLS[ball.type].tip&&!(itemCard&&itemCard.type===ball.type&&(!itemCard.off||NOW-itemCard.off<.3))){const t=BALLS[ball.type],st=ball.state,first=L.intro===ball.type||(hintShown[ball.type]||0)<2;
   if(first&&(st==='ready'||st==='drag'||st==='load'||(st==='fly'&&t.ab&&!ball.used&&!ball.hit)))hintPill(t.tip,ball.type,st==='fly'?1+Math.sin(now*12)*.03:1)}
  else if(L.colIntro&&colUp()&&!col.seen&&ball&&(ball.state==='ready'||ball.state==='drag'||ball.state==='load'))hintPill('COLLEAGUE  He blocks your throws. Hitting him scores nothing');   // C2
  // level intro: title card that drops in and leaves (the whole scene is visible from the start)
  if(levelT<1.9){const t=levelT,a=t<.25?t/.25:t>1.5?1-(t-1.5)/.4:1,sc=t<.3?easeOutBack(t/.3):1;X.save();X.globalAlpha=clamp(a,0,1);
   text('LEVEL '+(lvl+1),W/2,176,26,'#FFE066',{stroke:6,sc});text(L.name.toUpperCase(),W/2,226,62,'#fff',{stroke:12,ext:7,extCol:'#2E49C9',grad:['#FFFFFF','#FFFFFF','#CFE2FF'],gloss:1,sc,maxW:760});X.restore()}
+ // 23/11 L6: help after 2 losses in a row: big tip card at the start of the attempt (~3.6 s, gone at the first drag / throw), then the small pill
+ if(helpTip&&!result){const t=levelT,t0=1.6;if(!tipOff&&(thrown||(ball&&ball.state==='drag')||t>t0+3.6))tipOff=NOW;const out=tipOff?clamp(1-(NOW-tipOff)/.25,0,1):1;
+  if(t>t0&&out>0){const k=t-t0;drawTipCard(Math.min(1,k/.2)*out,k<.42?easeOutBack(k/.42):1)}}
+ // 23/11: NEW ITEM card when an unthrown special item is in the pouch (after the banner and after the tip card), ~3.6 s or until the drag
+ const tipBusy=helpTip&&!result&&(!tipOff||NOW-tipOff<.3);
+ const lead=L.lead&&ball&&L.lead[0]===ball.type&&!thrown&&!((save.stars||[])[lvl]>0);   // 23/11: level 'lead' card (L6: keyboard first), every attempt until the level is won
+ if(!itemCard&&!tipBusy&&!result&&!headless&&levelT>1.6&&ball&&ITEM_INFO[ball.type]&&(ball.state==='ready'||ball.state==='load')&&(lead||!(save.itemSeen&&save.itemSeen[ball.type])))itemCard={type:ball.type,t0:NOW,off:0,lead:lead?L.lead:null,isNew:!(save.itemSeen&&save.itemSeen[ball.type]),ac:!!(lead&&L.lead[3]&&wNow&&!save.acSeen)};
+ if(itemCard&&itemCard.ac&&!itemCard.acMark){itemCard.acMark=1;save.acSeen=1;persist()}
+ if(itemCard){const c=itemCard;if(!c.off&&(!ball||ball.type!==c.type||ball.state==='drag'||ball.state==='fly'||NOW-c.t0>(c.lead?4.6:3.6)||result))c.off=NOW;const out=c.off?clamp(1-(NOW-c.off)/.25,0,1):1,k=NOW-c.t0;
+  if(out>0){drawItemCard(c.type,Math.min(1,k/.2)*out,k<.42?easeOutBack(k/.42):1,c);if(c.ac)acHighlight(Math.min(1,k/.2)*out)}}
+ // 23/11: standalone AC card only if this level shows no other card (first wind met without the L6 lead card); max ONE card per level
+ if(!acCard&&!itemCard&&!tipBusy&&!result&&!headless&&!thrown&&levelT>1.6&&wNow&&!save.acSeen&&ball&&(ball.state==='ready'||ball.state==='load')&&!(ITEM_INFO[ball.type]&&!(save.itemSeen&&save.itemSeen[ball.type]))&&!(L.intro&&ITEM_INFO[L.intro]&&!(save.itemSeen&&save.itemSeen[L.intro]))){acCard={t0:NOW,off:0};save.acSeen=1;persist()}
+ if(acCard){const c=acCard;if(!c.off&&(!ball||ball.state==='drag'||ball.state==='fly'||NOW-c.t0>3.8||result))c.off=NOW;const out=c.off?clamp(1-(NOW-c.off)/.25,0,1):1,k=NOW-c.t0;
+  if(out>0){drawAcCard(Math.min(1,k/.2)*out,k<.42?easeOutBack(k/.42):1);acHighlight(Math.min(1,k/.2)*out)}}
  ctaDraw()}
+/* 23/11: AC highlight while the wind explanation is on screen: pulsing glow ring round the HUD A/C chip + bobbing arrow under it */
+function acHighlight(a){const b=drawWindAC.box;if(!b||a<=0)return;const p=.5+.5*Math.sin(NOW*6),cx=b.x+b.w/2;
+ X.save();X.globalAlpha=a;X.shadowColor='#FFE066';X.shadowBlur=14+14*p;rr(b.x-6,b.y-6,b.w+12,b.h+12,(b.h+12)/2);X.lineWidth=4+2*p;X.strokeStyle='#FFE066';X.stroke();X.shadowBlur=0;
+ const ay=b.y+b.h+30+Math.sin(NOW*6)*5;X.beginPath();X.moveTo(cx,ay-24);X.lineTo(cx+17,ay+2);X.lineTo(cx+6,ay+2);X.lineTo(cx+6,ay+22);X.lineTo(cx-6,ay+22);X.lineTo(cx-6,ay+2);X.lineTo(cx-17,ay+2);X.closePath();
+ X.fillStyle='#FFE066';X.fill();X.lineWidth=3;X.strokeStyle=INK;X.lineJoin='round';X.stroke();X.restore()}
+function drawAcCard(a,sc){const w=660,h=200,cx=W/2,cy=262,y0=cy-h/2;
+ X.save();X.globalAlpha=a;X.translate(cx,cy);X.scale(sc,sc);X.translate(-cx,-cy);panel(cx-w/2,y0,w,h,34);cardBadge(cx,y0,'NEW','#8FE3FF','#2D7BE0','#123C8A');
+ text('THE AC IS ON!',cx,y0+72,38,'#FFE066',{stroke:8,maxW:w-60});
+ text('The wind pushes your throws. Aim a bit against it.',cx,y0+122,24,'#fff',{w:800,f2:1,maxW:w-60,shD:2});text('The arrow and number show its strength.',cx,y0+158,22,'#CFE2FF',{w:700,f2:1,maxW:w-60,shD:2});X.restore()}
+function cardBadge(cx,y0,label,c1,c2,sc2){const fs=30,bw=tW(label,fs)+52,bh=50;rr(cx-bw/2,y0-bh/2,bw,bh,bh/2);X.fillStyle=INK;X.fill();rr(cx-bw/2+3,y0-bh/2+3,bw-6,bh-6,bh/2-3);X.fillStyle=vgrad(y0-bh/2,y0+bh/2,c1,c2);X.fill();
+ text(label,cx,y0+1,fs,'#fff',{stroke:7,strokeCol:sc2,shadow:false})}
+function drawItemCard(type,a,sc,c){const T=BALLS[type],ld=c&&c.lead,inf=ld?[ld[2],c.ac&&ld[3]?ld[3]:ITEM_INFO[type][0]]:ITEM_INFO[type],w=660,h=200,cx=W/2,cy=262,y0=cy-h/2;
+ X.save();X.globalAlpha=a;X.translate(cx,cy);X.scale(sc,sc);X.translate(-cx,-cy);panel(cx-w/2,y0,w,h,34);if(ld&&!c.isNew)cardBadge(cx,y0,'TIP','#FFE680','#F5A300','#8A4A00');else cardBadge(cx,y0,'NEW ITEM','#8FE3FF','#2D7BE0','#123C8A');
+ const ix=cx-w/2+92,iy=y0+h/2+8;X.beginPath();X.arc(ix,iy,56,0,7);X.fillStyle='rgba(255,255,255,.16)';X.fill();X.save();X.translate(ix,iy);X.rotate(Math.sin(NOW*3)*.12);itemIcon(type,0,0,84);X.restore();
+ const tx=cx-w/2+168,mw=w-200;text(ld?ld[1]:T.name.toUpperCase(),tx,y0+60,ld?32:36,'#FFE066',{align:'left',stroke:8,maxW:mw});
+ text(inf[0],tx,y0+112,24,'#fff',{align:'left',w:800,f2:1,maxW:mw,shD:2});text(inf[1],tx,y0+148,22,'#CFE2FF',{align:'left',w:700,f2:1,maxW:mw,shD:2});X.restore()}
+function drawTipCard(a,sc){const w=640,h=212,cx=W/2,cy=262,y0=cy-h/2,it=queue.length?queue[queue.length-1].type:'paper';
+ X.save();X.globalAlpha=a;X.translate(cx,cy);X.scale(sc,sc);X.translate(-cx,-cy);panel(cx-w/2,y0,w,h,34);
+ cardBadge(cx,y0,'TIP','#FFE680','#F5A300','#8A4A00');
+ const fs=27,mw=w-70,ws=helpTip.split(' ');let ln=[helpTip];if(tW(helpTip,fs,800,1)>mw){let best=1,bd=1e9;for(let j=1;j<ws.length;j++){const d=Math.abs(tW(ws.slice(0,j).join(' '),fs,800,1)-tW(ws.slice(j).join(' '),fs,800,1));if(d<bd){bd=d;best=j}}ln=[ws.slice(0,best).join(' '),ws.slice(best).join(' ')]}
+ ln.forEach((s,j)=>text(s,cx,y0+(ln.length>1?66:84)+j*36,fs,'#fff',{w:800,f2:1,maxW:mw,shD:2}));
+ const pw=330,ph=58,py=y0+h-ph-20;rr(cx-pw/2,py,pw,ph,ph/2);X.fillStyle=INK;X.fill();rr(cx-pw/2+3,py+3,pw-6,ph-6,ph/2-3);X.fillStyle=vgrad(py,py+ph,'#7CF08A','#23A845');X.fill();
+ X.beginPath();X.arc(cx-pw/2+34,py+ph/2,22,0,7);X.fillStyle='rgba(255,255,255,.28)';X.fill();itemIcon(it,cx-pw/2+34,py+ph/2,38);
+ text('+1 EXTRA ITEM',cx+22,py+ph/2+1,28,'#fff',{stroke:6,strokeCol:'#0E5A24'});X.restore()}
 
 /* ---------- screens ---------- */
 let LOGO=null,LOGO2=null,LOGOX=null;
@@ -1314,7 +1414,10 @@ function mkLogo(){const w=1040,h=330,M=X;const[c,x]=mkCanvas(w*2,h*2);x.imageSmo
   X.save();X.translate(0,-10);X.rotate(-.09);X.save();X.shadowColor='rgba(4,6,30,.5)';X.shadowBlur=14;X.shadowOffsetY=9;rr(-58,-52,116,104,10);X.fillStyle=INK;X.fill();X.restore();
   rr(-52,-46,104,92,6);X.fillStyle=vgrad(-46,46,'#FFF27A','#FFC928');X.fill();X.fillStyle='rgba(255,255,255,.45)';X.fillRect(-52,-46,104,16);X.fillStyle='rgba(190,120,0,.35)';X.beginPath();X.moveTo(52,22);X.lineTo(52,46);X.lineTo(26,46);X.closePath();X.fill();
   text('THE',0,6,44,'#fff',{stroke:9,strokeCol:'#8A2A00',maxW:88,shD:3,shCol:'rgba(90,40,0,.5)'});X.restore()}finally{X=M}return c}
-function drawLogo(cx,cy,sc){if(!LOGO){LOGO=mkLogo();const r=mkCanvas(LOGO.width,LOGO.height);LOGO2=r[0];LOGOX=r[1]}const now=NOW,w=LOGO.width/2,h=LOGO.height/2;
+let LOGO_BAD=false;
+function drawLogo(cx,cy,sc){if(!LOGO&&!LOGO_BAD){try{LOGO=mkLogo();const r=mkCanvas(LOGO.width,LOGO.height);LOGO2=r[0];LOGOX=r[1]}catch(e){LOGO=null;LOGO_BAD=true}}
+ if(!LOGO){try{text('TOSS THE BOSS',cx,cy,Math.round(110*sc),'#fff',{stroke:12})}catch(e){}return}   // 23/11: logo canvas failed (low memory): plain title
+ const now=NOW,w=LOGO.width/2,h=LOGO.height/2;
  X.save();X.translate(cx,cy+Math.sin(now*1.7)*3);X.rotate(-.012+Math.sin(now*1.1)*.006);X.scale(sc,sc);X.drawImage(LOGO,-w/2,-h/2,w,h);
  const k=((now+.6)%3.4)/.9;if(k<1){const x=LOGOX,sx=-160+(w+320)*k;x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.clearRect(0,0,w*2,h*2);x.setTransform(2,0,0,2,0,0);x.fillStyle='rgba(255,255,255,.75)';x.beginPath();x.moveTo(sx,0);x.lineTo(sx+70,0);x.lineTo(sx-50,h);x.lineTo(sx-120,h);x.closePath();x.fill();
   x.fillStyle='rgba(255,255,255,.4)';x.beginPath();x.moveTo(sx+92,0);x.lineTo(sx+108,0);x.lineTo(sx-12,h);x.lineTo(sx-28,h);x.closePath();x.fill();x.globalCompositeOperation='destination-in';x.drawImage(LOGO,0,0,w,h);X.globalAlpha=.8;X.drawImage(LOGO2,-w/2,-h/2,w,h);X.globalAlpha=1}
@@ -1367,8 +1470,8 @@ function mapScreen(){shade(.74,.86);vignette(.4);const now=NOW,n=LEVELS.length;i
 function pauseScreen(){shade(.7,.8);const e=popIn('pause',0),cx=W/2;X.save();X.translate(cx,H/2);X.scale(e,e);X.translate(-cx,-H/2);
  panel(cx-220,156,440,456,40);text('PAUSED',cx,216,50,'#fff',{stroke:12,ext:6,extCol:'#2E49C9',grad:['#FFFFFF','#FFFFFF','#CFE2FF'],gloss:1});X.restore();
  if(e>.6){button('resume',cx-164,268,328,88,{label:'RESUME',icon:'play',col:'green',fs:36,shine:1,fn:()=>{mode='play'}});
-  button('prestart',cx-164,376,328,76,{label:'RESTART',icon:'restart',col:'blue',fs:30,fn:()=>go(()=>loadLevel(lvl))});
-  button('pmenu',cx-164,470,240,76,{label:'LEVELS',icon:'grid',col:'slate',fs:28,fn:()=>go(()=>{mode='map';stateT=0})});
+  button('prestart',cx-164,376,328,76,{label:'RESTART',icon:'restart',col:'blue',fs:30,fn:()=>{quitLoss();go(()=>loadLevel(lvl))}});
+  button('pmenu',cx-164,470,240,76,{label:'LEVELS',icon:'grid',col:'slate',fs:28,fn:()=>{quitLoss();go(()=>{mode='map';stateT=0})}});
   button('pmute',cx+88,470,76,76,{icon:save.mute?'mute':'snd',col:'slate',fn:()=>setMute(!save.mute)})}}
 function rays(cx,cy,r,a){X.save();X.translate(cx,cy);X.rotate(NOW*.25);const g=X.createRadialGradient(0,0,20,0,0,r);g.addColorStop(0,'rgba(255,236,150,'+a+')');g.addColorStop(1,'rgba(255,236,150,0)');X.fillStyle=g;
  for(let i=0;i<12;i++){const an=i*Math.PI/6;X.beginPath();X.moveTo(0,0);X.arc(0,0,r,an-.12,an+.12);X.closePath();X.fill()}X.restore()}
@@ -1455,7 +1558,7 @@ function shareText(){const rk=lb.rank>0&&lb.name?'#'+fmt(lb.rank):'',r=mode==='r
 async function share(){const t=shareText();try{if(navigator.share)await navigator.share({title:'Toss the Boss',text:t,url:location.href});else await navigator.clipboard.writeText(t+' '+location.href)}catch(e){}}
 function boot(){slingSetup();try{makeBallVariants()}catch(e){}try{makeOfficeSprites()}catch(e){}
  try{kobiArt()}catch(e){if(!KIMG)KIMG=I.k3_stand}
- fit();pouch={x:REST.x,y:REST.y,vx:0,vy:0};requestAnimationFrame(step);
+ fit();pouch={x:REST.x,y:REST.y,vx:0,vy:0};requestAnimationFrame(step);try{const ld=document.getElementById('ld');if(ld&&ld.parentNode)ld.parentNode.removeChild(ld)}catch(e){}
  if(LB_ON){lbToken();if(lb.name&&lbTotal()>(lb.total||0))lbTimer=setTimeout(lbSubmit,8000)}}   // a total that never reached the server (offline win) is sent again
 window.GAME={koKobi,say,startLevel,introOk,shush,get intro(){return intro},get outro(){return outro},get talk(){return talk},get mode(){return mode},set mode(v){mode=v;stateT=0},get cam(){return cam},camT,w2s,s2w,WW,MAXPULL,POWER,BALLS,get zone(){return{x0:0,x1:W,x:W/2,z:1}},get levelT(){return levelT},WIND,windAmt,inWind,set levelT(v){levelT=v},get stateT(){return stateT},set stateT(v){stateT=v},get engine(){return engine},get bodies(){return bodies},loadLevel,finish,get save(){return save},get kobi(){return kobi},get col(){return col},get door(){return door},DOOR,get ball(){return ball},get queue(){return queue},selectBall,barLayout,leftOf,get stains(){return stains},addStain,REST:()=>REST,LEVELS,KCFG,
  set headless(v){headless=v},get headless(){return headless},
@@ -1463,7 +1566,7 @@ window.GAME={koKobi,say,startLevel,introOk,shush,get intro(){return intro},get o
  ability:()=>{if(ball&&ball.state==='fly'&&!ball.used)ability()},get score(){return score},get result(){return result},
  // leaderboard hooks. lbMock({name,rank,players,total,pending,state,top,around,me}) injects data (no network) for screenshots/tests
  get lb(){return{on:LB_ON,mock:lbMock,name:lb.name,rank:lb.rank,players:lb.players,total:lb.total,localTotal:lbTotal(),levels:lbLevels(),data:lbData}},
- lbMock:o=>{o=o||{};lbMock=true;nameAsked=true;for(const k of['name','rank','players','total'])if(k in o)lb[k]=o[k];lbPending=!!o.pending;
+ lbMock:o=>{o=o||{};lbMock=true;nameAsked=true;if(o.resetTop)lb.top=0;if('rank' in o)top3Check(o.rank);for(const k of['name','rank','players','total'])if(k in o)lb[k]=o[k];lbPending=!!o.pending;
   lbData={state:o.state||'ok',top:o.top||[],around:o.around||[],players:o.players||0,me:o.me||null}},
  shareText,openBoard,closeBoard,askName,showToast,lbSync:()=>lbSubmit(),lbLoad:()=>lbLoad()};
 </script></body></html>
