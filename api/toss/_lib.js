@@ -16,14 +16,15 @@ const MAX_PLAYERS = 20000;          // everyone keeps a rank; beyond this the lo
 const TOKEN_MAX_AGE = 12*3600;      // seconds
 const SEC_PER_LEVEL = 6;            // nobody clears a level faster than this (aim + flight + KO + result)
 
-// Highest score the game can pay out on each of the 10 levels, with ~15 % headroom. Computed from the game data
+// Highest score the game can pay out on each level, with ~15 % headroom. Computed from the game data
 // (tools/toss_caps.js): 7000 headshot KO + 1000 per projectile body (each one is either a headshot bonus or an
 // unused-supply bonus; sticky notes split in three) + 10 x (boss hp + 300 overkill) damage points
 // + for every breakable piece: its break points + 20 x (hp + 25) damage points; x1.15, rounded up to 1000.
 // The best scores found by 150 random games per level are 12-18 k, so honest players sit well below these.
 // 19/11 (C39): theoretical max incl. speed bonus 2000 and first-try +25% = (raw + 2000) x 1.25; levels 2 and 10
 // (28675 / 47575) were above their caps, raised to 30000 / 50000 (~5 % headroom). All other levels stay above that max.
-const LEVEL_CAP = [26000, 30000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 50000, 60000];
+// 24/11: levels 12-16 released; generous 60000 cap each (same as L11) until real data exists. Old saves (<= 11 levels) still pass.
+const LEVEL_CAP = [26000, 30000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 50000, 60000, 60000, 60000, 60000, 60000, 60000];
 const LEVELS = LEVEL_CAP.length;
 
 const ready = () => !!(RURL && RTOK && SECRET);
@@ -108,7 +109,24 @@ async function rows(from, to, pid){
 // the rows right around a 0-based rank (2 above, the player, 2 below)
 const around = (rank0, pid) => rows(Math.max(0, rank0 - 2), rank0 + 2, pid);
 
+// validates the submitted levels array + stars; returns { total, cleared, stars } or { error }
+function checkLevels(levels, starsRaw){
+  // integers, each within its cap, cleared in order (level n+1 only unlocks after level n); shorter arrays (old saves) are fine
+  if (!Array.isArray(levels) || levels.length > LEVELS) return { error:'levels' };
+  const lv = levels.map(v => v == null ? 0 : v);
+  let total = 0, cleared = 0, gap = false;
+  for (let i = 0; i < lv.length; i++){
+    const v = lv[i];
+    if (typeof v !== 'number' || !Number.isInteger(v) || v < 0 || v > LEVEL_CAP[i]) return { error:'score' };
+    if (v > 0){ if (gap) return { error:'levels' }; total += v; cleared++; } else gap = true;
+  }
+  if (!cleared) return { error:'score' };
+  const stars = Number(starsRaw);
+  if (!Number.isInteger(stars) || stars < cleared || stars > cleared*3) return { error:'stars' };
+  return { total, cleared, stars };
+}
+
 function body(req){ try { return typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch(e){ return {}; } }
 
-module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body,
+module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body, checkLevels,
   BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, SEC_PER_LEVEL, LEVEL_CAP, LEVELS, PID_OK };

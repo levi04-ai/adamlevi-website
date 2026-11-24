@@ -1,6 +1,6 @@
 // GET /api/toss/stats -> aggregates only (never names or player ids):
 // { players, byLevel:{"0":n..}, byStars:{ avg, max, buckets:{"0":n,"1-10":n,...} }, byDate:{"YYYY-MM-DD":n}, generated }
-const { redis, cors, ready, PLAYERS } = require('./_lib');
+const { redis, cors, ready, PLAYERS, LEVELS } = require('./_lib');
 
 module.exports = async (req, res) => {
   cors(req, res);
@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
       buckets[st === 0 ? '0' : st <= 10 ? '1-10' : st <= 20 ? '11-20' : st <= 33 ? '21-33' : '34+']++;
       const d = typeof p.d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(p.d) ? p.d : 'unknown'; byDate[d] = (byDate[d] || 0) + 1;
     }
-    for (let l = 0; l <= 11; l++) if (!(l in byLevel)) byLevel[l] = 0;
+    for (let l = 0; l <= LEVELS; l++) if (!(l in byLevel)) byLevel[l] = 0;
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     res.status(200).json({ players, byLevel, byStars:{ avg: players ? Math.round(starSum / players * 100) / 100 : 0, max:starMax, buckets },
       byDate:Object.fromEntries(Object.entries(byDate).sort()), skipped:bad, generated:new Date().toISOString() });
