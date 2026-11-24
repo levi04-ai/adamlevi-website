@@ -24,7 +24,7 @@ const SEC_PER_LEVEL = 6;            // nobody clears a level faster than this (a
 // 19/11 (C39): theoretical max incl. speed bonus 2000 and first-try +25% = (raw + 2000) x 1.25; levels 2 and 10
 // (28675 / 47575) were above their caps, raised to 30000 / 50000 (~5 % headroom). All other levels stay above that max.
 // 24/11: levels 12-16 released; generous 60000 cap each (same as L11) until real data exists. Old saves (<= 11 levels) still pass.
-const LEVEL_CAP = [26000, 30000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 50000, 60000, 60000, 60000, 60000, 60000, 60000];
+const LEVEL_CAP = [26000, 30000, 27000, 40000, 33000, 40000, 37000, 30000, 40000, 50000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000];   // 25/11: 20 levels (meeting room chapter 17-20)
 const LEVELS = LEVEL_CAP.length;
 
 const ready = () => !!(RURL && RTOK && SECRET);

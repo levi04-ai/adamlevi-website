@@ -1,7 +1,7 @@
 // POST /api/toss/submit { token, pid, name, levels:[best score per level, 0 = not cleared], stars }
 //   -> { rank, total, players, top:[10 rows], around:[rows near the player] }      row = { rank, name, total, lv, me? }
 // Ranking = TOTAL = sum of the player's best score on each level. One row per player (pid), only ever raised.
-// Checks: signed single-use token from start.js (<= 12 h old), pid format, clean name, <= LEVELS (16) levels cleared in order,
+// Checks: signed single-use token from start.js (<= 12 h old), pid format, clean name, <= LEVELS (20) levels cleared in order,
 // every level score an integer within that level's cap, >= 6 s of real time per newly cleared level, per-IP rate limits
 // (40 submits / hour, 30 new players / day).
 const { redis, pipe, readToken, allow, cors, ready, cleanName, rows, around, body, checkLevels,
