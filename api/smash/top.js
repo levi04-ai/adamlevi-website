@@ -1,6 +1,7 @@
-// GET /api/smash/top?pid=...  -> { top:[10 rows { rank, name, score, me? }], players, me:{ rank, score, name } | null, around:[rows] }
+// GET /api/smash/top?pid=...  -> { top:[10 rows { rank, name, score, me? }], players, me:{ rank, score, name } | null, around:[rows],
+//                                  topTime:[10 rows { rank, name, t, me? }], timePlayers, timeRank, time }   (r73 FASTEST RUN, lowest t first)
 // Without a pid the answer is the same for everybody and is cached for a few seconds at the edge.
-const { pipe, allow, cors, ready, rows, around, BOARD, PID_OK } = require('./_lib');
+const { pipe, allow, cors, ready, rows, around, timeRows, BOARD, TIME, PID_OK } = require('./_lib');
 
 module.exports = async (req, res) => {
   cors(req, res);
@@ -12,9 +13,9 @@ module.exports = async (req, res) => {
     if (pid === undefined){ try { pid = new URL(req.url, 'http://x').searchParams.get('pid'); } catch(e){} }
     pid = typeof pid === 'string' && PID_OK.test(pid) ? pid : null;
     if (pid && !await allow('top', req, 600)) return res.status(429).json({ error:'slow down' });
-    const cmds = [['ZCARD', BOARD]]; if (pid) cmds.push(['ZREVRANK', BOARD, pid], ['ZSCORE', BOARD, pid]);
-    const [players, rank0, score] = await pipe(cmds);
-    const top = await rows(0, 9, pid);
+    const cmds = [['ZCARD', BOARD], ['ZCARD', TIME]]; if (pid) cmds.push(['ZREVRANK', BOARD, pid], ['ZSCORE', BOARD, pid], ['ZRANK', TIME, pid], ['ZSCORE', TIME, pid]);
+    const [players, timePlayers, rank0, score, tRank0, tBest] = await pipe(cmds);
+    const [top, topTime] = await Promise.all([rows(0, 9, pid), timeRows(0, 9, pid)]);
     let me = null, near = [];
     if (pid && rank0 != null){
       near = await around(rank0, pid);
@@ -22,6 +23,7 @@ module.exports = async (req, res) => {
       me = { rank:rank0 + 1, score:Number(score), name:mine.name };
     }
     if (!pid) res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
-    res.status(200).json({ top, players:players || 0, me, around:near });
+    res.status(200).json({ top, players:players || 0, me, around:near, topTime, timePlayers:timePlayers || 0,
+      timeRank:pid && tRank0 != null ? tRank0 + 1 : null, time:pid && tBest != null ? Number(tBest) : null });
   } catch(e){ res.status(500).json({ error:'server' }); }
 };

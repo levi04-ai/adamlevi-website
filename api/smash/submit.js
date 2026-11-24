@@ -1,10 +1,13 @@
 // POST /api/smash/submit { token, pid, name, score, t, ko }
-//   -> { rank, score, players, top:[10 rows], around:[rows near the player] }      row = { rank, name, score, me? }
+//   -> { rank, score, players, top:[10 rows], around:[rows near the player],      row = { rank, name, score, me? }
+//        topTime:[10 rows], timeRank, time, timePlayers }                         r73 FASTEST RUN: time row = { rank, name, t, me? }
 // Only a FULL run (boss down) is submitted. Ranking = the player's best run score. One row per player (pid), only ever raised.
 // Checks: signed single-use token from start.js (<= 12 h old), pid format, name (2-14 letters in any language / digits / space . _ -, TtB profanity filter),
 // score an integer 1..20000, >= 45 s of real time since the token and <= 100 points per real second,
 // reported fight time 25 s .. (real time + 5 s), KO count sane, per-IP rate limits (40 submits / hour, 30 new players / day).
-const { redis, pipe, readToken, allow, cors, ready, cleanName, rows, around, body, P,
+// r73: the same run time `t` also goes on the FASTEST RUN board (smash:time, lowest wins, each player's best) when t >= 30 s and
+// t fits the token's real clock (>= 45 s since the token and t <= real time + 5 s). A time that does not fit is skipped, the score still counts.
+const { redis, pipe, readToken, allow, cors, ready, cleanName, rows, around, body, P, timeRows, TIME, MIN_TIME_SEC,
   BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, MAX_SCORE, MIN_RUN_SEC, MAX_PTS_PER_SEC, MIN_FIGHT_SEC, FIGHT_SLACK, MAX_FIGHT_SEC, MAX_KO, PID_OK } = require('./_lib');
 
 const int = v => typeof v === 'number' && Number.isInteger(v);
@@ -48,15 +51,18 @@ module.exports = async (req, res) => {
     const meta = score >= before ? { name, t, ko, d:new Date().toISOString().slice(0, 10) }
                                  : { ...old, name };         // lower score re-sent (e.g. another device): only the name changes
     await redis('HSET', PLAYERS, pid, JSON.stringify(meta));
+    // r73: FASTEST RUN. LT: adds a new player, never raises an existing (faster) time
+    if (t >= MIN_TIME_SEC && elapsed >= Math.max(MIN_RUN_SEC, t - FIGHT_SLACK)) await redis('ZADD', TIME, 'LT', t, pid);
 
     let players = await redis('ZCARD', BOARD);
     if (players > MAX_PLAYERS){                              // trim the lowest scores (and their names)
       const out = await redis('ZRANGE', BOARD, 0, players - MAX_PLAYERS - 1);
-      if (out && out.length){ await redis('ZREM', BOARD, ...out); await redis('HDEL', PLAYERS, ...out); players -= out.length; }
+      if (out && out.length){ await redis('ZREM', BOARD, ...out); await redis('ZREM', TIME, ...out); await redis('HDEL', PLAYERS, ...out); players -= out.length; }
     }
-    const [rank0, best] = await pipe([['ZREVRANK', BOARD, pid], ['ZSCORE', BOARD, pid]]);
-    if (rank0 == null) return res.status(200).json({ rank:null, score, players, top:await rows(0, 9, pid), around:[] });
+    const [rank0, best, tRank0, tBest, timePlayers] = await pipe([['ZREVRANK', BOARD, pid], ['ZSCORE', BOARD, pid], ['ZRANK', TIME, pid], ['ZSCORE', TIME, pid], ['ZCARD', TIME]]);
+    const tm = { topTime:await timeRows(0, 9, pid), timeRank:tRank0 == null ? null : tRank0 + 1, time:tBest == null ? null : Number(tBest), timePlayers:timePlayers || 0 };
+    if (rank0 == null) return res.status(200).json({ rank:null, score, players, top:await rows(0, 9, pid), around:[], ...tm });
     const [top, near] = await Promise.all([rows(0, 9, pid), around(rank0, pid)]);
-    res.status(200).json({ rank:rank0 + 1, score:Number(best), players, top, around:near });
+    res.status(200).json({ rank:rank0 + 1, score:Number(best), players, top, around:near, ...tm });
   } catch(e){ res.status(500).json({ error:'server' }); }
 };

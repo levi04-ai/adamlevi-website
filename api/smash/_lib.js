@@ -6,6 +6,7 @@
 // Storage (same Redis as TtB, its own keys - nothing here ever reads or writes a toss:* key):
 //   smash:board:v1    sorted set   member = player id (pid), score = the player's BEST full-run score (floor 1 -> boss down)
 //   smash:players:v1  hash         pid -> JSON { name (2-14 chars, TtB rules), t (fight seconds of that run), ko, d (date) }
+//   smash:time        sorted set   member = pid, score = the player's FASTEST finished run in seconds (lower is better; r73)
 // One row per player: re-submitting only ever raises the row (ZADD GT). Player ids never leave the server.
 const crypto = require('crypto');
 
@@ -15,7 +16,7 @@ const RTOK = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOK
 // can never be used here (and the other way round) even when both games share one secret.
 const SECRET = process.env.SMASH_SECRET || process.env.TOSS_SECRET || RTOK || '';
 const P = 'smash:';
-const BOARD = P + 'board:v1', PLAYERS = P + 'players:v1';
+const BOARD = P + 'board:v1', PLAYERS = P + 'players:v1', TIME = P + 'time';
 const MAX_PLAYERS = 20000;          // everyone keeps a rank; beyond this the lowest scores are trimmed
 const TOKEN_MAX_AGE = 12*3600;      // seconds
 
@@ -31,6 +32,10 @@ const MAX_PTS_PER_SEC = 100;
 // and never more than the real time since the token (+ a little slack for clocks / the end-screen delay).
 const MIN_FIGHT_SEC = 25, FIGHT_SLACK = 5, MAX_FIGHT_SEC = 3600;
 const MAX_KO = 500;
+// r73 FASTEST RUN board: the run time = the client's 'Time' stat (the same `t` as above). A time only goes on the board when it is
+// >= MIN_TIME_SEC and fits the token's real time (t <= seconds since the token + FIGHT_SLACK, and at least MIN_RUN_SEC real seconds);
+// otherwise the score is still taken and only the time is skipped.
+const MIN_TIME_SEC = 30;
 
 const ready = () => !!(RURL && RTOK && SECRET);
 
@@ -111,10 +116,18 @@ async function rows(from, to, pid){
   const metas = await redis('HMGET', PLAYERS, ...ids);
   return ids.map((id, i) => row(from + i + 1, r[i*2 + 1], metas[i], id === pid));
 }
+// r73: FASTEST RUN rows [from..to] (0-based ranks, inclusive), fastest first. row = { rank, name, t (seconds), me? }
+async function timeRows(from, to, pid){
+  if (to < from) return [];
+  const r = await redis('ZRANGE', TIME, from, to, 'WITHSCORES'); if (!r || !r.length) return [];
+  const ids = []; for (let i = 0; i < r.length; i += 2) ids.push(r[i]);
+  const metas = await redis('HMGET', PLAYERS, ...ids);
+  return ids.map((id, i) => { const x = row(from + i + 1, 0, metas[i], id === pid); delete x.score; x.t = Number(r[i*2 + 1]) || 0; return x; });
+}
 // the rows right around a 0-based rank (2 above, the player, 2 below)
 const around = (rank0, pid) => rows(Math.max(0, rank0 - 2), rank0 + 2, pid);
 
 function body(req){ try { return typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch(e){ return {}; } }
 
-module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body,
+module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body, timeRows, TIME, MIN_TIME_SEC,
   P, BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, MAX_SCORE, MIN_RUN_SEC, MAX_PTS_PER_SEC, MIN_FIGHT_SEC, FIGHT_SLACK, MAX_FIGHT_SEC, MAX_KO, PID_OK };
