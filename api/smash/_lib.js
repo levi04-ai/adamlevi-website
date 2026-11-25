@@ -7,6 +7,8 @@
 //   smash:board:v1    sorted set   member = player id (pid), score = the player's BEST full-run score (floor 1 -> boss down)
 //   smash:players:v1  hash         pid -> JSON { name (2-14 chars, TtB rules), t (fight seconds of that run), ko, d (date) }
 //   smash:time        sorted set   member = pid, score = the player's FASTEST finished run in seconds (lower is better; r73)
+//   smash:rush:v1     sorted set   member = pid, score = the player's BEST RUSH HOUR run in KOs (higher is better; rush.js)
+//   smash:rushmeta:v1 hash         pid -> JSON { name, ko, t (seconds survived), d } (own hash: the main board trim never removes rush names)
 // One row per player: re-submitting only ever raises the row (ZADD GT). Player ids never leave the server.
 const crypto = require('crypto');
 
@@ -36,6 +38,10 @@ const MAX_KO = 500;
 // >= MIN_TIME_SEC and fits the token's real time (t <= seconds since the token + FIGHT_SLACK, and at least MIN_RUN_SEC real seconds);
 // otherwise the score is still taken and only the time is skipped.
 const MIN_TIME_SEC = 30;
+// RUSH HOUR board (rush.js): KOs of one survival run. ko 1..2000, survived t >= 10 s, <= 3 KOs per survived second,
+// and t <= real seconds since the token + FIGHT_SLACK.
+const RUSH = P + 'rush:v1', RUSHMETA = P + 'rushmeta:v1';
+const RUSH_MAX_KO = 2000, RUSH_MIN_SEC = 10, RUSH_MAX_SEC = 3600, RUSH_MAX_KO_PER_SEC = 3;
 
 const ready = () => !!(RURL && RTOK && SECRET);
 
@@ -124,10 +130,24 @@ async function timeRows(from, to, pid){
   const metas = await redis('HMGET', PLAYERS, ...ids);
   return ids.map((id, i) => { const x = row(from + i + 1, 0, metas[i], id === pid); delete x.score; x.t = Number(r[i*2 + 1]) || 0; return x; });
 }
+// RUSH HOUR rows [from..to] (0-based ranks, inclusive), most KOs first. row = { rank, name, ko, t, me? }
+async function rushRows(from, to, pid){
+  if (to < from) return [];
+  const r = await redis('ZREVRANGE', RUSH, from, to, 'WITHSCORES'); if (!r || !r.length) return [];
+  const ids = []; for (let i = 0; i < r.length; i += 2) ids.push(r[i]);
+  const metas = await redis('HMGET', RUSHMETA, ...ids);
+  return ids.map((id, i) => {
+    let m = {}; try { m = JSON.parse(metas[i]) || {}; } catch(e){}
+    const x = { rank:from + i + 1, name:String(m.name || 'Anonymous'), ko:Number(r[i*2 + 1]) || 0, t:Number(m.t) || 0 };
+    if (id === pid) x.me = true; return x;
+  });
+}
+const rushAround = (rank0, pid) => rushRows(Math.max(0, rank0 - 2), rank0 + 2, pid);
 // the rows right around a 0-based rank (2 above, the player, 2 below)
 const around = (rank0, pid) => rows(Math.max(0, rank0 - 2), rank0 + 2, pid);
 
 function body(req){ try { return typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch(e){ return {}; } }
 
-module.exports = { ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body, timeRows, TIME, MIN_TIME_SEC,
+module.exports = { RUSH, RUSHMETA, RUSH_MAX_KO, RUSH_MIN_SEC, RUSH_MAX_SEC, RUSH_MAX_KO_PER_SEC, rushRows, rushAround,
+  ORIGIN_OK, redis, pipe, makeToken, readToken, ip, allow, cors, ready, cleanName, rows, around, row, body, timeRows, TIME, MIN_TIME_SEC,
   P, BOARD, PLAYERS, MAX_PLAYERS, TOKEN_MAX_AGE, MAX_SCORE, MIN_RUN_SEC, MAX_PTS_PER_SEC, MIN_FIGHT_SEC, FIGHT_SLACK, MAX_FIGHT_SEC, MAX_KO, PID_OK };
